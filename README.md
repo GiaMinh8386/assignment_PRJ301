@@ -1,2 +1,2 @@
 # assignment_PRJ301
-Project_PRJ
+WheyStore_Project
