@@ -22,6 +22,7 @@ CREATE TABLE Products (
     StockQuantity INT NOT NULL,
     CategoryID INT FOREIGN KEY REFERENCES Categories(CategoryID)
 	ADD ImageURL VARCHAR(255);
+	ADD ProductCode VARCHAR(10);
 );
 
 -- 3. Customers (Khách hàng)
@@ -104,5 +105,45 @@ VALUES
 (N'Lê Thị B', 'ltb@example.com', '0912345678', N'Hồ Chí Minh', 'ltbuser', 'ltb123'),
 (N'Trần Văn C', 'tvc@example.com', '0934567890', N'Đà Nẵng', 'tvcuser', 'tvc123');
 
+
+-- Whey Protein (CategoryID = 1)
+INSERT INTO Products (ProductCode, ProductName, CategoryID)
+VALUES
+('1.1', N'Whey Gold Standard', 1),
+('1.2', N'Serious Mass', 1),
+('1.3', N'Rule 1 Whey Blend', 1),
+('1.4', N'NitroTech Whey', 1);
+
+-- Creatine (CategoryID = 2)
+INSERT INTO Products (ProductCode, ProductName, CategoryID)
+VALUES
+('2.1', N'Creatine Monohydrate 300g', 2),
+('2.2', N'Micronized Creatine', 2),
+('2.3', N'Creactor Formula', 2),
+('2.4', N'Creatine 600g', 2);
+
+-- Sức khỏe toàn diện (CategoryID = 3)
+INSERT INTO Products (ProductCode, ProductName, CategoryID)
+VALUES
+('3.1', N'Vitamin Tổng hợp Daily', 3),
+('3.2', N'Multivitamin Women', 3),
+('3.3', N'Multivitamin Men Sport', 3),
+('3.4', N'Zinc + Magnesium + B6', 3);
+
+-- Hỗ trợ giảm mỡ (CategoryID = 4)
+INSERT INTO Products (ProductCode, ProductName, CategoryID)
+VALUES
+('4.1', N'Lipo 6 Black', 4),
+('4.2', N'Hydroxycut Hardcore', 4),
+('4.3', N'CLA 1000', 4),
+('4.4', N'Thermogenic Burner', 4);
+
+-- Sinh lý & nội tiết tố (CategoryID = 5)
+INSERT INTO Products (ProductCode, ProductName, CategoryID)
+VALUES
+('5.1', N'Tribulus 625mg', 5),
+('5.2', N'Maca Root Extract', 5),
+('5.3', N'Fenugreek Booster', 5),
+('5.4', N'Kẽm + Vitamin D3', 5);
 
 GO
