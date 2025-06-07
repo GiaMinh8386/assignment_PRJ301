@@ -113,8 +113,16 @@
     </form>
 
     <!-- Login -->
-    <div class="ms-4">
-      <a class="nav-link nav-link-login" href="login.jsp">Login</a>
+  <!-- Login Block -->
+<div class="ms-4 d-flex align-items-center">
+  <a href="login.jsp" class="d-flex align-items-center text-white text-decoration-none">
+    <i class="fas fa-user fa-2x me-2"></i>
+    <div class="d-flex flex-column">
+      <span style="font-size: 14px;">Login</span>
+      <strong style="font-size: 16px;">Account</strong>
     </div>
-  </div>
+  </a>
+</div>
+
+
 </nav>
