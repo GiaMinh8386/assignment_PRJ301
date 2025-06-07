@@ -1,4 +1,3 @@
-
 USE master;
 GO
 ALTER DATABASE WheyStoreConsultationPortal
@@ -45,6 +44,7 @@ CREATE TABLE Customers (
     Address NVARCHAR(255),
     Username VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(100) NOT NULL,
+    RoleID NVARCHAR(10) CHECK (RoleID IN ('MB')),  -- Chỉ có MB cho khách
     CreatedDate DATETIME DEFAULT GETDATE()
 );
 GO
@@ -70,12 +70,12 @@ CREATE TABLE OrderDetails (
 );
 GO
 
--- 6. Users (Tài khoản Admin / Nhân viên)
+-- 6. Admins / Staff
 CREATE TABLE Admins (
     AdminID INT PRIMARY KEY IDENTITY(1,1),
     Username VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(100) NOT NULL,
-    Role NVARCHAR(50) NOT NULL CHECK (Role IN ('Admin', 'Staff')),
+    RoleID NVARCHAR(10) NOT NULL CHECK (RoleID IN ('AD', 'ST')),
     CreatedDate DATETIME DEFAULT GETDATE()
 );
 GO
@@ -104,18 +104,18 @@ CREATE TABLE Reviews (
 GO
 
 -- Insert Admins
-INSERT INTO Admins (Username, Password, Role)
+INSERT INTO Admins (Username, Password, RoleID)
 VALUES
-('admin01', 'admin123', 'Admin'),
-('staff01', 'staff123', 'Staff');
+('admin01', 'admin123', 'AD'),
+('staff01', 'staff123', 'ST');
 GO
 
 -- Insert Customers
-INSERT INTO Customers (FullName, Email, Phone, Address, Username, Password)
+INSERT INTO Customers (FullName, Email, Phone, Address, Username, Password, RoleID)
 VALUES
-(N'Nguyễn Văn A', 'nva@example.com', '0901234567', N'Hà Nội', 'nvauser', 'nva123'),
-(N'Lê Thị B', 'ltb@example.com', '0912345678', N'Hồ Chí Minh', 'ltbuser', 'ltb123'),
-(N'Trần Văn C', 'tvc@example.com', '0934567890', N'Đà Nẵng', 'tvcuser', 'tvc123');
+(N'Nguyễn Văn A', 'nva@example.com', '0901234567', N'Hà Nội', 'nvauser', 'nva123', 'MB'),
+(N'Lê Thị B', 'ltb@example.com', '0912345678', N'Hồ Chí Minh', 'ltbuser', 'ltb123', 'MB'),
+(N'Trần Văn C', 'tvc@example.com', '0934567890', N'Đà Nẵng', 'tvcuser', 'tvc123', 'MB');
 GO
 
 -- Insert Categories
@@ -149,6 +149,5 @@ VALUES
 ('4.4', N'Thermogenic Burner', 4),
 ('5.1', N'Tribulus 625mg', 5),
 ('5.2', N'Maca Root Extract', 5),
-('5.3', N'Fenugreek Booster', 5),
-('5.4', N'Kẽm + Vitamin D3', 5);
-GO
+('5.3', N'Fenugreek Booster', 5);
+go

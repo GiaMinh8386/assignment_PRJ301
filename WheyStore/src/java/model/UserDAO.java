@@ -4,78 +4,64 @@
  */
 
 package model;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import utils.DbUtils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-/**
- *
- * @author GIA MINH
- */
-public class UserDAO extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserDAO</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserDAO at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
+public class UserDAO {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+    public UserDAO() {
     }
 
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    public boolean login(String userID, String password) {
+        try {
+            UserDTO user = getUserById(userID); 
+            if (user != null && user.getPassword().equals(password)) {
+                return true; // Nếu đúng mật khẩu, đăng nhập thành công
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Ghi log lỗi (tùy bạn có thể xóa dòng này)
+        }
+        return false;
+    }
+    
+     public UserDTO getUserById(String userID) {
+        try {
+            String sql = "SELECT * FROM tblUsers "
+                    + " WHERE userID=?";
+            // B1 - Ket noi
+            Connection conn = DbUtils.getConnection();
+            //
+            // B2 - Tao cong cu thuc thi cau lenh
+            PreparedStatement pr = conn.prepareStatement(sql);
+            pr.setString(1, userID);
+            ResultSet rs = pr.executeQuery();
+            
+            if (rs.next()) {
+                int customerID = rs.getInt("CustomerID");
+                String fullName = rs.getString("FullName");
+                String email = rs.getString("Email");
+                String phone = rs.getString("Phone");
+                String address = rs.getString("Address");
+                String uname = rs.getString("Username");
+                String pwd = rs.getString("Password");
+                String roleID = rs.getString("RoleID");
+                Timestamp ts = rs.getTimestamp("CreatedDate");
+                LocalDateTime createdDate = ts != null ? ts.toLocalDateTime() : null;
+                
+                return new UserDTO(userID, fullName, email, phone, address, uname, pwd, roleID, createdDate);
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace(); // Ghi log lỗi
+        }
+        return null;
+    }
 }
+     
