@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class DbUtils {
 //    Do not change this code
     private static final String DB_NAME = "WheyStoreConsultationPortal";
-    private static final String DB_USER_NAME = "sa";
+    private static final String DB_USER_NAME = "SA";
     private static final String DB_PASSWORD = "12345";
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
