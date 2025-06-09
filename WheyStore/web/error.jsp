@@ -12,6 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <% String msg = request.getAttribute("message")+""; %>
+        <h1><%=msg%></h1>
     </body>
 </html>

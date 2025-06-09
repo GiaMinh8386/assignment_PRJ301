@@ -16,7 +16,7 @@ import utils.AuthUtils;
 
 /**
  *
- * @author PC
+ * @author QUOC HUY
  */
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
