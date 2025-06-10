@@ -20,48 +20,62 @@ public class UserDAO {
     }
 
     public boolean login(String userID, String password) {
-        try {
-            UserDTO user = getUserById(userID); 
-            if (user != null && user.getPassword().equals(password)) {
-                return true; // Nếu đúng mật khẩu, đăng nhập thành công
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Ghi log lỗi (tùy bạn có thể xóa dòng này)
+    try {
+        UserDTO user = getUserById(userID); 
+        if (user != null && user.getPassword().equals(password)) {
+            return true;
         }
-        return false;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
-    
-     public UserDTO getUserById(String userID) {
-        try {
-            String sql = "SELECT * FROM tblUsers "
-                    + " WHERE userID=?";
-            // B1 - Ket noi
-            Connection conn = DbUtils.getConnection();
-            //
-            // B2 - Tao cong cu thuc thi cau lenh
-            PreparedStatement pr = conn.prepareStatement(sql);
-            pr.setString(1, userID);
-            ResultSet rs = pr.executeQuery();
-            
-            if (rs.next()) {
-                int customerID = rs.getInt("CustomerID");
-                String fullName = rs.getString("FullName");
-                String email = rs.getString("Email");
-                String phone = rs.getString("Phone");
-                String address = rs.getString("Address");
-                String uname = rs.getString("Username");
-                String pwd = rs.getString("Password");
-                String roleID = rs.getString("RoleID");
-                Timestamp ts = rs.getTimestamp("CreatedDate");
-                LocalDateTime createdDate = ts != null ? ts.toLocalDateTime() : null;
-                
-                return new UserDTO(userID, fullName, email, phone, address, uname, pwd, roleID, createdDate);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace(); // Ghi log lỗi
-        }
-        return null;
-    }
+    return false;
 }
+
+public UserDTO getUserById(String userID) {
+    String sqlAdmin = "SELECT Username, Password, RoleID FROM Admins WHERE Username = ?";
+    String sqlCustomer = "SELECT * FROM Customers WHERE Username = ?";
+
+    try (Connection conn = DbUtils.getConnection()) {
+        // Ưu tiên kiểm tra Admins trước
+        try (PreparedStatement pr = conn.prepareStatement(sqlAdmin)) {
+            pr.setString(1, userID);
+            try (ResultSet rs = pr.executeQuery()) {
+                if (rs.next()) {
+                    String pwd = rs.getString("Password");
+                    String roleID = rs.getString("RoleID");
+
+                    return new UserDTO(null, "Admin", "", "", "", userID, pwd, roleID, null);
+                }
+            }
+        }
+
+        // Sau đó kiểm tra Customers
+        try (PreparedStatement pr = conn.prepareStatement(sqlCustomer)) {
+            pr.setString(1, userID);
+            try (ResultSet rs = pr.executeQuery()) {
+                if (rs.next()) {
+                    int customerID = rs.getInt("CustomerID");
+                    String fullName = rs.getString("FullName");
+                    String email = rs.getString("Email");
+                    String phone = rs.getString("Phone");
+                    String address = rs.getString("Address");
+                    String pwd = rs.getString("Password");
+                    String roleID = rs.getString("RoleID");
+                    Timestamp ts = rs.getTimestamp("CreatedDate");
+                    LocalDateTime createdDate = ts != null ? ts.toLocalDateTime() : null;
+
+                    return new UserDTO(String.valueOf(customerID), fullName, email, phone, address,
+                            userID, pwd, roleID, createdDate);
+                }
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
+
+}
+
      

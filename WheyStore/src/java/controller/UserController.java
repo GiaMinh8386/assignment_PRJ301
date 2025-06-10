@@ -5,12 +5,12 @@
 package controller;
 
 import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.UserDAO;
 import model.UserDTO;
 
@@ -93,24 +93,25 @@ public class UserController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
-        String url = LOGIN_PAGE;
-        HttpSession session = request.getSession();
-        String strUsername = request.getParameter("strUsername");
-        String strPassword = request.getParameter("strPassword");
-        UserDAO userDAO = new UserDAO();
-        if (userDAO.login(strUsername, strPassword)) {
-            UserDTO user = userDAO.getUserById(strUsername);
-            // di den trang welcome.jsp
-            url = WELCOME_PAGE;
-            session.setAttribute("user", user);
-        } else {
-            // di den trang login.jsp
-            url = LOGIN_PAGE;
-            request.setAttribute("message", "Username or Password incorrect!");
-        }
-        return url;
+   private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
+    String url = LOGIN_PAGE;
+    HttpSession session = request.getSession();
+    String strUsername = request.getParameter("strUsername");
+    String strPassword = request.getParameter("strPassword");
+    UserDAO userDAO = new UserDAO();
+
+    if (userDAO.login(strUsername, strPassword)) {
+        UserDTO user = userDAO.getUserById(strUsername);
+        session.setAttribute("user", user);
+        url = WELCOME_PAGE; // giống như phiên bản cũ
+    } else {
+        request.setAttribute("message", "Invalid username or password");
     }
+
+    return url;
+}
+
+
 
     private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
         String url = LOGIN_PAGE;

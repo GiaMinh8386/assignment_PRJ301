@@ -104,11 +104,18 @@ CREATE TABLE Reviews (
 GO
 
 -- Insert Admins
+
+-- XÓA TOÀN BỘ ADMIN CŨ
+DELETE FROM Admins;
+
+-- THÊM LẠI ADMIN MỚI
 INSERT INTO Admins (Username, Password, RoleID)
-VALUES
-('admin01', 'admin123', 'AD'),
-('staff01', 'staff123', 'ST');
-GO
+VALUES 
+('admin', '1', 'AD'),
+('staff', '10', 'ST');
+
+SELECT * FROM Admins;
+
 
 -- Insert Customers
 INSERT INTO Customers (FullName, Email, Phone, Address, Username, Password, RoleID)
@@ -116,7 +123,7 @@ VALUES
 (N'Nguyễn Văn A', 'nva@example.com', '0901234567', N'Hà Nội', 'nvauser', 'nva123', 'MB'),
 (N'Lê Thị B', 'ltb@example.com', '0912345678', N'Hồ Chí Minh', 'ltbuser', 'ltb123', 'MB'),
 (N'Trần Văn C', 'tvc@example.com', '0934567890', N'Đà Nẵng', 'tvcuser', 'tvc123', 'MB');
-GO
+
 
 -- Insert Categories
 INSERT INTO Categories (CategoryName, Description)
