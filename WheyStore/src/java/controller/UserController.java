@@ -5,12 +5,12 @@
 package controller;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.UserDAO;
 import model.UserDTO;
 
@@ -93,25 +93,23 @@ public class UserController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-   private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
-    String url = LOGIN_PAGE;
-    HttpSession session = request.getSession();
-    String strUsername = request.getParameter("strUsername");
-    String strPassword = request.getParameter("strPassword");
-    UserDAO userDAO = new UserDAO();
+    private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
+        String url = LOGIN_PAGE;
+        HttpSession session = request.getSession();
+        String strUsername = request.getParameter("strUsername");
+        String strPassword = request.getParameter("strPassword");
+        UserDAO userDAO = new UserDAO();
 
-    if (userDAO.login(strUsername, strPassword)) {
-        UserDTO user = userDAO.getUserById(strUsername);
-        session.setAttribute("user", user);
-        url = WELCOME_PAGE; // giống như phiên bản cũ
-    } else {
-        request.setAttribute("message", "Invalid username or password");
+        if (userDAO.login(strUsername, strPassword)) {
+            UserDTO user = userDAO.getUserById(strUsername);
+            session.setAttribute("user", user);
+            url = WELCOME_PAGE; // giống như phiên bản cũ
+        } else {
+            request.setAttribute("message", "Invalid username or password");
+        }
+
+        return url;
     }
-
-    return url;
-}
-
-
 
     private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
         String url = LOGIN_PAGE;
@@ -132,7 +130,34 @@ public class UserController extends HttpServlet {
     }
 
     private String handleRegister(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        UserDAO dao = new UserDAO();
+
+        if (dao.isUsernameExist(username)) {
+            request.setAttribute("message", "Tên đăng nhập đã tồn tại!");
+            return "register.jsp";
+        }
+
+        if (dao.isEmailExist(email)) {
+            request.setAttribute("message", "Email này đã được sử dụng.");
+            return "register.jsp";
+        }
+
+        boolean success = dao.registerCustomer(fullName, email, phone, address, username, password);
+
+        if (success) {
+            request.setAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
+            return "login.jsp";
+        } else {
+            request.setAttribute("message", "Đăng ký thất bại. Vui lòng thử lại sau.");
+            return "register.jsp";
+        }
     }
 
     private String handleUpdateProfile(HttpServletRequest request, HttpServletResponse response) {
