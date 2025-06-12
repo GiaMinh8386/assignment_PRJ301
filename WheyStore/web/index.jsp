@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <h5 class="card-title">${p.name}</h5>
                         <p class="card-text text-danger fw-bold">${p.price} ?</p>
-                        <a href="MainController?action=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">Xem chi ti?t</a>
+                        <a href="MainController?action=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
                     </div>
                 </div>
             </div>
