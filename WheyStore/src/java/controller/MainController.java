@@ -9,8 +9,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.ProductDAO;
+import model.ProductDTO;
 import model.UserDAO;
 import model.UserDTO;
+
+
+ /*   import java.io.IOException;
+    import javax.servlet.ServletException;
+    import javax.servlet.annotation.WebServlet;
+    import javax.servlet.http.HttpServlet;
+    import javax.servlet.http.HttpServletRequest;
+    import javax.servlet.http.HttpServletResponse;
+    import model.ProductDAO;
+    import model.ProductDTO;
+    import utils.AuthUtils;
+*/
 
 /**
  *
@@ -40,22 +55,32 @@ public class MainController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE; // url => location di den sau khi xu ly
+        String url = LOGIN_PAGE;
+
         try {
             String action = request.getParameter("action");
-            //---- Xu ly cac action cua User -----
-            if (isUserAction(action)) {
+
+            if (action == null || action.equals("home")) {
+                // Load danh sách sản phẩm
+                ProductDAO dao = new ProductDAO();
+                List<ProductDTO> list = dao.getAllProducts(); // ⚠ dùng đúng DAO mới
+                request.setAttribute("products", list);
+                url = "index.jsp";
+            } else if (isUserAction(action)) {
                 url = "/UserController";
             } else if (isProductAction(action)) {
                 url = "/ProductController";
             }
+
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            System.out.println(url);
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
+
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -93,7 +118,7 @@ public class MainController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Main routing servlet";
     }// </editor-fold>
 
 }

@@ -1,11 +1,5 @@
-<%-- 
-    Document   : footer
-    Created on : Jun 5, 2025, 6:18:45 PM
-    Author     : GIA MINH
---%>
-
+<%@ page pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!-- Footer -->
 <footer class="bg-dark text-white py-3 mt-4">

@@ -14,6 +14,16 @@ import model.ProductDAO;
 import model.ProductDTO;
 import utils.AuthUtils;
 
+ /*   import java.io.IOException;
+    import javax.servlet.ServletException;
+    import javax.servlet.annotation.WebServlet;
+    import javax.servlet.http.HttpServlet;
+    import javax.servlet.http.HttpServletRequest;
+    import javax.servlet.http.HttpServletResponse;
+    import model.ProductDAO;
+    import model.ProductDTO;
+    import utils.AuthUtils;
+*/
 /**
  *
  * @author QUOC HUY
@@ -26,17 +36,18 @@ public class ProductController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = ""; // 
+        String url = "";
+
         try {
             String action = request.getParameter("action");
-            //---- Xu ly cac action cua User -----
-            if (action.equals("addProduct")) {
+
+            if ("addProduct".equals(action)) {
                 url = handleProductAdding(request, response);
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            System.out.println(url);
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
@@ -44,51 +55,67 @@ public class ProductController extends HttpServlet {
     private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
         String checkError = "";
         String message = "";
-        if (AuthUtils.isAdmin(request)) {
 
-            // Lay thong tin
+        if (AuthUtils.isAdmin(request)) {
+            // Lấy dữ liệu từ form
             String id = request.getParameter("id");
             String name = request.getParameter("name");
             String image = request.getParameter("image");
             String description = request.getParameter("description");
             String price = request.getParameter("price");
-            String size = request.getParameter("size");
-            String status = request.getParameter("status");
+            String brand = request.getParameter("brand");
+            String stock = request.getParameter("stockQuantity");
+            String productCode = request.getParameter("productCode");
+            String categoryId = request.getParameter("categoryId");
 
-            double price_value = 0;
+            // Chuyển kiểu dữ liệu
+            double priceValue = 0;
+            int stockQty = 0;
+            int catId = 0;
+
             try {
-                price_value = Double.parseDouble(price);
+                priceValue = Double.parseDouble(price);
             } catch (Exception e) {
+                checkError += "Price must be a number.<br/>";
             }
 
-            boolean status_value = true;
             try {
-                status_value = Boolean.parseBoolean(status);
+                stockQty = Integer.parseInt(stock);
             } catch (Exception e) {
+                checkError += "Stock quantity must be an integer.<br/>";
             }
 
-            // Kiem tra loi
-            // Kiem tra san pham bi trung
+            try {
+                catId = Integer.parseInt(categoryId);
+            } catch (Exception e) {
+                checkError += "Category ID must be an integer.<br/>";
+            }
+
+            // Kiểm tra trùng ID
             if (pdao.isProductExists(id)) {
-                checkError = "This Product ID already exists. Can not add new product.";
-            }
-            if (price_value < 0) {
-                checkError += "<br/>Price must be greater than zero!";
+                checkError += "This Product ID already exists.<br/>";
             }
 
-            ProductDTO product = new ProductDTO(id, name, image, description, price_value, size, status_value);
-
-            if (!pdao.create(product)) {
-                checkError += "<br/>Can not add product!";
-            };
-
+            // Tạo đối tượng sản phẩm
+            ProductDTO product = new ProductDTO(id, name, image, description, priceValue, brand, stockQty, productCode, catId);
             request.setAttribute("product", product);
+
+            // Nếu không có lỗi thì thêm
+            if (checkError.isEmpty()) {
+                boolean created = pdao.create(product);
+                if (created) {
+                    message = "Add product successfully!";
+                } else {
+                    checkError += "Error: Cannot add product to database.<br/>";
+                }
+            }
+
+            request.setAttribute("checkError", checkError);
+            request.setAttribute("message", message);
+        } else {
+            request.setAttribute("checkError", "Access denied: Admin only.");
         }
-        if (checkError.isEmpty()) {
-            message = "Add product successfully!";
-        }
-        request.setAttribute("checkError", checkError);
-        request.setAttribute("message", message);
+
         return "productForm.jsp";
     }
 

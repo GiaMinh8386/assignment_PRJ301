@@ -1,8 +1,4 @@
-<%-- 
-    Document   : header
-    Created on : Jun 5, 2025, 6:18:54 PM
-    Author     : GIA MINH
---%>
+
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!-- Bootstrap 5 CDN -->

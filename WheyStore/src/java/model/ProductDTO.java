@@ -2,49 +2,40 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package model;
 
-/**
- *
- * @author ASUS
- */
 public class ProductDTO {
 
-    private String id;
-    private String name;
-    private String image;
+    private String id;               // ProductID
+    private String name;             // ProductName
     private String description;
     private double price;
-    private String size;
-    private boolean status;
+    private String image;            // ImageURL
+    private String brand;
+    private int stockQuantity;
+    private String productCode;
+    private int categoryId;
 
     // Default constructor
     public ProductDTO() {
     }
 
-    // Constructor with all parameters
-    public ProductDTO(String id, String name, String image, String description, double price, String size, boolean status) {
+    // Full constructor
+    public ProductDTO(String id, String name, String image, String description, double price,
+                      String brand, int stockQuantity, String productCode, int categoryId) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.description = description;
         this.price = price;
-        this.size = size;
-        this.status = status;
+        this.brand = brand;
+        this.stockQuantity = stockQuantity;
+        this.productCode = productCode;
+        this.categoryId = categoryId;
     }
 
-    // Constructor without status (default to true)
-    public ProductDTO(String id, String name, String image, String description, double price, String size) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.description = description;
-        this.price = price;
-        this.size = size;
-        this.status = true;
-    }
-
-    // Getter and Setter methods
+    // Getters & Setters
     public String getId() {
         return id;
     }
@@ -59,6 +50,14 @@ public class ProductDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDescription() {
@@ -77,69 +76,55 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public String getSize() {
-        return size;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
-    public boolean isStatus() {
-        return status;
+    public int getStockQuantity() {
+        return stockQuantity;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 
-    public String getImage() {
-        return image;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
-    // Utility methods
-    public String getStatusText() {
-        return status ? "Active" : "Inactive";
+    public int getCategoryId() {
+        return categoryId;
     }
 
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    // Optional: format price for display
     public String getFormattedPrice() {
-        return String.format("$%.2f", price);
+        return String.format("%,.0f ₫", price); // ví dụ: 1,200,000 ₫
     }
 
-    // toString method for debugging
     @Override
     public String toString() {
-        return "ProductDTO{"
-                + "id='" + id + '\''
-                + ", name='" + name + '\''
-                + ", description='" + description + '\''
-                + ", price=" + price
-                + ", size='" + size + '\''
-                + ", status=" + status
-                + '}';
-    }
-
-    // equals method for comparison
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        ProductDTO that = (ProductDTO) obj;
-        return id != null ? id.equals(that.id) : that.id == null;
-    }
-
-    // hashCode method
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return "ProductDTO{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", brand='" + brand + '\'' +
+                ", stockQuantity=" + stockQuantity +
+                ", productCode='" + productCode + '\'' +
+                ", categoryId=" + categoryId +
+                '}';
     }
 }
