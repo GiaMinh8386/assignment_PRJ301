@@ -4,17 +4,17 @@
  */
 package controller;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import model.ProductDAO;
-import model.ProductDTO;
-import utils.AuthUtils;
+//import java.io.IOException;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.annotation.WebServlet;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
+//import model.ProductDAO;
+//import model.ProductDTO;
+//import utils.AuthUtils;
 
- /*   import java.io.IOException;
+    import java.io.IOException;
     import javax.servlet.ServletException;
     import javax.servlet.annotation.WebServlet;
     import javax.servlet.http.HttpServlet;
@@ -23,7 +23,7 @@ import utils.AuthUtils;
     import model.ProductDAO;
     import model.ProductDTO;
     import utils.AuthUtils;
-*/
+
 /**
  *
  * @author QUOC HUY

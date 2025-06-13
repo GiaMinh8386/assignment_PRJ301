@@ -11,23 +11,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
     <style>
-        body {
-            background: linear-gradient(to right, #ffffff, #5b1776);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-        }
+   body {
+  background: linear-gradient(to right, #ffffff, #a94455);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+}
         .login-card {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: #222;
+}
         .login-card .logo {
             width: 230px;
             height: auto;
@@ -42,7 +43,7 @@
             top: 50%;
             left: 15px;
             transform: translateY(-50%);
-            color: #999;
+            color: #ccc;
         }
         .form-group {
             position: relative;
@@ -61,10 +62,11 @@
             margin-left: 5px;
         }
         .text-muted a {
-            text-decoration: none;
+            color: #ffd4f0;
+            text-decoration: underline;
         }
         .error-message {
-            color: #ff4444;
+            color: #ffaaaa;
             font-size: 0.9rem;
         }
     </style>
@@ -92,14 +94,6 @@
             <div class="form-group">
                 <span class="material-symbols-rounded form-item-icon">lock</span>
                 <input type="password" name="strPassword" class="form-control" placeholder="Mật khẩu" required>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check d-flex align-items-center">
-                    <input type="checkbox" class="form-check-input" id="rememberMe" checked>
-                    <label class="form-check-label" for="rememberMe">Nhớ mật khẩu</label>
-                </div>
-                <a href="#" class="text-muted">Quên mật khẩu!</a>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
