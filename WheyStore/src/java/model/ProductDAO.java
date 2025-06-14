@@ -11,33 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 import utils.DbUtils;
 
-/**
- *
- * @author ASUS
- */
 public class ProductDAO {
 
-    private static final String GET_ALL_PRODUCTS = "SELECT ProductID, ProductName, Description, Price, ImageURL, Brand, StockQuantity, ProductCode, CategoryID FROM Products";
-    private static final String GET_PRODUCT_BY_ID = "SELECT ProductID, ProductName, Description, Price, ImageURL, Brand, StockQuantity, ProductCode, CategoryID FROM Products WHERE ProductID = ?";
-    private static final String CREATE_PRODUCT = "INSERT INTO Products (ProductID, ProductName, ImageURL, Description, Price, Brand, StockQuantity, ProductCode, CategoryID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT = "UPDATE Products SET ProductName = ?, ImageURL = ?, Description = ?, Price = ?, Brand = ?, StockQuantity = ?, ProductCode = ?, CategoryID = ? WHERE ProductID = ?";
+    private static final String GET_ALL_PRODUCTS = "SELECT ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID FROM Products";
+    private static final String GET_PRODUCT_BY_ID = "SELECT ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID FROM Products WHERE ProductID = ?";
+    private static final String CREATE_PRODUCT = "INSERT INTO Products (ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE_PRODUCT = "UPDATE Products SET ProductName = ?, Description = ?, Brand = ?, Price = ?, StockQuantity = ?, ImageURL = ?, ProductCode = ?, CategoryID = ? WHERE ProductID = ?";
     private static final String DELETE_PRODUCT = "DELETE FROM Products WHERE ProductID = ?";
 
     public List<ProductDTO> getAllProducts() {
         List<ProductDTO> products = new ArrayList<>();
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(GET_ALL_PRODUCTS);
-             ResultSet rs = ps.executeQuery()) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_ALL_PRODUCTS);  ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 ProductDTO product = new ProductDTO(
                         String.valueOf(rs.getInt("ProductID")),
                         rs.getString("ProductName"),
-                        rs.getString("ImageURL"),
                         rs.getString("Description"),
-                        rs.getDouble("Price"),
                         rs.getString("Brand"),
+                        rs.getDouble("Price"),
                         rs.getInt("StockQuantity"),
+                        rs.getString("ImageURL"),
                         rs.getString("ProductCode"),
                         rs.getInt("CategoryID")
                 );
@@ -58,8 +52,7 @@ public class ProductDAO {
      */
     public ProductDTO getProductByID(String id) {
         ProductDTO product = null;
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(GET_PRODUCT_BY_ID)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_PRODUCT_BY_ID)) {
 
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
@@ -68,11 +61,11 @@ public class ProductDAO {
                 product = new ProductDTO(
                         String.valueOf(rs.getInt("ProductID")),
                         rs.getString("ProductName"),
-                        rs.getString("ImageURL"),
                         rs.getString("Description"),
-                        rs.getDouble("Price"),
                         rs.getString("Brand"),
+                        rs.getDouble("Price"),
                         rs.getInt("StockQuantity"),
+                        rs.getString("ImageURL"),
                         rs.getString("ProductCode"),
                         rs.getInt("CategoryID")
                 );
@@ -92,17 +85,15 @@ public class ProductDAO {
      */
     public boolean create(ProductDTO product) {
         boolean success = false;
-   
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(CREATE_PRODUCT)) {
 
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(CREATE_PRODUCT)) {
             ps.setString(1, product.getId());
             ps.setString(2, product.getName());
-            ps.setString(3, product.getImage());
-            ps.setString(4, product.getDescription());
+            ps.setString(3, product.getDescription());
+            ps.setString(4, product.getBrand());
             ps.setDouble(5, product.getPrice());
-            ps.setString(6, product.getBrand());
-            ps.setInt(7, product.getStockQuantity());
+            ps.setInt(6, product.getStockQuantity());
+            ps.setString(7, product.getImage());
             ps.setString(8, product.getProductCode());
             ps.setInt(9, product.getCategoryId());
 
@@ -124,8 +115,7 @@ public class ProductDAO {
      */
     public boolean update(ProductDTO product) {
         boolean success = false;
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(UPDATE_PRODUCT)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(UPDATE_PRODUCT)) {
 
             ps.setString(1, product.getName());
             ps.setString(2, product.getImage());
@@ -155,8 +145,7 @@ public class ProductDAO {
      */
     public boolean delete(String id) {
         boolean success = false;
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(DELETE_PRODUCT)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(DELETE_PRODUCT)) {
 
             ps.setString(1, id);
             int rows = ps.executeUpdate();
@@ -179,20 +168,21 @@ public class ProductDAO {
     public boolean isProductExists(String id) {
         return getProductByID(id) != null;
     }
-    
-    
+
     private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
         try {
-            if (rs != null)
+            if (rs != null) {
                 rs.close();
-            if (ps != null)
+            }
+            if (ps != null) {
                 ps.close();
-            if (conn != null)
+            }
+            if (conn != null) {
                 conn.close();
+            }
         } catch (Exception e) {
             System.err.println("Error closing resources: " + e.getMessage());
             e.printStackTrace();
         }
     }
 }
-

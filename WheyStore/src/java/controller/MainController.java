@@ -1,39 +1,34 @@
 
 package controller;
 
-
-//import java.io.IOException;
-//import java.io.PrintWriter;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.util.List;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import model.UserDAO;
-//import model.UserDTO;
-
-
-    import java.io.IOException;
-    import javax.servlet.ServletException;
-    import javax.servlet.annotation.WebServlet;
-    import javax.servlet.http.HttpServlet;
-    import javax.servlet.http.HttpServletRequest;
-    import javax.servlet.http.HttpServletResponse;
-    import java.util.List;
-    import model.ProductDAO;
-    import model.ProductDTO;
-    import model.UserDAO;
-    import model.UserDTO;
-    import utils.AuthUtils;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.ProductDAO;
+import model.ProductDTO;
+import model.UserDAO;
+import model.UserDTO;
 
 
-/**
- *
- * @author tungi
- */
+//    import java.io.IOException;
+//    import javax.servlet.ServletException;
+//    import javax.servlet.annotation.WebServlet;
+//    import javax.servlet.http.HttpServlet;
+//    import javax.servlet.http.HttpServletRequest;
+//    import javax.servlet.http.HttpServletResponse;
+//    import java.util.List;
+//    import model.ProductDAO;
+//    import model.ProductDTO;
+//    import model.UserDAO;
+//    import model.UserDTO;
+//    import utils.AuthUtils;
+
+
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 

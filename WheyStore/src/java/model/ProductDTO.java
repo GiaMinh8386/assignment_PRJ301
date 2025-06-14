@@ -2,35 +2,33 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package model;
 
 public class ProductDTO {
 
     private String id;               // ProductID
     private String name;             // ProductName
-    private String description;
-    private double price;
+    private String description;      // Description
+    private String brand;            // Brand
+    private double price;            // Price
+    private int stockQuantity;       // StockQuantity
     private String image;            // ImageURL
-    private String brand;
-    private int stockQuantity;
-    private String productCode;
-    private int categoryId;
+    private String productCode;      // ProductCode
+    private int categoryId;          // CategoryID
 
     // Default constructor
     public ProductDTO() {
     }
 
     // Full constructor
-    public ProductDTO(String id, String name, String image, String description, double price,
-                      String brand, int stockQuantity, String productCode, int categoryId) {
+    public ProductDTO(String id, String name, String description, String brand, double price, int stockQuantity, String image, String productCode, int categoryId) {
         this.id = id;
         this.name = name;
-        this.image = image;
         this.description = description;
-        this.price = price;
         this.brand = brand;
+        this.price = price;
         this.stockQuantity = stockQuantity;
+        this.image = image;
         this.productCode = productCode;
         this.categoryId = categoryId;
     }
@@ -39,8 +37,8 @@ public class ProductDTO {
     public String getId() {
         return id;
     }
-
-    public void setId(String id) {
+    
+    public void setId(String id) {    
         this.id = id;
     }
 
@@ -52,28 +50,12 @@ public class ProductDTO {
         this.name = name;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public String getBrand() {
@@ -84,12 +66,28 @@ public class ProductDTO {
         this.brand = brand;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public int getStockQuantity() {
         return stockQuantity;
     }
 
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getProductCode() {
@@ -115,16 +113,35 @@ public class ProductDTO {
 
     @Override
     public String toString() {
-        return "ProductDTO{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", image='" + image + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", brand='" + brand + '\'' +
-                ", stockQuantity=" + stockQuantity +
-                ", productCode='" + productCode + '\'' +
-                ", categoryId=" + categoryId +
-                '}';
+        return "ProductDTO{" + "id=" + id
+                + ", name=" + name
+                + ", description=" + description
+                + ", brand=" + brand
+                + ", price=" + price
+                + ", stockQuantity=" + stockQuantity
+                + ", image=" + image
+                + ", productCode=" + productCode
+                + ", categoryId=" + categoryId + '}';
     }
+
+    // equals method for comparison
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        ProductDTO that = (ProductDTO) obj;
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    // hashCode method
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
 }

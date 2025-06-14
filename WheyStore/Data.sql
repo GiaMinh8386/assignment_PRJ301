@@ -23,7 +23,7 @@ GO
 
 -- 2. Products (Sản phẩm)
 CREATE TABLE Products (
-    ProductID INT PRIMARY KEY IDENTITY(1,1),
+    ProductID NVARCHAR(50) PRIMARY KEY,
     ProductName NVARCHAR(100) NOT NULL,
     Description NVARCHAR(255),
     Brand NVARCHAR(100),
@@ -64,7 +64,7 @@ GO
 CREATE TABLE OrderDetails (
     OrderDetailID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT FOREIGN KEY REFERENCES Orders(OrderID),
-    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+	ProductID NVARCHAR(50) FOREIGN KEY REFERENCES Products(ProductID),
     Quantity INT NOT NULL,
     UnitPrice DECIMAL(10,2) NOT NULL
 );
@@ -83,7 +83,7 @@ GO
 -- 7. Guarantee (Bảo hành)
 CREATE TABLE Guarantee (
     GuaranteeID INT PRIMARY KEY IDENTITY(1,1),
-    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+	ProductID NVARCHAR(50) FOREIGN KEY REFERENCES Products(ProductID),
     CustomerID INT FOREIGN KEY REFERENCES Customers(CustomerID),
     OrderID INT FOREIGN KEY REFERENCES Orders(OrderID),
     GuaranteeStartDate DATETIME DEFAULT GETDATE(),
@@ -95,7 +95,7 @@ GO
 -- 8. Reviews (Đánh giá sản phẩm)
 CREATE TABLE Reviews (
     ReviewID INT PRIMARY KEY IDENTITY(1,1),
-    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+	ProductID NVARCHAR(50) FOREIGN KEY REFERENCES Products(ProductID),
     CustomerID INT FOREIGN KEY REFERENCES Customers(CustomerID),
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment NVARCHAR(MAX),
@@ -136,25 +136,25 @@ VALUES
 GO
 
 -- Insert Products
-INSERT INTO Products (ProductCode, ProductName, CategoryID)
+INSERT INTO Products (ProductID, ProductCode, ProductName, CategoryID)
 VALUES
-('1.1', N'Whey Gold Standard', 1),
-('1.2', N'Serious Mass', 1),
-('1.3', N'Rule 1 Whey Blend', 1),
-('1.4', N'NitroTech Whey', 1),
-('2.1', N'Creatine Monohydrate 300g', 2),
-('2.2', N'Micronized Creatine', 2),
-('2.3', N'Creactor Formula', 2),
-('2.4', N'Creatine 600g', 2),
-('3.1', N'Vitamin Tổng hợp Daily', 3),
-('3.2', N'Multivitamin Women', 3),
-('3.3', N'Multivitamin Men Sport', 3),
-('3.4', N'Zinc + Magnesium + B6', 3),
-('4.1', N'Lipo 6 Black', 4),
-('4.2', N'Hydroxycut Hardcore', 4),
-('4.3', N'CLA 1000', 4),
-('4.4', N'Thermogenic Burner', 4),
-('5.1', N'Tribulus 625mg', 5),
-('5.2', N'Maca Root Extract', 5),
-('5.3', N'Fenugreek Booster', 5);
+(1, '1.1', N'Whey Gold Standard', 1),
+(2, '1.2', N'Serious Mass', 1),
+(3, '1.3', N'Rule 1 Whey Blend', 1),
+(4, '1.4', N'NitroTech Whey', 1),
+(5, '2.1', N'Creatine Monohydrate 300g', 2),
+(6, '2.2', N'Micronized Creatine', 2),
+(7, '2.3', N'Creactor Formula', 2),
+(8, '2.4', N'Creatine 600g', 2),
+(9, '3.1', N'Vitamin Tổng hợp Daily', 3),
+(10, '3.2', N'Multivitamin Women', 3),
+(11, '3.3', N'Multivitamin Men Sport', 3),
+(12, '3.4', N'Zinc + Magnesium + B6', 3),
+(13, '4.1', N'Lipo 6 Black', 4),
+(14, '4.2', N'Hydroxycut Hardcore', 4),
+(15, '4.3', N'CLA 1000', 4),
+(16, '4.4', N'Thermogenic Burner', 4),
+(17, '5.1', N'Tribulus 625mg', 5),
+(18, '5.2', N'Maca Root Extract', 5),
+(19, '5.3', N'Fenugreek Booster', 5);
 go

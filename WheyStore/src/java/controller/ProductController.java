@@ -4,30 +4,25 @@
  */
 package controller;
 
-//import java.io.IOException;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import utils.AuthUtils;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.ProductDAO;
+import model.ProductDTO;
+import utils.AuthUtils;
 
-    import java.io.IOException;
-    import javax.servlet.ServletException;
-    import javax.servlet.annotation.WebServlet;
-    import javax.servlet.http.HttpServlet;
-    import javax.servlet.http.HttpServletRequest;
-    import javax.servlet.http.HttpServletResponse;
-    import model.ProductDAO;
-    import model.ProductDTO;
-    import utils.AuthUtils;
-
-/**
- *
- * @author QUOC HUY
- */
+//    import java.io.IOException;
+//    import javax.servlet.ServletException;
+//    import javax.servlet.annotation.WebServlet;
+//    import javax.servlet.http.HttpServlet;
+//    import javax.servlet.http.HttpServletRequest;
+//    import javax.servlet.http.HttpServletResponse;
+//    import model.ProductDAO;
+//    import model.ProductDTO;
+//    import utils.AuthUtils;
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
 
@@ -53,70 +48,80 @@ public class ProductController extends HttpServlet {
     }
 
     private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
-        String checkError = "";
-        String message = "";
-
         if (AuthUtils.isAdmin(request)) {
-            // Lấy dữ liệu từ form
+            // Lay thong tin
             String id = request.getParameter("id");
             String name = request.getParameter("name");
-            String image = request.getParameter("image");
             String description = request.getParameter("description");
-            String price = request.getParameter("price");
             String brand = request.getParameter("brand");
-            String stock = request.getParameter("stockQuantity");
+            String price = request.getParameter("price");
+            String stockQuantity = request.getParameter("stockQuantity");
+            String image = request.getParameter("image");
             String productCode = request.getParameter("productCode");
             String categoryId = request.getParameter("categoryId");
+            //String status = request.getParameter("status");
 
-            // Chuyển kiểu dữ liệu
-            double priceValue = 0;
-            int stockQty = 0;
-            int catId = 0;
+            boolean hasError = false;
 
-            try {
-                priceValue = Double.parseDouble(price);
-            } catch (Exception e) {
-                checkError += "Price must be a number.<br/>";
-            }
-
-            try {
-                stockQty = Integer.parseInt(stock);
-            } catch (Exception e) {
-                checkError += "Stock quantity must be an integer.<br/>";
-            }
-
-            try {
-                catId = Integer.parseInt(categoryId);
-            } catch (Exception e) {
-                checkError += "Category ID must be an integer.<br/>";
-            }
-
-            // Kiểm tra trùng ID
             if (pdao.isProductExists(id)) {
-                checkError += "This Product ID already exists.<br/>";
+                request.setAttribute("idError", "This Product ID already exists.");
+                hasError = true;
             }
 
-            // Tạo đối tượng sản phẩm
-            ProductDTO product = new ProductDTO(id, name, image, description, priceValue, brand, stockQty, productCode, catId);
+            if (name == null || name.trim().isEmpty()) {
+                request.setAttribute("nameError", "Product name cannot be empty.");
+                hasError = true;
+            }
+
+            double price_value = 0;
+            try {
+                price_value = Double.parseDouble(price);
+                if (price_value < 0) {
+                    request.setAttribute("priceError", "Price must be greater than zero.");
+                    hasError = true;
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("priceError", "Price must be a number.");
+                hasError = true;
+            }
+
+            int stock = 0;
+            try {
+                stock = Integer.parseInt(stockQuantity);
+            } catch (NumberFormatException e) {
+                request.setAttribute("stockError", "Stock quantity must be a number.");
+                hasError = true;
+            }
+
+            int category = 0;
+            try {
+                category = Integer.parseInt(categoryId);
+            } catch (NumberFormatException e) {
+                request.setAttribute("categoryError", "Category ID must be a number.");
+                hasError = true;
+            }
+
+            //boolean status_value = "true".equals(status);
+            
+            // Giữ lại giá trị đúng đã nhập
+            //ProductDTO product = new ProductDTO(id, name, description, brand, price_value, 0, image, productCode, 0);
+            ProductDTO product = new ProductDTO(id, name, description, brand, price_value, stock, image, productCode, category);
+
             request.setAttribute("product", product);
 
-            // Nếu không có lỗi thì thêm
-            if (checkError.isEmpty()) {
-                boolean created = pdao.create(product);
-                if (created) {
-                    message = "Add product successfully!";
-                } else {
-                    checkError += "Error: Cannot add product to database.<br/>";
-                }
+            if (hasError) {
+                return "productForm.jsp";
             }
 
-            request.setAttribute("checkError", checkError);
-            request.setAttribute("message", message);
-        } else {
-            request.setAttribute("checkError", "Access denied: Admin only.");
-        }
+            if (!pdao.create(product)) {
+                request.setAttribute("createError", "Can not add product!");
+                return "productForm.jsp";
+            }
 
-        return "productForm.jsp";
+            request.setAttribute("message", "Add product successfully!");
+            return "productForm.jsp";
+        }
+        return "accessDenied.jsp";
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
