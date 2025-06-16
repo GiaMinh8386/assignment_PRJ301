@@ -18,11 +18,10 @@ import model.UserDTO;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 public class AuthUtils {
 
     public static UserDTO getCurrentUser(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         if (session != null) {
             return (UserDTO) session.getAttribute("user");
         }
@@ -53,12 +52,12 @@ public class AuthUtils {
     public static boolean isUser(HttpServletRequest request) {
         return hasRole(request, "MB");
     }
-    
-    public static String getLoginURL(){
+
+    public static String getLoginURL() {
         return "MainController?action=login";
     }
-    
-    public static String getAccessDeniedMessage(String action){
-        return "You don't have permission to "+action+". Please contact administrator.";
+
+    public static String getAccessDeniedMessage(String action) {
+        return "You don't have permission to " + action + ". Please contact administrator.";
     }
 }

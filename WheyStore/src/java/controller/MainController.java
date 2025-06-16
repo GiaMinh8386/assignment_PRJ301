@@ -1,4 +1,3 @@
-
 package controller;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import model.ProductDTO;
 import model.UserDAO;
 import model.UserDTO;
 
-
 //    import java.io.IOException;
 //    import javax.servlet.ServletException;
 //    import javax.servlet.annotation.WebServlet;
@@ -27,8 +25,6 @@ import model.UserDTO;
 //    import model.UserDAO;
 //    import model.UserDTO;
 //    import utils.AuthUtils;
-
-
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
@@ -55,15 +51,15 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
+        String url = "index.jsp";
 
         try {
             String action = request.getParameter("action");
 
-            if (action == null || action.equals("home")) {
+            if (action == null || action.equals("") || action.equals("home")) {
                 // Load danh sách sản phẩm
                 ProductDAO dao = new ProductDAO();
-                List<ProductDTO> list = dao.getAllProducts(); // ⚠ dùng đúng DAO mới
+                List<ProductDTO> list = dao.getAllProducts();
                 request.setAttribute("products", list);
                 url = "index.jsp";
             } else if (isUserAction(action)) {
@@ -78,7 +74,6 @@ public class MainController extends HttpServlet {
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

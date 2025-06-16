@@ -114,7 +114,7 @@ public class UserController extends HttpServlet {
         if (userDAO.login(strUsername, strPassword)) {
             UserDTO user = userDAO.getUserById(strUsername);
             session.setAttribute("user", user);
-            url = WELCOME_PAGE; // giống như phiên bản cũ
+            url = "MainController?action=home"; // chuyen ve trang chu
         } else {
             request.setAttribute("message", "Invalid username or password");
         }
