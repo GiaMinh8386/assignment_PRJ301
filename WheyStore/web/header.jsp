@@ -83,7 +83,7 @@
 <nav class="navbar navbar-expand-lg px-4 py-2">
     <div class="container-fluid d-flex align-items-center">
         <!-- Logo -->
-        <a class="navbar-brand me-4" href="home.jsp">GymLife</a>
+        <a class="navbar-brand me-4" href="index.jsp">GymLife</a>
 
         <!-- Search Form -->
         <form class="search-container" role="search" action="search.jsp" method="get">
