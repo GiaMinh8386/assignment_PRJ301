@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package model;
 
 import java.io.IOException;
@@ -20,8 +19,8 @@ import java.time.LocalDateTime;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
 //import java.time.LocalDateTime;
-
 public class UserDTO {
+
     private String userID;
     private String fullName;
     private String email;
@@ -29,15 +28,14 @@ public class UserDTO {
     private String address;
     private String username;
     private String password;
-    private String roleID; // Chỉ nhận "MB"
+    private String roleID;
+    private boolean status;
     private LocalDateTime createdDate;
 
     public UserDTO() {
     }
 
-    public UserDTO(String userID, String fullName, String email, String phone,
-                   String address, String username, String password, String roleID,
-                   LocalDateTime createdDate) {
+    public UserDTO(String userID, String fullName, String email, String phone, String address, String username, String password, String roleID, boolean status, LocalDateTime createdDate) {
         this.userID = userID;
         this.fullName = fullName;
         this.email = email;
@@ -46,11 +44,12 @@ public class UserDTO {
         this.username = username;
         this.password = password;
         this.roleID = roleID;
+        this.status = status;
         this.createdDate = createdDate;
     }
 
     // Getters and Setters
-     public String getUserID() {
+    public String getUserID() {
         return userID;
     }
 
@@ -114,6 +113,14 @@ public class UserDTO {
         this.roleID = roleID;
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -124,15 +131,18 @@ public class UserDTO {
 
     @Override
     public String toString() {
-        return "UserDTO{" +
-                "userID=" + userID +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", username='" + username + '\'' +
-                ", roleID='" + roleID + '\'' +
-                ", createdDate=" + createdDate +
-                '}';
+        return "UserDTO{"
+                + "userID='" + userID + '\''
+                + ", fullName='" + fullName + '\''
+                + ", email='" + email + '\''
+                + ", phone='" + phone + '\''
+                + ", address='" + address + '\''
+                + ", username='" + username + '\''
+                + ", password='" + password + '\''
+                + ", roleID='" + roleID + '\''
+                + ", status=" + status
+                + ", createdDate=" + createdDate
+                + '}';
     }
+
 }
