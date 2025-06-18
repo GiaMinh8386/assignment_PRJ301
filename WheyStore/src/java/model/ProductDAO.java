@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.sql.Connection;
@@ -13,28 +9,30 @@ import utils.DbUtils;
 
 public class ProductDAO {
 
-    private static final String GET_ALL_PRODUCTS = "SELECT ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID FROM Products";
-    private static final String GET_PRODUCT_BY_ID = "SELECT ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID FROM Products WHERE ProductID = ?";
-    private static final String CREATE_PRODUCT = "INSERT INTO Products (ProductID, ProductName, Description, Brand, Price, StockQuantity, ImageURL, ProductCode, CategoryID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT = "UPDATE Products SET ProductName = ?, Description = ?, Brand = ?, Price = ?, StockQuantity = ?, ImageURL = ?, ProductCode = ?, CategoryID = ? WHERE ProductID = ?";
-    private static final String DELETE_PRODUCT = "DELETE FROM Products WHERE ProductID = ?";
+    private static final String GET_ALL_PRODUCTS
+            = "SELECT ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status FROM tblProducts";
+    private static final String GET_PRODUCT_BY_ID = "SELECT ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status FROM tblProducts WHERE ProductID = ?";
+    private static final String CREATE_PRODUCT
+            = "INSERT INTO tblProducts (ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE_PRODUCT = "UPDATE tblProducts SET ProductName = ?, Description = ?, Brand = ?, Price = ?, ImageURL = ?, CategoryID = ?, Status = ? WHERE ProductID = ?";
+    private static final String DELETE_PRODUCT = "DELETE FROM tblProducts WHERE ProductID = ?";
 
     public List<ProductDTO> getAllProducts() {
         List<ProductDTO> products = new ArrayList<>();
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_ALL_PRODUCTS);  ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                ProductDTO product = new ProductDTO(
-                        String.valueOf(rs.getInt("ProductID")),
-                        rs.getString("ProductName"),
-                        rs.getString("Description"),
-                        rs.getString("Brand"),
-                        rs.getDouble("Price"),
-                        rs.getInt("StockQuantity"),
-                        rs.getString("ImageURL"),
-                        rs.getString("ProductCode"),
-                        rs.getInt("CategoryID")
-                );
+                String id = rs.getString("ProductID");
+                String name = rs.getString("ProductName");
+                String description = rs.getString("Description");
+                String brand = rs.getString("Brand");
+                double price = rs.getDouble("Price");
+                String image = rs.getString("ImageURL");
+                int categoryId = rs.getInt("CategoryID");
+                boolean status = rs.getBoolean("Status");
+
+                ProductDTO product = new ProductDTO(id, name, description, brand, price, image, categoryId, status);
                 products.add(product);
             }
         } catch (Exception e) {
@@ -44,12 +42,6 @@ public class ProductDAO {
         return products;
     }
 
-    /**
-     * Get product by ID
-     *
-     * @param id Product ID to search
-     * @return ProductDTO object or null if not found
-     */
     public ProductDTO getProductByID(String id) {
         ProductDTO product = null;
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_PRODUCT_BY_ID)) {
@@ -59,15 +51,14 @@ public class ProductDAO {
 
             if (rs.next()) {
                 product = new ProductDTO(
-                        String.valueOf(rs.getInt("ProductID")),
+                        rs.getString("ProductID"),
                         rs.getString("ProductName"),
                         rs.getString("Description"),
                         rs.getString("Brand"),
                         rs.getDouble("Price"),
-                        rs.getInt("StockQuantity"),
                         rs.getString("ImageURL"),
-                        rs.getString("ProductCode"),
-                        rs.getInt("CategoryID")
+                        rs.getInt("CategoryID"),
+                        rs.getBoolean("Status")
                 );
             }
         } catch (Exception e) {
@@ -77,25 +68,18 @@ public class ProductDAO {
         return product;
     }
 
-    /**
-     * Create new product
-     *
-     * @param product ProductDTO object to create
-     * @return true if successful, false otherwise
-     */
     public boolean create(ProductDTO product) {
         boolean success = false;
-
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(CREATE_PRODUCT)) {
+
             ps.setString(1, product.getId());
             ps.setString(2, product.getName());
             ps.setString(3, product.getDescription());
             ps.setString(4, product.getBrand());
             ps.setDouble(5, product.getPrice());
-            ps.setInt(6, product.getStockQuantity());
-            ps.setString(7, product.getImage());
-            ps.setString(8, product.getProductCode());
-            ps.setInt(9, product.getCategoryId());
+            ps.setString(6, product.getImage());
+            ps.setInt(7, product.getCategoryId());
+            ps.setBoolean(8, product.isStatus());
 
             int rows = ps.executeUpdate();
             success = rows > 0;
@@ -107,25 +91,18 @@ public class ProductDAO {
         return success;
     }
 
-    /**
-     * Update existing product
-     *
-     * @param product ProductDTO object with updated information
-     * @return true if successful, false otherwise
-     */
     public boolean update(ProductDTO product) {
         boolean success = false;
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(UPDATE_PRODUCT)) {
 
             ps.setString(1, product.getName());
-            ps.setString(2, product.getImage());
-            ps.setString(3, product.getDescription());
+            ps.setString(2, product.getDescription());
+            ps.setString(3, product.getBrand());
             ps.setDouble(4, product.getPrice());
-            ps.setString(5, product.getBrand());
-            ps.setInt(6, product.getStockQuantity());
-            ps.setString(7, product.getProductCode());
-            ps.setInt(8, product.getCategoryId());
-            ps.setString(9, product.getId());
+            ps.setString(5, product.getImage());
+            ps.setInt(6, product.getCategoryId());
+            ps.setBoolean(7, product.isStatus());
+            ps.setString(8, product.getId());
 
             int rows = ps.executeUpdate();
             success = rows > 0;
@@ -137,12 +114,6 @@ public class ProductDAO {
         return success;
     }
 
-    /**
-     * Delete product by ID
-     *
-     * @param id Product ID to delete
-     * @return true if successful, false otherwise
-     */
     public boolean delete(String id) {
         boolean success = false;
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(DELETE_PRODUCT)) {
@@ -158,13 +129,6 @@ public class ProductDAO {
         return success;
     }
 
-    /**
-     * Close database resources safely
-     *
-     * @param conn Connection to close
-     * @param ps PreparedStatement to close
-     * @param rs ResultSet to close
-     */
     public boolean isProductExists(String id) {
         return getProductByID(id) != null;
     }

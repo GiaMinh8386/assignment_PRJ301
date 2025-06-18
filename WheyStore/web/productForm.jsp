@@ -195,7 +195,7 @@
                 border-radius: 10px;
                 margin-top: 20px;
             }
-            
+
             /* Access denied styles */
             .access-denied {
                 text-align: center;
@@ -220,97 +220,92 @@
                 String message = (String) request.getAttribute("message");
         %>
 
-        <div class="form-wrapper">
-            <div class="card card-custom">
-                <h3 class="form-title">Thêm Sản Phẩm Mới</h3>
+        <div class="container mt-5">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Thêm Sản Phẩm Mới</h3>
                 <form action="MainController" method="post">
                     <input type="hidden" name="action" value="addProduct"/>
 
                     <div class="mb-3">
-                        <label class="form-label" for="id">Mã sản phẩm *</label>
+                        <label for="id" class="form-label">Mã sản phẩm *</label>
                         <input type="text" class="form-control" id="id" name="id" required
                                value="<%= product != null ? product.getId() : "" %>"/>
+                        <div class="text-danger"><%= request.getAttribute("idError") != null ? request.getAttribute("idError") : "" %></div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="name">Tên sản phẩm *</label>
+                        <label for="name" class="form-label">Tên sản phẩm *</label>
                         <input type="text" class="form-control" id="name" name="name" required
                                value="<%= product != null ? product.getName() : "" %>"/>
+                        <div class="text-danger"><%= request.getAttribute("nameError") != null ? request.getAttribute("nameError") : "" %></div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="image">Link ảnh</label>
+                        <label for="image" class="form-label">Link ảnh</label>
                         <input type="text" class="form-control" id="image" name="image"
                                value="<%= product != null ? product.getImage() : "" %>"/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="description">Mô tả</label>
+                        <label for="description" class="form-label">Mô tả</label>
                         <textarea class="form-control" id="description" name="description" rows="3"><%= product != null ? product.getDescription() : "" %></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="price">Giá *</label>
+                        <label for="price" class="form-label">Giá *</label>
                         <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required
                                value="<%= product != null ? product.getPrice() : "" %>"/>
+                        <div class="text-danger"><%= request.getAttribute("priceError") != null ? request.getAttribute("priceError") : "" %></div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="brand">Thương hiệu</label>
+                        <label for="brand" class="form-label">Thương hiệu</label>
                         <input type="text" class="form-control" id="brand" name="brand"
                                value="<%= product != null ? product.getBrand() : "" %>"/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="stockQuantity">Số lượng tồn kho</label>
-                        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity" min="0"
-                               value="<%= product != null ? product.getStockQuantity() : "" %>"/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="productCode">Mã hiển thị</label>
-                        <input type="text" class="form-control" id="productCode" name="productCode"
-                               value="<%= product != null ? product.getProductCode() : "" %>"/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="categoryId">Mã danh mục</label>
-                        <input type="number" class="form-control" id="categoryId" name="categoryId"
+                        <label for="categoryId" class="form-label">Mã danh mục *</label>
+                        <input type="number" class="form-control" id="categoryId" name="categoryId" required
                                value="<%= product != null ? product.getCategoryId() : "" %>"/>
+                        <div class="text-danger"><%= request.getAttribute("categoryError") != null ? request.getAttribute("categoryError") : "" %></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Trạng thái hiển thị *</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="true" <%= (product != null && product.isStatus()) ? "selected" : "" %>>Hiển thị</option>
+                            <option value="false" <%= (product != null && !product.isStatus()) ? "selected" : "" %>>Ẩn</option>
+                        </select>
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-custom btn-submit">Thêm</button>
-                        <button type="reset" class="btn btn-custom btn-reset">Reset</button>
+                        <button type="submit" class="btn btn-primary">Thêm</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
                     </div>
 
-                    <div style="color:red">
-                        <%=request.getAttribute("createError")!=null?request.getAttribute("createError"):""%>
+                    <div class="mt-3 text-danger">
+                        <%= request.getAttribute("createError") != null ? request.getAttribute("createError") : "" %>
                     </div>
-                    <div style="color:green">
-                        <%=request.getAttribute("message")!=null?request.getAttribute("message"):""%>
+                    <div class="mt-3 text-success">
+                        <%= request.getAttribute("message") != null ? request.getAttribute("message") : "" %>
                     </div>
                 </form>
-
-                <% if (checkError != null && !checkError.isEmpty()) { %>
-                <div class="error-msg mt-3"><%= checkError %></div>
-                <% } %>
-
-                <% if (message != null && !message.isEmpty()) { %>
-                <div class="success-msg mt-3"><%= message %></div>
-                <% } %>
             </div>
         </div>
 
-        <% } else { %>
-        
-        <div class="access-denied">
-            <%=AuthUtils.getAccessDeniedMessage(" product-form page ")%>
+        <%
+            } else {
+        %>
+        <div class="container mt-5">
+            <div class="alert alert-danger">
+                <%= AuthUtils.getAccessDeniedMessage(" product-form page ") %>
+            </div>
         </div>
-        
-        <% } %>
+        <%
+            }
+        %>
 
-        <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

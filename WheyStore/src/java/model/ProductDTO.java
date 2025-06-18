@@ -11,34 +11,32 @@ public class ProductDTO {
     private String description;      // Description
     private String brand;            // Brand
     private double price;            // Price
-    private int stockQuantity;       // StockQuantity
     private String image;            // ImageURL
-    private String productCode;      // ProductCode
     private int categoryId;          // CategoryID
+    private boolean status;          // Status (hiện/ẩn)
 
     // Default constructor
     public ProductDTO() {
     }
 
     // Full constructor
-    public ProductDTO(String id, String name, String description, String brand, double price, int stockQuantity, String image, String productCode, int categoryId) {
+    public ProductDTO(String id, String name, String description, String brand, double price, String image, int categoryId, boolean status) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.price = price;
-        this.stockQuantity = stockQuantity;
         this.image = image;
-        this.productCode = productCode;
         this.categoryId = categoryId;
+        this.status = status;
     }
 
     // Getters & Setters
     public String getId() {
         return id;
     }
-    
-    public void setId(String id) {    
+
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,28 +72,12 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
-
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
     }
 
     public int getCategoryId() {
@@ -106,7 +88,14 @@ public class ProductDTO {
         this.categoryId = categoryId;
     }
 
-    // Optional: format price for display
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     public String getFormattedPrice() {
         return String.format("%,.0f ₫", price); // ví dụ: 1,200,000 ₫
     }
@@ -118,13 +107,11 @@ public class ProductDTO {
                 + ", description=" + description
                 + ", brand=" + brand
                 + ", price=" + price
-                + ", stockQuantity=" + stockQuantity
                 + ", image=" + image
-                + ", productCode=" + productCode
-                + ", categoryId=" + categoryId + '}';
+                + ", categoryId=" + categoryId
+                + ", status=" + status + '}';
     }
 
-    // equals method for comparison
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -138,10 +125,9 @@ public class ProductDTO {
         return id != null ? id.equals(that.id) : that.id == null;
     }
 
-    // hashCode method
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
-
 }
+

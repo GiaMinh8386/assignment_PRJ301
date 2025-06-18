@@ -191,9 +191,10 @@ public class UserDAO {
     }
 
     public boolean registerCustomer(UserDTO user) {
-        String sql = "INSERT INTO tblUsers (userID, fullname, email, phone, address, username, password, roleID, status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tblUsers (userID, fullname, email, phone, address, username, password, roleID, status, createdDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, user.getUserID());
             ps.setString(2, user.getFullName());
             ps.setString(3, user.getEmail());
@@ -203,6 +204,10 @@ public class UserDAO {
             ps.setString(7, user.getPassword());
             ps.setString(8, user.getRoleID());
             ps.setBoolean(9, user.isStatus());
+
+            // ⚠️ Chuyển từ LocalDateTime sang Timestamp
+            ps.setTimestamp(10, java.sql.Timestamp.valueOf(user.getCreatedDate()));
+
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();

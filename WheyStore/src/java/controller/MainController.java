@@ -51,67 +51,59 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-        String url = "index.jsp";
+        String url = "index.jsp";  // Mặc định về trang chủ
 
         try {
             String action = request.getParameter("action");
-
             if (action == null || action.equals("") || action.equals("home")) {
                 // Load danh sách sản phẩm
                 ProductDAO dao = new ProductDAO();
-                List<ProductDTO> list = dao.getAllProducts();
+                List<ProductDTO> list = dao.getAllProducts();  // chỉ lấy status = 1 đã xử lý ở DAO
                 request.setAttribute("products", list);
+
+                System.out.println("=== MainController Debug ===");
+                System.out.println("Số lượng sản phẩm lấy được: " + (list != null ? list.size() : 0));
+                if (list != null) {
+                    for (ProductDTO p : list) {
+                        System.out.println("Sản phẩm: " + p.getId() + " - " + p.getName());
+                    }
+                }
+
+                System.out.println(">>> Product List Size: " + (list != null ? list.size() : "null"));
+                for (ProductDTO p : list) {
+                    System.out.println(">>> Product: " + p.getId() + " - " + p.getName());
+                }
+                request.setAttribute("products", list); // Truyền danh sách cho index.jsp
                 url = "index.jsp";
             } else if (isUserAction(action)) {
                 url = "/UserController";
             } else if (isProductAction(action)) {
                 url = "/ProductController";
+            } else {
+                request.setAttribute("message", "Invalid action: " + action);
             }
-
         } catch (Exception e) {
+            System.err.println("Lỗi trong MainController: " + e.getMessage());
             e.printStackTrace();
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Main routing servlet";
-    }// </editor-fold>
-
+    }
 }

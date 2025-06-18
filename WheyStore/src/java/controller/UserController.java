@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 //import javax.servlet.http.HttpSession;
 //import model.UserDAO;
 //import model.UserDTO;
-
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
 
@@ -114,13 +113,15 @@ public class UserController extends HttpServlet {
     }
 
     private String handleRegister(HttpServletRequest request, HttpServletResponse response) {
-        String userID = request.getParameter("userID");
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+
+        // ✅ Sinh userID tự động theo timestamp
+        String userID = "MB" + System.currentTimeMillis();
 
         UserDAO dao = new UserDAO();
 
@@ -134,7 +135,11 @@ public class UserController extends HttpServlet {
             return "register.jsp";
         }
 
-        UserDTO newUser = new UserDTO(userID, fullName, email, phone, address, username, password, "MB", true, LocalDateTime.now());
+        UserDTO newUser = new UserDTO(
+                userID, fullName, email, phone, address,
+                username, password, "MB", true, LocalDateTime.now()
+        );
+
         boolean success = dao.registerCustomer(newUser);
 
         if (success) {

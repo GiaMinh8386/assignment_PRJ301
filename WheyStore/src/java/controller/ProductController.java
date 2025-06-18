@@ -49,17 +49,14 @@ public class ProductController extends HttpServlet {
 
     private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
         if (AuthUtils.isAdmin(request)) {
-            // Lay thong tin
             String id = request.getParameter("id");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String brand = request.getParameter("brand");
             String price = request.getParameter("price");
-            String stockQuantity = request.getParameter("stockQuantity");
             String image = request.getParameter("image");
-            String productCode = request.getParameter("productCode");
             String categoryId = request.getParameter("categoryId");
-            //String status = request.getParameter("status");
+            String status = request.getParameter("status");
 
             boolean hasError = false;
 
@@ -85,14 +82,6 @@ public class ProductController extends HttpServlet {
                 hasError = true;
             }
 
-            int stock = 0;
-            try {
-                stock = Integer.parseInt(stockQuantity);
-            } catch (NumberFormatException e) {
-                request.setAttribute("stockError", "Stock quantity must be a number.");
-                hasError = true;
-            }
-
             int category = 0;
             try {
                 category = Integer.parseInt(categoryId);
@@ -101,12 +90,9 @@ public class ProductController extends HttpServlet {
                 hasError = true;
             }
 
-            //boolean status_value = "true".equals(status);
-            
-            // Giữ lại giá trị đúng đã nhập
-            //ProductDTO product = new ProductDTO(id, name, description, brand, price_value, 0, image, productCode, 0);
-            ProductDTO product = new ProductDTO(id, name, description, brand, price_value, stock, image, productCode, category);
+            boolean status_value = "true".equalsIgnoreCase(status); // hoặc mặc định là true
 
+            ProductDTO product = new ProductDTO(id, name, description, brand, price_value, image, category, status_value);
             request.setAttribute("product", product);
 
             if (hasError) {
@@ -114,7 +100,7 @@ public class ProductController extends HttpServlet {
             }
 
             if (!pdao.create(product)) {
-                request.setAttribute("createError", "Can not add product!");
+                request.setAttribute("createError", "Cannot add product!");
                 return "productForm.jsp";
             }
 
