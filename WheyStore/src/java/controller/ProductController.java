@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
 import utils.AuthUtils;
@@ -35,11 +36,12 @@ public class ProductController extends HttpServlet {
 
         try {
             String action = request.getParameter("action");
-
+            // ----- Xu ly action cua Users -----
             if ("addProduct".equals(action)) {
                 url = handleProductAdding(request, response);
+            } else if (action.equals("searchProduct")) {
+                url = handleProductSearching(request, response);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -108,6 +110,16 @@ public class ProductController extends HttpServlet {
             return "productForm.jsp";
         }
         return "accessDenied.jsp";
+    }
+    
+    private String handleProductSearching(HttpServletRequest request, HttpServletResponse response) {
+        String keyword = request.getParameter("strKeyword");
+        List<ProductDTO> list = pdao.getProductsByName(keyword);
+        // Chi hien thi san pham co status là 1 (true)
+        list.removeIf(product -> !product.isStatus());
+        request.setAttribute("list", list);
+        request.setAttribute("keyword", keyword);
+        return "search.jsp";
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

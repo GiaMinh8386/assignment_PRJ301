@@ -86,7 +86,8 @@
         <a class="navbar-brand me-4" href="index.jsp">GymLife</a>
 
         <!-- Search Form -->
-        <form class="search-container" role="search" action="search.jsp" method="get">
+        <form class="search-container" role="search" action="MainController" method="get">
+            <input type="hidden" name="action" value="searchProduct" />
             <div class="input-group">
                 <!-- Dropdown -->
                 <select class="form-select" name="category">
@@ -99,7 +100,7 @@
                 </select>
 
                 <!-- Input -->
-                <input type="text" class="form-control" placeholder="Search..." name="q" />
+                <input type="text" class="form-control" placeholder="Search..." name="strKeyword" />
 
                 <!-- Button -->
                 <button class="btn btn-search" type="submit">

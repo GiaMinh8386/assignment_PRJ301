@@ -18,12 +18,11 @@
             if(!AuthUtils.isLoggedIn(request)){
                 response.sendRedirect("MainController");
             }else{
-            %>
-            <h1>Welcome <%=user.getFullName()%> !</h1>
-            <a href="MainController?action=logout">Logout</a>
-            <%
-        }
-        
-           %>
+        %>
+        <h1>Welcome <%=user.getFullName()%> !</h1>
+        <a href="MainController?action=logout">Logout</a>
+        <%
+    }
+        %>
     </body>
 </html>

@@ -149,4 +149,40 @@ public class ProductDAO {
             e.printStackTrace();
         }
     }
+
+    public List<ProductDTO> getProductsByName(String name) {
+        List<ProductDTO> products = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        //String query = GET_ALL_PRODUCTS + " WHERE name like ?";
+        String query = "SELECT * FROM tblProducts WHERE ProductName LIKE ?";
+        System.out.println(query);
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, "%" + name + "%");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO();
+                product.setId(rs.getString("productID"));
+                product.setName(rs.getString("ProductName"));
+                product.setDescription(rs.getString("Description"));
+                product.setBrand(rs.getString("Brand"));
+                product.setPrice(rs.getDouble("Price"));
+                product.setImage(rs.getString("ImageURL"));
+                product.setCategoryId(rs.getInt("CategoryID"));
+                product.setStatus(rs.getBoolean("Status"));
+                products.add(product);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getProductsByStatus(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+        return products;
+    }
 }
