@@ -179,12 +179,11 @@
             }
 
             .error-msg {
-                color: #ffdddd;
-                background-color: #7a1212;
-                border-left: 6px solid #ff4444;
-                padding: 12px 16px;
-                border-radius: 10px;
-                margin-top: 20px;
+                color: #fff;
+                padding-left: 2px;
+                font-weight: bold;
+                font-size: 14px;
+                margin-top: 5px;
             }
 
             .success-msg {
@@ -212,17 +211,15 @@
         </style>
     </head>
     <body>
-
         <%
             if (AuthUtils.isAdmin(request)) {
                 ProductDTO product = (ProductDTO) request.getAttribute("product");
-                String checkError = (String) request.getAttribute("checkError");
                 String message = (String) request.getAttribute("message");
         %>
 
-        <div class="container mt-5">
-            <div class="card shadow p-4">
-                <h3 class="mb-4">Thêm Sản Phẩm Mới</h3>
+        <div class="form-wrapper">
+            <div class="card-custom">
+                <h3 class="form-title">Thêm Sản Phẩm Mới</h3>
                 <form action="MainController" method="post">
                     <input type="hidden" name="action" value="addProduct"/>
 
@@ -230,14 +227,18 @@
                         <label for="id" class="form-label">Mã sản phẩm *</label>
                         <input type="text" class="form-control" id="id" name="id" required
                                value="<%= product != null ? product.getId() : "" %>"/>
-                        <div class="text-danger"><%= request.getAttribute("idError") != null ? request.getAttribute("idError") : "" %></div>
+                        <% if (request.getAttribute("idError") != null) { %>
+                        <div class="error-msg"><%= request.getAttribute("idError") %></div>
+                        <% } %>
                     </div>
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Tên sản phẩm *</label>
                         <input type="text" class="form-control" id="name" name="name" required
                                value="<%= product != null ? product.getName() : "" %>"/>
-                        <div class="text-danger"><%= request.getAttribute("nameError") != null ? request.getAttribute("nameError") : "" %></div>
+                        <% if (request.getAttribute("nameError") != null) { %>
+                        <div class="error-msg"><%= request.getAttribute("nameError") %></div>
+                        <% } %>
                     </div>
 
                     <div class="mb-3">
@@ -255,7 +256,9 @@
                         <label for="price" class="form-label">Giá *</label>
                         <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required
                                value="<%= product != null ? product.getPrice() : "" %>"/>
-                        <div class="text-danger"><%= request.getAttribute("priceError") != null ? request.getAttribute("priceError") : "" %></div>
+                        <% if (request.getAttribute("priceError") != null) { %>
+                        <div class="error-msg"><%= request.getAttribute("priceError") %></div>
+                        <% } %>
                     </div>
 
                     <div class="mb-3">
@@ -268,43 +271,41 @@
                         <label for="categoryId" class="form-label">Mã danh mục *</label>
                         <input type="number" class="form-control" id="categoryId" name="categoryId" required
                                value="<%= product != null ? product.getCategoryId() : "" %>"/>
-                        <div class="text-danger"><%= request.getAttribute("categoryError") != null ? request.getAttribute("categoryError") : "" %></div>
+                        <% if (request.getAttribute("categoryError") != null) { %>
+                        <div class="error-msg"><%= request.getAttribute("categoryError") %></div>
+                        <% } %>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Trạng thái hiển thị *</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="true" <%= (product != null && product.isStatus()) ? "selected" : "" %>>Hiển thị</option>
-                            <option value="false" <%= (product != null && !product.isStatus()) ? "selected" : "" %>>Ẩn</option>
-                        </select>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="status" name="status" value="true"
+                               <%= (product != null && product.isStatus()) ? "checked" : "" %>/>
+                        <label class="form-check-label" for="status">Hiển thị sản phẩm</label>
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                        <button type="reset" class="btn btn-secondary">Reset</button>
+                        <button type="submit" class="btn btn-success btn-custom">Thêm</button>
+                        <button type="reset" class="btn btn-light btn-custom btn-reset">Reset</button>
                     </div>
 
-                    <div class="mt-3 text-danger">
-                        <%= request.getAttribute("createError") != null ? request.getAttribute("createError") : "" %>
-                    </div>
-                    <div class="mt-3 text-success">
-                        <%= request.getAttribute("message") != null ? request.getAttribute("message") : "" %>
-                    </div>
+                    <% if (request.getAttribute("createError") != null) { %>
+                    <div class="error-msg mt-3"><%= request.getAttribute("createError") %></div>
+                    <% } %>
+
+                    <% if (message != null) { %>
+                    <div class="success-msg mt-3"><%= message %></div>
+                    <% } %>
+
                 </form>
             </div>
         </div>
 
-        <%
-            } else {
-        %>
+        <% } else { %>
         <div class="container mt-5">
-            <div class="alert alert-danger">
-                <%= AuthUtils.getAccessDeniedMessage(" product-form page ") %>
+            <div class="alert alert-danger text-center">
+                <%= AuthUtils.getAccessDeniedMessage("product-form page") %>
             </div>
         </div>
-        <%
-            }
-        %>
+        <% } %>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
