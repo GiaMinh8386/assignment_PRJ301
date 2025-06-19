@@ -1,10 +1,6 @@
-
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!-- Bootstrap 5 CDN -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<%@ page pageEncoding="UTF-8" %>
+<%@ page import="model.UserDTO" %>
+<%@ page import="utils.AuthUtils" %>
 
 <style>
     body {
@@ -12,13 +8,13 @@
     }
 
     .navbar {
-        background-color: #b02a20;
+        background-color: #b02a20 !important;
     }
 
     .navbar-brand {
         font-size: 30px;
         font-weight: bold;
-        color: white;
+        color: white !important;
     }
 
     .search-container {
@@ -48,78 +44,126 @@
         box-shadow: none;
     }
 
-    .input-group .form-control:focus {
-        box-shadow: none;
-    }
-
     .input-group .btn-search {
         background-color: white;
         color: #b02a20;
         border: none;
         padding: 0 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .input-group .btn-search i {
-        color: #b02a20;
     }
 
     .input-group .btn-search:hover {
         background-color: #f8f8f8;
-    }
-
-    .nav-link-login {
-        font-weight: bold;
-        color: white !important;
-    }
-
-    .nav-link-login:hover {
-        text-decoration: underline;
     }
 </style>
 
 <nav class="navbar navbar-expand-lg px-4 py-2">
     <div class="container-fluid d-flex align-items-center">
         <!-- Logo -->
-        <a class="navbar-brand me-4" href="index.jsp">GymLife</a>
+       <a class="navbar-brand me-4" href="MainController?action=home" onclick="handleNavigation(this)">GymLife</a>
 
         <!-- Search Form -->
         <form class="search-container" role="search" action="MainController" method="get">
+
             <input type="hidden" name="action" value="searchProduct" />
+=======
+            <input type="hidden" name="action" value="searchProduct">
+
             <div class="input-group">
-                <!-- Dropdown -->
                 <select class="form-select" name="category">
-                    <option value="">Product</option>
-                    <option value="whey">Whey Protein</option>
-                    <option value="creatine">Creatine</option>
-                    <option value="vitamin">Vitamin</option>
-                    <option value="dotmo">Reduce Fat</option>
-                    <option value="sinhly">Physiology-Endocrinology</option>
+                    <option value="">Tất cả sản phẩm</option>
+                    <option value="1">Whey Protein</option>
+                    <option value="2">Creatine</option>
+                    <option value="3">Vitamin</option>
+                    <option value="4">Giảm mỡ</option>
+                    <option value="5">Sinh lý</option>
                 </select>
+
 
                 <!-- Input -->
                 <input type="text" class="form-control" placeholder="Search..." name="strKeyword" />
 
                 <!-- Button -->
+
+                <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm..." name="keyword" />
+
                 <button class="btn btn-search" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </form>
 
-        <!-- Login -->
-        <!-- Login Block -->
+        <!-- User Info -->
         <div class="ms-4 d-flex align-items-center">
-            <a href="login.jsp" class="d-flex align-items-center text-white text-decoration-none">
-                <i class="fas fa-user fa-2x me-2"></i>
-                <div class="d-flex flex-column">
-                    <span style="font-size: 14px;">Login</span>
-                    <strong style="font-size: 16px;">Account</strong>
+            <%
+                UserDTO currentUser = null;
+                try {
+                    currentUser = AuthUtils.getCurrentUser(request);
+                } catch (Exception e) {
+                    // Handle exception silently
+                }
+                
+                if (currentUser != null) {
+            %>
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" 
+                       data-bs-toggle="dropdown" id="userDropdown">
+                        <i class="fas fa-user fa-2x me-2"></i>
+                        <div class="d-flex flex-column">
+                            <span style="font-size: 14px;">Xin chào</span>
+                            <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="MainController?action=viewProfile">
+                            <i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
+                        <li><a class="dropdown-item" href="MainController?action=changePassword">
+                            <i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                        <%
+                            try {
+                                if (AuthUtils.isAdmin(request)) {
+                        %>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="MainController?action=listProducts">
+                                    <i class="fas fa-box me-2"></i>Quản lý sản phẩm</a></li>
+                                <li><a class="dropdown-item" href="productForm.jsp">
+                                    <i class="fas fa-plus me-2"></i>Thêm sản phẩm</a></li>
+                        <%
+                                }
+                            } catch (Exception e) {
+                                // Handle exception silently
+                            }
+                        %>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="MainController?action=logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                    </ul>
                 </div>
-            </a>
+            <%
+                } else {
+            %>
+                <a href="login.jsp" class="d-flex align-items-center text-white text-decoration-none">
+                    <i class="fas fa-user fa-2x me-2"></i>
+                    <div class="d-flex flex-column">
+                        <span style="font-size: 14px;">Đăng nhập</span>
+                        <strong style="font-size: 16px;">Tài khoản</strong>
+                    </div>
+                </a>
+            <%
+                }
+            %>
         </div>
-
-
+    </div>
+        <script>
+function handleNavigation(element) {
+    // Vô hiệu hóa link tạm thời để tránh click nhiều lần
+    element.style.pointerEvents = 'none';
+    element.style.opacity = '0.7';
+    
+    // Khôi phục sau 2 giây
+    setTimeout(() => {
+        element.style.pointerEvents = 'auto';
+        element.style.opacity = '1';
+    }, 2000);
+}
+</script>
 </nav>

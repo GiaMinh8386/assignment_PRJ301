@@ -111,8 +111,11 @@
             }
         %>
 
+       <div class="mt-3 text-muted">
+    Tôi chưa có tài khoản? <a href="register.jsp" class="text-primary text-decoration-none">Tạo tài khoản</a>
+</div>       
         <div class="mt-3 text-muted">
-            Tôi chưa có tài khoản? <a href="register.jsp">Tạo tài khoản</a>
+            <a href="index_1.jsp">Quay về trang chủ</a>
         </div>
     </div>
 
