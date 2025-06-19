@@ -59,7 +59,11 @@
 <nav class="navbar navbar-expand-lg px-4 py-2">
     <div class="container-fluid d-flex align-items-center">
         <!-- Logo -->
+<<<<<<< Updated upstream
        <a class="navbar-brand me-4" href="MainController?action=home" onclick="handleNavigation(this)">GymLife</a>
+=======
+        <a class="navbar-brand me-4" href="index_1.jsp">GymLife</a>
+>>>>>>> Stashed changes
 
         <!-- Search Form -->
         <form class="search-container" role="search" action="MainController" method="get">

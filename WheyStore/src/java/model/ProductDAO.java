@@ -132,7 +132,42 @@ public class ProductDAO {
     public boolean isProductExists(String id) {
         return getProductByID(id) != null;
     }
+<<<<<<< Updated upstream
 
+=======
+    public List<ProductDTO> getProductsByPriceRange(double minPrice, double maxPrice) {
+    List<ProductDTO> products = new ArrayList<>();
+    String sql = "SELECT ProductID, ProductName, Description, Price, ImageURL, Brand, StockQuantity, ProductCode, CategoryID "
+               + "FROM Products WHERE Price BETWEEN ? AND ?";
+    try (Connection conn = DbUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setDouble(1, minPrice);
+        ps.setDouble(2, maxPrice);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ProductDTO product = new ProductDTO(
+                String.valueOf(rs.getInt("ProductID")),
+                rs.getString("ProductName"),
+                rs.getString("ImageURL"),
+                rs.getString("Description"),
+                rs.getDouble("Price"),
+                rs.getString("Brand"),
+                rs.getInt("StockQuantity"),
+                rs.getString("ProductCode"),
+                rs.getInt("CategoryID")
+            );
+            products.add(product);
+        }
+    } catch (Exception e) {
+        System.err.println("Error in getProductsByPriceRange(): " + e.getMessage());
+        e.printStackTrace();
+    }
+    return products;
+}
+
+    
+    
+>>>>>>> Stashed changes
     private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
         try {
             if (rs != null) {

@@ -115,8 +115,20 @@
     Tôi chưa có tài khoản? <a href="register.jsp" class="text-primary text-decoration-none">Tạo tài khoản</a>
 </div>       
         <div class="mt-3 text-muted">
+<<<<<<< Updated upstream
             <a href="index_1.jsp">Quay về trang chủ</a>
+=======
+            Bạn chưa có tài khoản? <a href="register.jsp" class="text-primary text-decoration-none">Tạo tài khoản</a>
+
+
+
+
+>>>>>>> Stashed changes
         </div>
+         <div class="mt-3 text-muted">
+          <a href="index_1.jsp">Quay trở lại xem hàng</a>
+        </div>
+
     </div>
 
 <% } %>

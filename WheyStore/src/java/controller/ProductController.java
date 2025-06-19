@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
+<<<<<<< Updated upstream
 
 //import java.io.IOException;
 //import jakarta.servlet.ServletException;
@@ -37,6 +34,19 @@ import java.util.List;
     import model.ProductDAO;
     import model.ProductDTO;
     import utils.AuthUtils;
+=======
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import model.ProductDAO;
+import model.ProductDTO;
+import utils.AuthUtils;
+
+>>>>>>> Stashed changes
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
 
@@ -51,10 +61,16 @@ public class ProductController extends HttpServlet {
             String action = request.getParameter("action");
             // ----- Xu ly action cua Users -----
             if ("addProduct".equals(action)) {
+<<<<<<< Updated upstream
                 url = handleProductAdding(request, response);
             } else if (action.equals("searchProduct")) {
                 url = handleProductSearching(request, response);
             }
+=======
+    url = handleProductAdding(request, response);
+}
+
+>>>>>>> Stashed changes
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -73,13 +89,39 @@ public class ProductController extends HttpServlet {
             String categoryId = request.getParameter("categoryId");
             String status = request.getParameter("status");
 
+<<<<<<< Updated upstream
             boolean hasError = false;
 
+=======
+            double priceValue = 0;
+            int stockQty = 0;
+            int catId = 0;
+
+            try {
+                priceValue = Double.parseDouble(price);
+            } catch (Exception e) {
+                checkError += "Price must be a number.<br/>";
+            }
+
+            try {
+                stockQty = Integer.parseInt(stock);
+            } catch (Exception e) {
+                checkError += "Stock quantity must be an integer.<br/>";
+            }
+
+            try {
+                catId = Integer.parseInt(categoryId);
+            } catch (Exception e) {
+                checkError += "Category ID must be an integer.<br/>";
+            }
+
+>>>>>>> Stashed changes
             if (pdao.isProductExists(id)) {
                 request.setAttribute("idError", "This Product ID already exists.");
                 hasError = true;
             }
 
+<<<<<<< Updated upstream
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("nameError", "Product name cannot be empty.");
                 hasError = true;
@@ -112,6 +154,18 @@ public class ProductController extends HttpServlet {
 
             if (hasError) {
                 return "productForm.jsp";
+=======
+            ProductDTO product = new ProductDTO(id, name, image, description, priceValue, brand, stockQty, productCode, catId);
+            request.setAttribute("product", product);
+
+            if (checkError.isEmpty()) {
+                boolean created = pdao.create(product);
+                if (created) {
+                    message = "Add product successfully!";
+                } else {
+                    checkError += "Error: Cannot add product to database.<br/>";
+                }
+>>>>>>> Stashed changes
             }
 
             if (!pdao.create(product)) {
@@ -135,43 +189,20 @@ public class ProductController extends HttpServlet {
         return "search.jsp";
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Product Controller handles adding and filtering products";
+    }
 }

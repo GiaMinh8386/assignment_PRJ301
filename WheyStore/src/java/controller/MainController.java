@@ -47,7 +47,7 @@ public class MainController extends HttpServlet {
                 || "searchProduct".equals(action);
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+      protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
@@ -55,10 +55,20 @@ public class MainController extends HttpServlet {
 
         try {
             String action = request.getParameter("action");
+<<<<<<< Updated upstream
             if (action == null || action.equals("") || action.equals("home")) {
                 // Load danh sách sản phẩm
                 ProductDAO dao = new ProductDAO();
                 List<ProductDTO> list = dao.getAllProducts();  // chỉ lấy status = 1 đã xử lý ở DAO
+=======
+
+            ProductDAO dao = new ProductDAO();  // chỉ tạo 1 lần
+
+
+            if (action == null || action.equals("home")) {
+                // Trang chủ → lấy toàn bộ sản phẩm
+                List<ProductDTO> list = dao.getAllProducts();
+>>>>>>> Stashed changes
                 request.setAttribute("products", list);
 
                 System.out.println("=== MainController Debug ===");
@@ -75,13 +85,53 @@ public class MainController extends HttpServlet {
                 }
                 request.setAttribute("products", list); // Truyền danh sách cho index.jsp
                 url = "index.jsp";
+
+            } else if ("filter".equals(action)) {
+                // Lọc sản phẩm theo khoảng giá
+                String priceRange = request.getParameter("priceRange");
+                if (priceRange != null && priceRange.contains("-")) {
+                    String[] parts = priceRange.split("-");
+                    double min = Double.parseDouble(parts[0]);
+                    double max = Double.parseDouble(parts[1]);
+                    List<ProductDTO> filteredList = dao.getProductsByPriceRange(min, max);
+                    request.setAttribute("products", filteredList);
+                }
+                url = "index.jsp";
+
+            } else if ("filterByCategory".equals(action)) {
+                // Lọc sản phẩm theo danh mục
+                String categoryIdStr = request.getParameter("categoryId");
+                if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                    try {
+                        int categoryId = Integer.parseInt(categoryIdStr);
+                        List<ProductDTO> filteredList = dao.getProductsByPriceRange(categoryId, categoryId);
+                        request.setAttribute("products", filteredList);
+                    } catch (NumberFormatException e) {
+                        // Nếu categoryId không hợp lệ thì lấy toàn bộ sản phẩm
+                        List<ProductDTO> list = dao.getAllProducts();
+                        request.setAttribute("products", list);
+                    }
+                } else {
+                    // Nếu không có categoryId thì lấy toàn bộ sản phẩm
+                    List<ProductDTO> list = dao.getAllProducts();
+                    request.setAttribute("products", list);
+                }
+                url = "index.jsp";
+
             } else if (isUserAction(action)) {
                 url = "/UserController";
+
             } else if (isProductAction(action)) {
                 url = "/ProductController";
             } else {
                 request.setAttribute("message", "Invalid action: " + action);
             }
+<<<<<<< Updated upstream
+=======
+
+
+
+>>>>>>> Stashed changes
         } catch (Exception e) {
             System.err.println("Lỗi trong MainController: " + e.getMessage());
             e.printStackTrace();
