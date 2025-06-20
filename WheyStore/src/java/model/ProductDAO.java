@@ -8,35 +8,52 @@ import java.util.List;
 import utils.DbUtils;
 
 public class ProductDAO {
-
+    
+    // SQL Server queries for your database structure
     private static final String GET_ALL_PRODUCTS
-            = "SELECT ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status FROM tblProducts";
-    private static final String GET_PRODUCT_BY_ID = "SELECT ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status FROM tblProducts WHERE ProductID = ?";
+            = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1 ORDER BY productName";
+    private static final String GET_PRODUCT_BY_ID = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE productID = ?";
     private static final String CREATE_PRODUCT
-            = "INSERT INTO tblProducts (ProductID, ProductName, Description, Brand, Price, ImageURL, CategoryID, Status) "
+            = "INSERT INTO tblProducts (productID, productName, description, brand, price, imageURL, categoryID, status) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT = "UPDATE tblProducts SET ProductName = ?, Description = ?, Brand = ?, Price = ?, ImageURL = ?, CategoryID = ?, Status = ? WHERE ProductID = ?";
-    private static final String DELETE_PRODUCT = "DELETE FROM tblProducts WHERE ProductID = ?";
+    private static final String UPDATE_PRODUCT = "UPDATE tblProducts SET productName = ?, description = ?, brand = ?, price = ?, imageURL = ?, categoryID = ?, status = ? WHERE productID = ?";
+    private static final String DELETE_PRODUCT = "DELETE FROM tblProducts WHERE productID = ?";
+    
+    // Search queries - SQL Server compatible
+    private static final String SEARCH_PRODUCTS = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1 AND (LOWER(productName) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?) OR LOWER(brand) LIKE LOWER(?)) ORDER BY productName";
+    private static final String GET_PRODUCTS_BY_CATEGORY = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1 AND categoryID = ? ORDER BY productName";
+    private static final String GET_PRODUCTS_BY_PRICE_RANGE = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1 AND price BETWEEN ? AND ? ORDER BY price";
+    private static final String GET_PRODUCTS_BY_BRAND = "SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1 AND LOWER(brand) LIKE LOWER(?) ORDER BY productName";
 
     public List<ProductDTO> getAllProducts() {
         List<ProductDTO> products = new ArrayList<>();
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_ALL_PRODUCTS);  ResultSet rs = ps.executeQuery()) {
-
+        System.out.println("🔍 ProductDAO: Getting all products from SQL Server...");
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(GET_ALL_PRODUCTS); 
+             ResultSet rs = ps.executeQuery()) {
+            
+            System.out.println("✅ ProductDAO: Query executed successfully");
+            
             while (rs.next()) {
-                String id = rs.getString("ProductID");
-                String name = rs.getString("ProductName");
-                String description = rs.getString("Description");
-                String brand = rs.getString("Brand");
-                double price = rs.getDouble("Price");
-                String image = rs.getString("ImageURL");
-                int categoryId = rs.getInt("CategoryID");
-                boolean status = rs.getBoolean("Status");
-
+                String id = rs.getString("productID");
+                String name = rs.getString("productName");
+                String description = rs.getString("description");
+                String brand = rs.getString("brand");
+                double price = rs.getDouble("price");
+                String image = rs.getString("imageURL");
+                int categoryId = rs.getInt("categoryID");
+                boolean status = rs.getBoolean("status");
+                
                 ProductDTO product = new ProductDTO(id, name, description, brand, price, image, categoryId, status);
                 products.add(product);
+                System.out.println("📦 Found product: " + name + " (ID: " + id + ", Price: " + price + "₫)");
             }
+            
+            System.out.println("✅ ProductDAO: Total products loaded: " + products.size());
+            
         } catch (Exception e) {
-            System.err.println("Error in getAllProducts(): " + e.getMessage());
+            System.err.println("❌ Error in getAllProducts(): " + e.getMessage());
             e.printStackTrace();
         }
         return products;
@@ -44,34 +61,270 @@ public class ProductDAO {
 
     public ProductDTO getProductByID(String id) {
         ProductDTO product = null;
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(GET_PRODUCT_BY_ID)) {
-
+        System.out.println("🔍 ProductDAO: Getting product by ID: " + id);
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(GET_PRODUCT_BY_ID)) {
+            
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
-
+            
             if (rs.next()) {
                 product = new ProductDTO(
-                        rs.getString("ProductID"),
-                        rs.getString("ProductName"),
-                        rs.getString("Description"),
-                        rs.getString("Brand"),
-                        rs.getDouble("Price"),
-                        rs.getString("ImageURL"),
-                        rs.getInt("CategoryID"),
-                        rs.getBoolean("Status")
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
                 );
+                System.out.println("✅ Found product: " + product.getName());
+            } else {
+                System.out.println("❌ Product not found with ID: " + id);
             }
         } catch (Exception e) {
-            System.err.println("Error in getProductByID(): " + e.getMessage());
+            System.err.println("❌ Error in getProductByID(): " + e.getMessage());
             e.printStackTrace();
         }
         return product;
     }
 
+    /**
+     * Search products by keyword (case insensitive) - SQL Server compatible
+     */
+    public List<ProductDTO> searchProducts(String keyword) {
+        List<ProductDTO> products = new ArrayList<>();
+        System.out.println("🔍 ProductDAO: Searching products with keyword: " + keyword);
+        
+        if (keyword == null || keyword.trim().isEmpty()) {
+            System.out.println("🔄 Empty keyword, returning all products");
+            return getAllProducts();
+        }
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(SEARCH_PRODUCTS)) {
+            
+            String searchPattern = "%" + keyword.trim() + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            
+            System.out.println("🔍 Search pattern: " + searchPattern);
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
+                );
+                products.add(product);
+                System.out.println("📦 Found product: " + product.getName());
+            }
+            
+            System.out.println("✅ Search completed. Found: " + products.size() + " products");
+        } catch (Exception e) {
+            System.err.println("❌ Error in searchProducts(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    /**
+     * Get products by category
+     */
+    public List<ProductDTO> getProductsByCategory(int categoryId) {
+        List<ProductDTO> products = new ArrayList<>();
+        System.out.println("🔍 ProductDAO: Getting products by category: " + categoryId);
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(GET_PRODUCTS_BY_CATEGORY)) {
+            
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
+                );
+                products.add(product);
+                System.out.println("📦 Found product: " + product.getName());
+            }
+            
+            System.out.println("✅ Category filter completed. Found: " + products.size() + " products");
+        } catch (Exception e) {
+            System.err.println("❌ Error in getProductsByCategory(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    /**
+     * Get products by price range
+     */
+    public List<ProductDTO> getProductsByPriceRange(double minPrice, double maxPrice) {
+        List<ProductDTO> products = new ArrayList<>();
+        System.out.println("🔍 ProductDAO: Getting products by price range: " + minPrice + " - " + maxPrice);
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(GET_PRODUCTS_BY_PRICE_RANGE)) {
+            
+            ps.setDouble(1, minPrice);
+            ps.setDouble(2, maxPrice);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
+                );
+                products.add(product);
+                System.out.println("📦 Found product: " + product.getName() + " - " + product.getFormattedPrice());
+            }
+            
+            System.out.println("✅ Price filter completed. Found: " + products.size() + " products");
+        } catch (Exception e) {
+            System.err.println("❌ Error in getProductsByPriceRange(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    /**
+     * Get products by brand (case insensitive)
+     */
+    public List<ProductDTO> getProductsByBrand(String brand) {
+        List<ProductDTO> products = new ArrayList<>();
+        System.out.println("🔍 ProductDAO: Getting products by brand: " + brand);
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(GET_PRODUCTS_BY_BRAND)) {
+            
+            ps.setString(1, "%" + brand + "%");
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
+                );
+                products.add(product);
+                System.out.println("📦 Found product: " + product.getName());
+            }
+            
+            System.out.println("✅ Brand filter completed. Found: " + products.size() + " products");
+        } catch (Exception e) {
+            System.err.println("❌ Error in getProductsByBrand(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    /**
+     * Advanced filter with multiple criteria
+     */
+    public List<ProductDTO> filterProducts(String keyword, Integer categoryId, Double minPrice, Double maxPrice, String brand) {
+        List<ProductDTO> products = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT productID, productName, description, brand, price, imageURL, categoryID, status FROM tblProducts WHERE status = 1");
+        List<Object> params = new ArrayList<>();
+        
+        System.out.println("🔍 ProductDAO: Advanced filter - keyword:" + keyword + ", category:" + categoryId + ", price:" + minPrice + "-" + maxPrice + ", brand:" + brand);
+        
+        // Build dynamic query
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            query.append(" AND (LOWER(productName) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?) OR LOWER(brand) LIKE LOWER(?))");
+            String searchPattern = "%" + keyword.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        
+        if (categoryId != null && categoryId > 0) {
+            query.append(" AND categoryID = ?");
+            params.add(categoryId);
+        }
+        
+        if (minPrice != null && maxPrice != null) {
+            query.append(" AND price BETWEEN ? AND ?");
+            params.add(minPrice);
+            params.add(maxPrice);
+        }
+        
+        if (brand != null && !brand.trim().isEmpty()) {
+            query.append(" AND LOWER(brand) LIKE LOWER(?)");
+            params.add("%" + brand.trim() + "%");
+        }
+        
+        query.append(" ORDER BY productName");
+        
+        System.out.println("🔍 Final query: " + query.toString());
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(query.toString())) {
+            
+            // Set parameters
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+                System.out.println("📝 Parameter " + (i + 1) + ": " + params.get(i));
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("productID"),
+                        rs.getString("productName"),
+                        rs.getString("description"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("imageURL"),
+                        rs.getInt("categoryID"),
+                        rs.getBoolean("status")
+                );
+                products.add(product);
+                System.out.println("📦 Found product: " + product.getName());
+            }
+            
+            System.out.println("✅ Advanced filter completed. Found: " + products.size() + " products");
+        } catch (Exception e) {
+            System.err.println("❌ Error in filterProducts(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
+
     public boolean create(ProductDTO product) {
         boolean success = false;
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(CREATE_PRODUCT)) {
-
+        System.out.println("➕ ProductDAO: Creating product: " + product.getName());
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(CREATE_PRODUCT)) {
+            
             ps.setString(1, product.getId());
             ps.setString(2, product.getName());
             ps.setString(3, product.getDescription());
@@ -80,12 +333,17 @@ public class ProductDAO {
             ps.setString(6, product.getImage());
             ps.setInt(7, product.getCategoryId());
             ps.setBoolean(8, product.isStatus());
-
+            
             int rows = ps.executeUpdate();
             success = rows > 0;
-
+            
+            if (success) {
+                System.out.println("✅ Product created successfully: " + product.getName());
+            } else {
+                System.out.println("❌ Failed to create product: " + product.getName());
+            }
         } catch (Exception e) {
-            System.err.println("Error in create(): " + e.getMessage());
+            System.err.println("❌ Error in create(): " + e.getMessage());
             e.printStackTrace();
         }
         return success;
@@ -93,8 +351,11 @@ public class ProductDAO {
 
     public boolean update(ProductDTO product) {
         boolean success = false;
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(UPDATE_PRODUCT)) {
-
+        System.out.println("✏️ ProductDAO: Updating product: " + product.getName());
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(UPDATE_PRODUCT)) {
+            
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setString(3, product.getBrand());
@@ -103,12 +364,17 @@ public class ProductDAO {
             ps.setInt(6, product.getCategoryId());
             ps.setBoolean(7, product.isStatus());
             ps.setString(8, product.getId());
-
+            
             int rows = ps.executeUpdate();
             success = rows > 0;
-
+            
+            if (success) {
+                System.out.println("✅ Product updated successfully: " + product.getName());
+            } else {
+                System.out.println("❌ Failed to update product: " + product.getName());
+            }
         } catch (Exception e) {
-            System.err.println("Error in update(): " + e.getMessage());
+            System.err.println("❌ Error in update(): " + e.getMessage());
             e.printStackTrace();
         }
         return success;
@@ -116,108 +382,30 @@ public class ProductDAO {
 
     public boolean delete(String id) {
         boolean success = false;
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(DELETE_PRODUCT)) {
-
+        System.out.println("🗑️ ProductDAO: Deleting product with ID: " + id);
+        
+        try (Connection conn = DbUtils.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(DELETE_PRODUCT)) {
+            
             ps.setString(1, id);
             int rows = ps.executeUpdate();
             success = rows > 0;
-
+            
+            if (success) {
+                System.out.println("✅ Product deleted successfully with ID: " + id);
+            } else {
+                System.out.println("❌ Failed to delete product with ID: " + id);
+            }
         } catch (Exception e) {
-            System.err.println("Error in delete(): " + e.getMessage());
+            System.err.println("❌ Error in delete(): " + e.getMessage());
             e.printStackTrace();
         }
         return success;
     }
 
     public boolean isProductExists(String id) {
-        return getProductByID(id) != null;
-    }
-<<<<<<< Updated upstream
-
-=======
-    public List<ProductDTO> getProductsByPriceRange(double minPrice, double maxPrice) {
-    List<ProductDTO> products = new ArrayList<>();
-    String sql = "SELECT ProductID, ProductName, Description, Price, ImageURL, Brand, StockQuantity, ProductCode, CategoryID "
-               + "FROM Products WHERE Price BETWEEN ? AND ?";
-    try (Connection conn = DbUtils.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setDouble(1, minPrice);
-        ps.setDouble(2, maxPrice);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            ProductDTO product = new ProductDTO(
-                String.valueOf(rs.getInt("ProductID")),
-                rs.getString("ProductName"),
-                rs.getString("ImageURL"),
-                rs.getString("Description"),
-                rs.getDouble("Price"),
-                rs.getString("Brand"),
-                rs.getInt("StockQuantity"),
-                rs.getString("ProductCode"),
-                rs.getInt("CategoryID")
-            );
-            products.add(product);
-        }
-    } catch (Exception e) {
-        System.err.println("Error in getProductsByPriceRange(): " + e.getMessage());
-        e.printStackTrace();
-    }
-    return products;
-}
-
-    
-    
->>>>>>> Stashed changes
-    private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
-        try {
-            if (rs != null) {
-                rs.close();
-            }
-            if (ps != null) {
-                ps.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (Exception e) {
-            System.err.println("Error closing resources: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public List<ProductDTO> getProductsByName(String name) {
-        List<ProductDTO> products = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        //String query = GET_ALL_PRODUCTS + " WHERE name like ?";
-        String query = "SELECT * FROM tblProducts WHERE ProductName LIKE ?";
-        System.out.println(query);
-        try {
-            conn = DbUtils.getConnection();
-            ps = conn.prepareStatement(query);
-            ps.setString(1, "%" + name + "%");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                ProductDTO product = new ProductDTO();
-                product.setId(rs.getString("productID"));
-                product.setName(rs.getString("ProductName"));
-                product.setDescription(rs.getString("Description"));
-                product.setBrand(rs.getString("Brand"));
-                product.setPrice(rs.getDouble("Price"));
-                product.setImage(rs.getString("ImageURL"));
-                product.setCategoryId(rs.getInt("CategoryID"));
-                product.setStatus(rs.getBoolean("Status"));
-                products.add(product);
-            }
-        } catch (Exception e) {
-            System.err.println("Error in getProductsByStatus(): " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            closeResources(conn, ps, rs);
-        }
-        return products;
+        boolean exists = getProductByID(id) != null;
+        System.out.println("🔍 Product exists check for ID " + id + ": " + exists);
+        return exists;
     }
 }

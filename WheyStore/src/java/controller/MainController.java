@@ -13,18 +13,19 @@ package controller;
 //import model.UserDAO;
 //import model.UserDTO;
 
-    import java.io.IOException;
-    import javax.servlet.ServletException;
-    import javax.servlet.annotation.WebServlet;
-    import javax.servlet.http.HttpServlet;
-    import javax.servlet.http.HttpServletRequest;
-    import javax.servlet.http.HttpServletResponse;
-    import java.util.List;
-    import model.ProductDAO;
-    import model.ProductDTO;
-    import model.UserDAO;
-    import model.UserDTO;
-    import utils.AuthUtils;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.ProductDAO;
+import model.ProductDTO;
+import model.UserDAO;
+import model.UserDTO;
+import utils.AuthUtils;
+
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
@@ -44,98 +45,51 @@ public class MainController extends HttpServlet {
                 || "addProduct".equals(action)
                 || "updateProduct".equals(action)
                 || "deleteProduct".equals(action)
-                || "searchProduct".equals(action);
+                || "searchProduct".equals(action)
+                || "filterByCategory".equals(action)
+                || "filterByPrice".equals(action)
+                || "filterByBrand".equals(action)
+                || "productDetail".equals(action);
     }
 
-      protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-        String url = "index.jsp";  // Mặc định về trang chủ
+        String url = "index.jsp";
 
         try {
             String action = request.getParameter("action");
-<<<<<<< Updated upstream
+            System.out.println("DEBUG MainController - Action received: " + action);
+
             if (action == null || action.equals("") || action.equals("home")) {
-                // Load danh sách sản phẩm
+                // FIXED: Load ALL products for home page
+                System.out.println("DEBUG MainController - Loading home page with all products");
                 ProductDAO dao = new ProductDAO();
-                List<ProductDTO> list = dao.getAllProducts();  // chỉ lấy status = 1 đã xử lý ở DAO
-=======
-
-            ProductDAO dao = new ProductDAO();  // chỉ tạo 1 lần
-
-
-            if (action == null || action.equals("home")) {
-                // Trang chủ → lấy toàn bộ sản phẩm
                 List<ProductDTO> list = dao.getAllProducts();
->>>>>>> Stashed changes
+                System.out.println("DEBUG MainController - Loaded " + (list != null ? list.size() : 0) + " products for home");
                 request.setAttribute("products", list);
-
-                System.out.println("=== MainController Debug ===");
-                System.out.println("Số lượng sản phẩm lấy được: " + (list != null ? list.size() : 0));
-                if (list != null) {
-                    for (ProductDTO p : list) {
-                        System.out.println("Sản phẩm: " + p.getId() + " - " + p.getName());
-                    }
-                }
-
-                System.out.println(">>> Product List Size: " + (list != null ? list.size() : "null"));
-                for (ProductDTO p : list) {
-                    System.out.println(">>> Product: " + p.getId() + " - " + p.getName());
-                }
-                request.setAttribute("products", list); // Truyền danh sách cho index.jsp
                 url = "index.jsp";
-
-            } else if ("filter".equals(action)) {
-                // Lọc sản phẩm theo khoảng giá
-                String priceRange = request.getParameter("priceRange");
-                if (priceRange != null && priceRange.contains("-")) {
-                    String[] parts = priceRange.split("-");
-                    double min = Double.parseDouble(parts[0]);
-                    double max = Double.parseDouble(parts[1]);
-                    List<ProductDTO> filteredList = dao.getProductsByPriceRange(min, max);
-                    request.setAttribute("products", filteredList);
-                }
-                url = "index.jsp";
-
-            } else if ("filterByCategory".equals(action)) {
-                // Lọc sản phẩm theo danh mục
-                String categoryIdStr = request.getParameter("categoryId");
-                if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-                    try {
-                        int categoryId = Integer.parseInt(categoryIdStr);
-                        List<ProductDTO> filteredList = dao.getProductsByPriceRange(categoryId, categoryId);
-                        request.setAttribute("products", filteredList);
-                    } catch (NumberFormatException e) {
-                        // Nếu categoryId không hợp lệ thì lấy toàn bộ sản phẩm
-                        List<ProductDTO> list = dao.getAllProducts();
-                        request.setAttribute("products", list);
-                    }
-                } else {
-                    // Nếu không có categoryId thì lấy toàn bộ sản phẩm
-                    List<ProductDTO> list = dao.getAllProducts();
-                    request.setAttribute("products", list);
-                }
-                url = "index.jsp";
-
             } else if (isUserAction(action)) {
-                url = "/UserController";
-
+                System.out.println("DEBUG MainController - Forwarding to UserController");
+                url = "UserController"; // FIXED: Remove leading slash
             } else if (isProductAction(action)) {
-                url = "/ProductController";
+                System.out.println("DEBUG MainController - Forwarding to ProductController");
+                url = "ProductController"; // FIXED: Remove leading slash
             } else {
-                request.setAttribute("message", "Invalid action: " + action);
+                // Handle unknown actions
+                System.out.println("DEBUG MainController - Unknown action: " + action);
+                request.setAttribute("message", "Unknown action: " + action);
+                url = "error.jsp";
             }
-<<<<<<< Updated upstream
-=======
 
-
-
->>>>>>> Stashed changes
         } catch (Exception e) {
-            System.err.println("Lỗi trong MainController: " + e.getMessage());
             e.printStackTrace();
+            System.out.println("DEBUG MainController - Error: " + e.getMessage());
+            request.setAttribute("message", "System error occurred: " + e.getMessage());
+            url = "error.jsp";
         } finally {
+            System.out.println("DEBUG MainController - Final URL: " + url);
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
@@ -154,6 +108,6 @@ public class MainController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Main routing servlet";
+        return "Main routing servlet with enhanced product search support";
     }
 }

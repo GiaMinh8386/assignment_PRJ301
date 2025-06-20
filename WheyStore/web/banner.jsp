@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 <!-- BANNER V?I ?NH CÓ S?N + BUTTONS -->
 <!-- Thay th? banner c? trong index.jsp -->
 
@@ -292,42 +292,3 @@ H??NG D?N S? D?NG:
    - Carousel speed: data-bs-interval="4000" (4 giây)
    - Animation delay: setTimeout(..., 3000) (3 giây)
 
-===========================================
--->
-=======
-<div class="container mt-3">
-    <div id="bannerCarousel" class="carousel slide shadow rounded bg-white" data-bs-ride="carousel">
-        <div class="carousel-inner text-center">
-            <div class="carousel-item active">
-                <img src="images/banner1.jpg" class="img-fluid d-inline-block"
-                     style="max-height: 200px; object-fit: contain;" alt="Banner 1">
-            </div>
-            <div class="carousel-item">
-                <img src="images/banner2.jpg" class="img-fluid d-inline-block"
-                     style="max-height: 200px; object-fit: contain;" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="images/banner3.jpg" class="img-fluid d-inline-block"
-                     style="max-height: 200px; object-fit: contain;" alt="Banner 3">
-            </div>
-        </div>
-
-        <!-- ?i?u h??ng -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Tr??c</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Sau</span>
-        </button>
-
-        <!-- Ch?m tròn -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2"></button>
-        </div>
-    </div>
-</div>
->>>>>>> Stashed changes
