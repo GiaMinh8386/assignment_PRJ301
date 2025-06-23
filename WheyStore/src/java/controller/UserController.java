@@ -1,15 +1,25 @@
 package controller;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.UserDAO;
 import model.UserDTO;
 import java.time.LocalDateTime;
+//import java.io.IOException;
+//import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.http.HttpSession;
+//import model.UserDAO;
+//import model.UserDTO;
+//import java.time.LocalDateTime;
 
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
@@ -22,11 +32,11 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
-        
+
         try {
             String action = request.getParameter("action");
             System.out.println("DEBUG UserController - Action received: " + action);
-            
+
             if ("login".equals(action)) {
                 url = handleLogin(request, response);
             } else if ("logout".equals(action)) {
@@ -39,10 +49,13 @@ public class UserController extends HttpServlet {
                 url = handleViewProfile(request, response);
             } else if ("changePassword".equals(action)) {
                 url = handleChangePassword(request, response);
+            } else if ("forgotPassword".equals(action)) {
+                url = handleChangePassword(request, response); // ✅ Gọi đúng hàm đang chứa logic quên mật khẩu
             } else {
                 request.setAttribute("message", "Invalid action: " + action);
                 url = LOGIN_PAGE;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("DEBUG UserController - Error: " + e.getMessage());
@@ -50,7 +63,7 @@ public class UserController extends HttpServlet {
             url = "error.jsp";
         } finally {
             System.out.println("DEBUG UserController - Final URL: " + url);
-            
+
             // FIXED: Smart redirect/forward handling
             if (url.startsWith("MainController")) {
                 // Redirect for MainController actions to avoid forward loops
@@ -69,14 +82,14 @@ public class UserController extends HttpServlet {
         HttpSession session = request.getSession();
         String strUsername = request.getParameter("strUsername");
         String strPassword = request.getParameter("strPassword");
-        
+
         System.out.println("DEBUG handleLogin - Username: " + strUsername);
-        
+
         UserDAO userDAO = new UserDAO();
 
         // Validate input
-        if (strUsername == null || strUsername.trim().isEmpty() || 
-            strPassword == null || strPassword.trim().isEmpty()) {
+        if (strUsername == null || strUsername.trim().isEmpty()
+                || strPassword == null || strPassword.trim().isEmpty()) {
             request.setAttribute("message", "Username and password are required");
             System.out.println("DEBUG handleLogin - Empty username or password");
             return url;
@@ -88,7 +101,7 @@ public class UserController extends HttpServlet {
                 if (user != null && user.isStatus()) { // Check if user is active
                     session.setAttribute("user", user);
                     System.out.println("DEBUG handleLogin - Login successful for user: " + user.getFullName());
-                    
+
                     // FIXED: Choose destination based on user preference
                     String redirectTo = request.getParameter("redirectTo");
                     if ("welcome".equals(redirectTo)) {
@@ -123,22 +136,22 @@ public class UserController extends HttpServlet {
                 if (user != null) {
                     System.out.println("DEBUG handleLogout - Logging out user: " + user.getFullName());
                 }
-                
+
                 // Invalidate session completely
                 session.invalidate();
                 System.out.println("DEBUG handleLogout - Session invalidated successfully");
             }
-            
+
             // Clear any cached data
             response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("DEBUG handleLogout - Error: " + e.getMessage());
         }
-        
+
         // FIXED: Check where user wants to go after logout
         String logoutDestination = request.getParameter("destination");
         if ("login".equals(logoutDestination)) {
@@ -223,28 +236,28 @@ public class UserController extends HttpServlet {
     private String handleViewProfile(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null) {
             request.setAttribute("message", "Vui lòng đăng nhập để xem thông tin cá nhân");
             return LOGIN_PAGE;
         }
-        
+
         // Refresh user data from database
         UserDAO userDAO = new UserDAO();
         UserDTO refreshedUser = userDAO.getUserById(user.getUsername());
-        
+
         if (refreshedUser != null) {
             session.setAttribute("user", refreshedUser);
             request.setAttribute("user", refreshedUser);
         }
-        
+
         return "profile.jsp";
     }
 
     private String handleUpdateProfile(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         UserDTO currentUser = (UserDTO) session.getAttribute("user");
-        
+
         if (currentUser == null) {
             request.setAttribute("message", "Vui lòng đăng nhập để cập nhật thông tin");
             return LOGIN_PAGE;
@@ -283,19 +296,48 @@ public class UserController extends HttpServlet {
         // For now, we'll just update the session
         session.setAttribute("user", currentUser);
         request.setAttribute("message", "Cập nhật thông tin thành công");
-        
+
         return "profile.jsp";
     }
 
     private String handleChangePassword(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         UserDTO currentUser = (UserDTO) session.getAttribute("user");
-        
+
+        String email = request.getParameter("email");
+
+        // ✅ Nếu không đăng nhập nhưng có email gửi lên → Xử lý "quên mật khẩu"
+        if (currentUser == null && email != null) {
+            if (email.trim().isEmpty()) {
+                request.setAttribute("message", "Vui lòng nhập email để khôi phục mật khẩu");
+                return "forgot_password.jsp";
+            }
+
+            UserDAO dao = new UserDAO();
+            String username = dao.findUsernameByEmail(email);
+
+            if (username != null) {
+                String tempPassword = "123456"; // hoặc UUID.randomUUID().toString().substring(0, 8)
+                boolean updated = dao.updatePasswordByEmail(email, tempPassword);
+                if (updated) {
+                    request.setAttribute("message", "Mật khẩu mới của bạn là: " + tempPassword);
+                } else {
+                    request.setAttribute("message", "Không thể cập nhật mật khẩu. Vui lòng thử lại.");
+                }
+            } else {
+                request.setAttribute("message", "Email không tồn tại trong hệ thống.");
+            }
+
+            return "forgot_password.jsp";
+        }
+
+        // ✅ Nếu chưa đăng nhập và không phải quên mật khẩu ⇒ Không được phép
         if (currentUser == null) {
             request.setAttribute("message", "Vui lòng đăng nhập để đổi mật khẩu");
             return LOGIN_PAGE;
         }
 
+        // ✅ Người dùng đã đăng nhập → xử lý đổi mật khẩu
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -322,12 +364,20 @@ public class UserController extends HttpServlet {
             return "changePassword.jsp";
         }
 
-        // Update password
-        currentUser.setPassword(newPassword);
-        session.setAttribute("user", currentUser);
-        request.setAttribute("message", "Đổi mật khẩu thành công");
-        
-        return "profile.jsp";
+        // Cập nhật mật khẩu vào DB
+        UserDAO dao = new UserDAO();
+        boolean updated = dao.updatePasswordByUsername(currentUser.getUsername(), newPassword);
+
+        if (updated) {
+            currentUser.setPassword(newPassword);
+            session.setAttribute("user", currentUser);
+            request.setAttribute("message", "Đổi mật khẩu thành công");
+        } else {
+            request.setAttribute("message", "Lỗi khi cập nhật mật khẩu. Vui lòng thử lại.");
+        }
+
+        request.setAttribute("success", "Thay đổi mật khẩu thành công. Bạn sẽ được đăng xuất sau 5 giây...");
+        return "changePassword.jsp";
     }
 
     @Override

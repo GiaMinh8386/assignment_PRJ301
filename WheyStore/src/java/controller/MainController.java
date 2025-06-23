@@ -1,31 +1,30 @@
 package controller;
 
-//import java.io.IOException;
-//import java.io.PrintWriter;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.util.List;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import model.UserDAO;
-//import model.UserDTO;
-
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
 import model.UserDAO;
 import model.UserDTO;
-import utils.AuthUtils;
 
+//import java.io.IOException;
+//import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import java.util.List;
+//import model.ProductDAO;
+//import model.ProductDTO;
+//import model.UserDAO;
+//import model.UserDTO;
+//import utils.AuthUtils;
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
@@ -37,7 +36,8 @@ public class MainController extends HttpServlet {
                 || "register".equals(action)
                 || "updateProfile".equals(action)
                 || "viewProfile".equals(action)
-                || "changePassword".equals(action);
+                || "changePassword".equals(action)
+                || "forgotPassword".equals(action);
     }
 
     private boolean isProductAction(String action) {
@@ -63,7 +63,7 @@ public class MainController extends HttpServlet {
             System.out.println("DEBUG MainController - Action received: " + action);
 
             if (action == null || action.equals("") || action.equals("home")) {
-                // FIXED: Load ALL products for home page
+                // Load ALL products for home page
                 System.out.println("DEBUG MainController - Loading home page with all products");
                 ProductDAO dao = new ProductDAO();
                 List<ProductDTO> list = dao.getAllProducts();
@@ -72,12 +72,11 @@ public class MainController extends HttpServlet {
                 url = "index.jsp";
             } else if (isUserAction(action)) {
                 System.out.println("DEBUG MainController - Forwarding to UserController");
-                url = "UserController"; // FIXED: Remove leading slash
+                url = "UserController";
             } else if (isProductAction(action)) {
                 System.out.println("DEBUG MainController - Forwarding to ProductController");
-                url = "ProductController"; // FIXED: Remove leading slash
+                url = "ProductController";
             } else {
-                // Handle unknown actions
                 System.out.println("DEBUG MainController - Unknown action: " + action);
                 request.setAttribute("message", "Unknown action: " + action);
                 url = "error.jsp";

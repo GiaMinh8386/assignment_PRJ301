@@ -166,7 +166,7 @@
             right: -10px;
             min-width: 180px;
         }
-        
+
         .search-container {
             max-width: 400px;
         }
@@ -203,56 +203,60 @@
                 
                 if (currentUser != null) {
             %>
-                <!-- User Dropdown -->
-                <div class="user-dropdown">
-                    <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
-                        <i class="fas fa-user-circle fa-2x me-2"></i>
-                        <div class="d-flex flex-column">
-                            <span style="font-size: 14px;">Xin chào</span>
-                            <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
-                        </div>
-                    </div>
-                    
-                    <!-- Dropdown Menu -->
-                    <div class="user-dropdown-menu" id="userDropdownMenu">
-                        <div class="dropdown-header">
-                            <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
-                        </div>
-                        
-                        <%
-                            try {
-                                if (AuthUtils.isAdmin(request)) {
-                        %>
-                            <a href="MainController?action=listProducts" class="dropdown-item">
-                                <i class="fas fa-box"></i>Quản lý sản phẩm
-                            </a>
-                            <a href="productForm.jsp" class="dropdown-item">
-                                <i class="fas fa-plus"></i>Thêm sản phẩm
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        <%
-                                }
-                            } catch (Exception e) {
-                                // Handle exception silently
-                            }
-                        %>
-                        
-                        <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
-                            <i class="fas fa-sign-out-alt"></i>Đăng xuất
-                        </a>
+            <!-- User Dropdown -->
+            <div class="user-dropdown">
+                <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
+                    <i class="fas fa-user-circle fa-2x me-2"></i>
+                    <div class="d-flex flex-column">
+                        <span style="font-size: 14px;">Xin chào</span>
+                        <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
                     </div>
                 </div>
+
+                <!-- Dropdown Menu -->
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-header">
+                        <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
+                    </div>
+
+                    <%
+                        try {
+                            if (AuthUtils.isAdmin(request)) {
+                    %>
+                    <a href="MainController?action=listProducts" class="dropdown-item">
+                        <i class="fas fa-box"></i>Quản lý sản phẩm
+                    </a>
+                    <a href="productForm.jsp" class="dropdown-item">
+                        <i class="fas fa-plus"></i>Thêm sản phẩm
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <%
+                            }
+                        } catch (Exception e) {
+                            // Handle exception silently
+                        }
+                    %>
+
+                    <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i>Đăng xuất
+                    </a>
+                    <a href="changePassword.jsp" class="dropdown-item">
+                        <i class="fas fa-key"></i>Thay đổi mật khẩu
+                    </a>
+                    <div class="dropdown-divider"></div>
+                </div>
+            </div>
             <%
                 } else {
             %>
-                <!-- Login Link -->
-                <a href="login.jsp" class="user-info">
-                    <i class="fas fa-user-circle fa-2x me-2"></i>
-                    <div class="d-flex flex-column">
-                        <span style="font-size: 14px;">Đăng nhập</span>
-                        <strong style="font-size: 16px;">Tài khoản</strong>
-                    </div>
-                </a>
+            <!-- Login Link -->
+            <a href="login.jsp" class="user-info">
+                <i class="fas fa-user-circle fa-2x me-2"></i>
+                <div class="d-flex flex-column">
+                    <span style="font-size: 14px;">Đăng nhập</span>
+                    <strong style="font-size: 16px;">Tài khoản</strong>
+                </div>
+            </a>
             <%
                 }
             %>
@@ -261,57 +265,57 @@
 </nav>
 
 <script>
-function toggleUserDropdown() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    dropdown.classList.toggle('show');
-    
-    // Close dropdown when clicking outside
-    setTimeout(() => {
-        document.addEventListener('click', closeDropdownOnClickOutside);
-    }, 10);
-}
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdownMenu');
+        dropdown.classList.toggle('show');
 
-function closeDropdownOnClickOutside(event) {
-    const dropdown = document.getElementById('userDropdownMenu');
-    const userInfo = document.getElementById('userInfoClick');
-    
-    if (dropdown && userInfo) {
-        if (!userInfo.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.classList.remove('show');
-            document.removeEventListener('click', closeDropdownOnClickOutside);
+        // Close dropdown when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', closeDropdownOnClickOutside);
+        }, 10);
+    }
+
+    function closeDropdownOnClickOutside(event) {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const userInfo = document.getElementById('userInfoClick');
+
+        if (dropdown && userInfo) {
+            if (!userInfo.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeDropdownOnClickOutside);
+            }
         }
     }
-}
 
-function confirmLogout() {
-    return confirm('Bạn có chắc chắn muốn đăng xuất?');
-}
+    function confirmLogout() {
+        return confirm('Bạn có chắc chắn muốn đăng xuất?');
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Header loaded with user dropdown');
-    
-    // Search form validation
-    const searchForm = document.querySelector('form[role="search"]');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            const keyword = this.querySelector('input[name="keyword"]');
-            if (keyword && keyword.value.trim().length < 2) {
-                e.preventDefault();
-                alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
-                keyword.focus();
-                return false;
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('✅ Header loaded with user dropdown');
+
+        // Search form validation
+        const searchForm = document.querySelector('form[role="search"]');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function (e) {
+                const keyword = this.querySelector('input[name="keyword"]');
+                if (keyword && keyword.value.trim().length < 2) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                    keyword.focus();
+                    return false;
+                }
+            });
+        }
+
+        // Close dropdown when pressing Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const dropdown = document.getElementById('userDropdownMenu');
+                if (dropdown) {
+                    dropdown.classList.remove('show');
+                }
             }
         });
-    }
-    
-    // Close dropdown when pressing Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const dropdown = document.getElementById('userDropdownMenu');
-            if (dropdown) {
-                dropdown.classList.remove('show');
-            }
-        }
     });
-});
 </script>
