@@ -57,8 +57,8 @@
             if (successMessage && successMessage.textContent.trim().length > 0) {
                 setTimeout(() => {
                     // Chuyển hướng sang trang logout (và trang chủ sau đó)
-                    window.location.href = "MainController?action=logout";
-                }, 5000); // 5000 ms = 5 giây
+                    window.location.href = "MainController?action=logout&destination=login";
+                }, 1000); // 1000 ms = 1 giây
             }
         </script>
     </body>
