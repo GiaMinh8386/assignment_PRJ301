@@ -760,34 +760,6 @@
                                                 });
                                             });
         </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const productId = this.getAttribute('data-productid');
-
-                        fetch('CartController', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: `action=add&productID=${productId}&qty=1`
-                        })
-                                .then(response => {
-                                    if (response.ok) {
-                                        alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
-                                        // Có thể cập nhật số lượng giỏ hàng ở header tại đây nếu cần
-                                    } else {
-                                        alert("❌ Không thể thêm sản phẩm!");
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Lỗi:', error);
-                                    alert("❌ Đã xảy ra lỗi khi thêm sản phẩm!");
-                                });
-                    });
-                });
-            });
-        </script>
+        
     </body>
 </html>
