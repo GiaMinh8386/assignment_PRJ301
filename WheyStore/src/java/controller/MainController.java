@@ -56,6 +56,13 @@ public class MainController extends HttpServlet {
                 || "productDetail".equals(action);
     }
 
+    private boolean isCartAction(String action) {
+        return "add".equals(action)
+                || "remove".equals(action)
+                || "update".equals(action)
+                || "view".equals(action);
+    }
+
     /*--------------------------------------------------------------
      * NEW: Load categories once per request so JSP sidebar can loop
      *-------------------------------------------------------------*/
@@ -97,6 +104,10 @@ public class MainController extends HttpServlet {
             } else if (isProductAction(action)) {
                 System.out.println("DEBUG MainController - Forwarding to ProductController");
                 url = "ProductController";
+
+            } else if (isCartAction(action)) {
+                System.out.println("DEBUG MainController - Forwarding to CartController");
+                url = "CartController";
             } else {
                 System.out.println("DEBUG MainController - Unknown action: " + action);
                 request.setAttribute("message", "Unknown action: " + action);

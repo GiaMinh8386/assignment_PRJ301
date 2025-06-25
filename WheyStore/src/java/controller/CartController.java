@@ -76,34 +76,26 @@ public class CartController extends HttpServlet {
  /*------------------------------------------------------------*/
     private String handleAdd(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
-        String pid = req.getParameter("productID");
+        String pid    = req.getParameter("productID");
         String qtyRaw = req.getParameter("qty");
 
         int qty = 1;
         try {
-            if (qtyRaw != null) {
-                qty = Integer.parseInt(qtyRaw);
-            }
-            if (qty < 1) {
-                qty = 1;
-            }
-        } catch (NumberFormatException e) {
-            // Giữ qty = 1
-        }
+            if (qtyRaw != null)  qty = Integer.parseInt(qtyRaw);
+            if (qty < 1)         qty = 1;
+        } catch (NumberFormatException ignored) {}
 
-        /* --- 1. kiểm tra sản phẩm --- */
+        /* 1. kiểm tra sản phẩm */
         ProductDTO p = productDAO.getProductByID(pid);
         if (p == null || !p.isStatus()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Product invalid");
             return null;
         }
 
-        /* --- 2. lưu giỏ trong session --- */
+        /* 2. lưu giỏ trong session */
         HttpSession session = req.getSession(true);
         Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new HashMap<>();
-        }
+        if (cart == null) cart = new HashMap<>();
 
         CartItemDTO item = cart.get(pid);
         if (item == null) {
@@ -114,33 +106,25 @@ public class CartController extends HttpServlet {
         cart.put(pid, item);
         session.setAttribute("cart", cart);
 
-        /* --- 3. lưu DB nếu đã đăng nhập --- */
+        /* 3. lưu DB nếu đã đăng nhập */
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user != null) {
             cartDAO.addOrUpdate(user.getUserID(), pid, qty);
         }
 
-        /* --- 4. phản hồi: AJAX => JSON | form thường => redirect back --- */
-        boolean ajax = XML_HTTP_REQUEST.equals(req.getHeader("X-Requested-With"));
-        if (ajax) {
-            resp.setContentType("application/json; charset=UTF-8");
-            resp.getWriter().write(
-                    "{\"status\":\"ok\",\"items\":" + cart.size() + ",\"product\":\"" + p.getName().replace("\"", "") + "\"}"
-            );
-        } else {
-            String referer = req.getHeader("referer");
-            resp.sendRedirect(referer != null ? referer : "CartController?action=view");
-        }
+        /* 4. luôn redirect về trang gọi */
+        String referer = req.getHeader("referer");
+        resp.sendRedirect(referer != null ? referer : "CartController?action=view");
         return null;
     }
 
     /*------------------------------------------------------------*/
- /* 2. UPDATE QUANTITY                                         */
- /*------------------------------------------------------------*/
+    /* 2. UPDATE QUANTITY                                         */
+    /*------------------------------------------------------------*/
     private String handleUpdate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         String pid = req.getParameter("productID");
-        int qty = Integer.parseInt(req.getParameter("qty"));
+        int qty    = Integer.parseInt(req.getParameter("qty"));
 
         HttpSession session = req.getSession(false);
         Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
@@ -153,43 +137,33 @@ public class CartController extends HttpServlet {
             cartDAO.updateQuantity(user.getUserID(), pid, qty);
         }
 
-        if (XML_HTTP_REQUEST.equals(req.getHeader("X-Requested-With"))) {
-            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);   // 204
-        } else {
-            resp.sendRedirect("CartController?action=view");
-        }
+        resp.sendRedirect(req.getHeader("referer"));
         return null;
     }
 
     /*------------------------------------------------------------*/
- /* 3. REMOVE                                                  */
- /*------------------------------------------------------------*/
+    /* 3. REMOVE                                                  */
+    /*------------------------------------------------------------*/
     private String handleRemove(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         String pid = req.getParameter("productID");
 
         HttpSession session = req.getSession(false);
         Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
-        if (cart != null) {
-            cart.remove(pid);
-        }
+        if (cart != null) cart.remove(pid);
 
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user != null) {
             cartDAO.remove(user.getUserID(), pid);
         }
 
-        if (XML_HTTP_REQUEST.equals(req.getHeader("X-Requested-With"))) {
-            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);   // 204
-        } else {
-            resp.sendRedirect("CartController?action=view");
-        }
+        resp.sendRedirect(req.getHeader("referer"));
         return null;
     }
 
     /*------------------------------------------------------------*/
- /* 4. VIEW CART                                               */
- /*------------------------------------------------------------*/
+    /* 4. VIEW CART                                               */
+    /*------------------------------------------------------------*/
     private String handleView(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         HttpSession session = req.getSession(true);

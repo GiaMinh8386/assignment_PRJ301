@@ -494,13 +494,11 @@
                                            class="btn product-btn">
                                             <i class="fas fa-eye me-2"></i>Xem chi tiết
                                         </a>
-                                        <form action="CartController" method="post" class="d-inline">
+                                        <form action="MainController" method="post" style="display:inline;">
                                             <input type="hidden" name="action" value="add">
                                             <input type="hidden" name="productID" value="<%= p.getId() %>">
                                             <input type="hidden" name="qty" value="1">
-                                            <button class="btn product-btn mt-2">
-                                                <i class="fas fa-cart-plus me-2"></i>Thêm giỏ hàng
-                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary">Thêm vào giỏ hàng</button>
                                         </form>
                                     </div>
                                 </div>
