@@ -465,12 +465,14 @@
                             <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                                 <div class="card product-card">
                                     <%
-                                        String imagePath = (p.getImage() != null && !p.getImage().trim().isEmpty()) 
-                                                         ? "assets/images/" + p.getImage() 
-                                                         : "https://via.placeholder.com/300x200/f8f9fa/6c757d?text=No+Image";
+                                        /* ---- Xây dựng đường dẫn chuẩn tới thư mục ảnh ---- */
+                                        String baseImagePath = request.getContextPath() + "/assets/images/products/";
+                                        String imagePath = (p.getImage() != null && !p.getImage().trim().isEmpty())? baseImagePath + p.getImage() : baseImagePath + "default.png";
                                     %>
-                                    <img src="<%= imagePath %>" class="product-image" alt="<%= p.getName() %>"
-                                         onerror="this.src='https://via.placeholder.com/300x200/f8f9fa/6c757d?text=No+Image'">
+                                    <img src="<%= imagePath %>"
+                                         class="product-image"
+                                         alt="<%= p.getName() %>"
+                                         onerror="this.onerror=null; this.src='<%= baseImagePath %>default.png';">
 
                                     <div class="product-info">
                                         <%
@@ -760,6 +762,6 @@
                                                 });
                                             });
         </script>
-        
+
     </body>
 </html>
