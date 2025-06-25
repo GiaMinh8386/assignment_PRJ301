@@ -22,7 +22,7 @@ CREATE TABLE [dbo].[tblUsers] (
 	[phone] [varchar](20),
 	[address] [nvarchar](255),
 	[username] [varchar](50) NOT NULL UNIQUE,
-	[password] [nvarchar](50) NOT NULL,
+	[password] [nvarchar](256) NOT NULL,
 	[roleID] [nvarchar](50) NOT NULL CHECK (RoleID IN ('AD', 'MB')),
 	[status] [bit] NULL,
 	[createdDate] DATETIME DEFAULT GETDATE()

@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import utils.DbUtils;
 
 public class UserDAO {
@@ -40,6 +42,34 @@ public class UserDAO {
             System.out.println("DEBUG getUserById - Error: " + e.getMessage());
         }
         return null;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        List<UserDTO> userList = new ArrayList<>();
+        String sql = "SELECT userID, fullname, email, phone, address, username, password, roleID, status, createdDate FROM tblUsers ORDER BY userID";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UserDTO user = new UserDTO();
+                user.setUserID(rs.getString("userID"));
+                user.setFullName(rs.getString("fullname"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRoleID(rs.getString("roleID"));
+                user.setStatus(rs.getBoolean("status"));
+                Timestamp ts = rs.getTimestamp("createdDate");
+                user.setCreatedDate(ts != null ? ts.toLocalDateTime() : null);
+                userList.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
     }
 
     public boolean login(String username, String password) {
@@ -145,6 +175,21 @@ public class UserDAO {
             System.out.println("DEBUG findUsernameByEmail - Error: " + e.getMessage());
         }
         return null;
+    }
+    
+    public boolean updatePassword(String userID, String newPassword) {
+        String sql = "UPDATE tblUsers SET password = ? WHERE userID = ?";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newPassword);
+            ps.setString(2, userID);
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updatePasswordByEmail(String email, String newPassword) {
