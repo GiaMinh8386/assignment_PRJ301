@@ -12,6 +12,9 @@ import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
 import utils.AuthUtils;
+import model.CategoryDAO;
+import model.CategoryDTO;
+import java.util.ArrayList;
 
 
 //import java.io.IOException;
@@ -29,6 +32,16 @@ import utils.AuthUtils;
 public class ProductController extends HttpServlet {
 
     ProductDAO pdao = new ProductDAO();
+    
+    private void loadCategories(HttpServletRequest request) {
+    try {
+        List<CategoryDTO> list = new CategoryDAO().getAll();
+        request.setAttribute("categories", list);
+    } catch (Exception ex) {
+        log("Cannot load categories", ex);
+        request.setAttribute("categories", new ArrayList<CategoryDTO>());
+    }
+}
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,6 +76,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("message", "System error occurred: " + e.getMessage());
             url = "error.jsp";
         } finally {
+            loadCategories(request);
             System.out.println("DEBUG ProductController - Forwarding to: " + url);
             request.getRequestDispatcher(url).forward(request, response);
         }

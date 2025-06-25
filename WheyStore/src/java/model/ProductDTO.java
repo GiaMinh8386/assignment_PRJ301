@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.math.BigDecimal;
+
 public class ProductDTO {
 
     private String id;               // ProductID
@@ -129,5 +131,8 @@ public class ProductDTO {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
-}
 
+    public BigDecimal getPriceBigDec() {
+        return BigDecimal.valueOf(price);
+    }
+}

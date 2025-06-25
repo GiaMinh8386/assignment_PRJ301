@@ -203,65 +203,74 @@
                 
                 if (currentUser != null) {
             %>
-            <!-- User Dropdown -->
-            <div class="user-dropdown">
-                <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
-                    <i class="fas fa-user-circle fa-2x me-2"></i>
-                    <div class="d-flex flex-column">
-                        <span style="font-size: 14px;">Xin chào</span>
-                        <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
+
+            <div class="d-flex align-items-center">
+                <!-- Giỏ hàng -->
+                <a href="CartController?action=view" class="btn btn-outline-light me-3">
+                    <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                </a>
+
+                <!-- User dropdown -->
+                <div class="user-dropdown">
+                    <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
+                        <i class="fas fa-user-circle fa-2x me-2"></i>
+                        <div class="d-flex flex-column">
+                            <span style="font-size: 14px;">Xin chào</span>
+                            <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Dropdown Menu -->
-                <div class="user-dropdown-menu" id="userDropdownMenu">
-                    <div class="dropdown-header">
-                        <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
-                    </div>
-
-                    <%
-                        try {
-                            if (AuthUtils.isAdmin(request)) {
-                    %>
-                    <a href="MainController?action=listProducts" class="dropdown-item">
-                        <i class="fas fa-box"></i>Quản lý sản phẩm
-                    </a>
-                    <a href="productForm.jsp" class="dropdown-item">
-                        <i class="fas fa-plus"></i>Thêm sản phẩm
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <%
-                            }
-                        } catch (Exception e) {
-                            // Handle exception silently
-                        }
-                    %>
-
-                    <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
-                        <i class="fas fa-sign-out-alt"></i>Đăng xuất
-                    </a>
-                    <a href="changePassword.jsp" class="dropdown-item">
-                        <i class="fas fa-key"></i>Thay đổi mật khẩu
-                    </a>
-                    <div class="dropdown-divider"></div>
                 </div>
             </div>
-            <%
-                } else {
-            %>
-            <!-- Login Link -->
-            <a href="login.jsp" class="user-info">
-                <i class="fas fa-user-circle fa-2x me-2"></i>
-                <div class="d-flex flex-column">
-                    <span style="font-size: 14px;">Đăng nhập</span>
-                    <strong style="font-size: 16px;">Tài khoản</strong>
+
+            <!-- Dropdown Menu -->
+            <div class="user-dropdown-menu" id="userDropdownMenu">
+                <div class="dropdown-header">
+                    <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
                 </div>
-            </a>
-            <%
-                }
-            %>
+
+                <%
+                    try {
+                        if (AuthUtils.isAdmin(request)) {
+                %>
+                <a href="MainController?action=listProducts" class="dropdown-item">
+                    <i class="fas fa-box"></i>Quản lý sản phẩm
+                </a>
+                <a href="productForm.jsp" class="dropdown-item">
+                    <i class="fas fa-plus"></i>Thêm sản phẩm
+                </a>
+                <div class="dropdown-divider"></div>
+                <%
+                        }
+                    } catch (Exception e) {
+                        // Handle exception silently
+                    }
+                %>
+
+                <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
+                    <i class="fas fa-sign-out-alt"></i>Đăng xuất
+                </a>
+                <a href="changePassword.jsp" class="dropdown-item">
+                    <i class="fas fa-key"></i>Thay đổi mật khẩu
+                </a>
+                <div class="dropdown-divider"></div>
+            </div>
         </div>
+        <%
+            } else {
+        %>
+        <!-- Login Link -->
+        <a href="login.jsp" class="user-info">
+            <i class="fas fa-user-circle fa-2x me-2"></i>
+            <div class="d-flex flex-column">
+                <span style="font-size: 14px;">Đăng nhập</span>
+                <strong style="font-size: 16px;">Tài khoản</strong>
+            </div>
+        </a>
+        <%
+            }
+        %>
     </div>
+</div>
 </nav>
 
 <script>

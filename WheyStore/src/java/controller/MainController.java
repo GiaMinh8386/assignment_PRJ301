@@ -1,35 +1,39 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
-import model.UserDAO;
-import model.UserDTO;
+import model.CategoryDAO;
+import model.CategoryDTO;
 
-//import java.io.IOException;
-//import javax.servlet.ServletException;
-//import javax.servlet.annotation.WebServlet;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import java.util.List;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import model.UserDAO;
-//import model.UserDTO;
-//import utils.AuthUtils;
+//    import java.io.IOException;
+//    import javax.servlet.ServletException;
+//    import javax.servlet.annotation.WebServlet;
+//    import javax.servlet.http.HttpServlet;
+//    import javax.servlet.http.HttpServletRequest;
+//    import javax.servlet.http.HttpServletResponse;
+//    import java.util.List;
+//    import model.ProductDAO;
+//    import model.ProductDTO;
+//    import model.UserDAO;
+//    import model.UserDTO;
+//    import utils.AuthUtils;
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
     private static final String LOGIN_PAGE = "login.jsp";
 
+    /*--------------------------------------------------------------
+     * Utility: Determine action type
+     *-------------------------------------------------------------*/
     private boolean isUserAction(String action) {
         return "login".equals(action)
                 || "logout".equals(action)
@@ -52,6 +56,23 @@ public class MainController extends HttpServlet {
                 || "productDetail".equals(action);
     }
 
+    /*--------------------------------------------------------------
+     * NEW: Load categories once per request so JSP sidebar can loop
+     *-------------------------------------------------------------*/
+    private void loadCategories(HttpServletRequest request) {
+        try {
+            List<CategoryDTO> categories = new CategoryDAO().getAll();
+            request.setAttribute("categories", categories);
+        } catch (SQLException | ClassNotFoundException ex) {
+            log("Cannot load categories", ex);
+            // fallback: provide empty list to avoid null check in JSP
+            request.setAttribute("categories", new ArrayList<CategoryDTO>());
+        }
+    }
+
+    /*--------------------------------------------------------------
+     * Main dispatcher
+     *-------------------------------------------------------------*/
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -62,7 +83,7 @@ public class MainController extends HttpServlet {
             String action = request.getParameter("action");
             System.out.println("DEBUG MainController - Action received: " + action);
 
-            if (action == null || action.equals("") || action.equals("home")) {
+            if (action == null || action.isEmpty() || "home".equals(action)) {
                 // Load ALL products for home page
                 System.out.println("DEBUG MainController - Loading home page with all products");
                 ProductDAO dao = new ProductDAO();
@@ -88,6 +109,9 @@ public class MainController extends HttpServlet {
             request.setAttribute("message", "System error occurred: " + e.getMessage());
             url = "error.jsp";
         } finally {
+            // *** BEGIN FIX: always provide category list for sidebar ***
+            loadCategories(request);
+            // *** END FIX ***
             System.out.println("DEBUG MainController - Final URL: " + url);
             request.getRequestDispatcher(url).forward(request, response);
         }
@@ -107,6 +131,6 @@ public class MainController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Main routing servlet with enhanced product search support";
+        return "Main routing servlet with enhanced product and category support";
     }
 }
