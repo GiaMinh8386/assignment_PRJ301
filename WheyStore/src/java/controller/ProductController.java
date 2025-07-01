@@ -1,32 +1,32 @@
 package controller;
 
-
-
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.ProductDAO;
-import model.ProductDTO;
-import utils.AuthUtils;
-import model.CategoryDAO;
-import model.CategoryDTO;
-import java.util.ArrayList;
-
-
 //import java.io.IOException;
-//import javax.servlet.ServletException;
-//import javax.servlet.annotation.WebServlet;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.annotation.WebServlet;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
+//import java.util.List;
 //import model.ProductDAO;
 //import model.ProductDTO;
 //import utils.AuthUtils;
-//import java.util.List;
+//import model.CategoryDAO;
+//import model.CategoryDTO;
+//import java.util.ArrayList;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import model.ProductDAO;
+import model.ProductDTO;
+import utils.AuthUtils;
+import java.util.List;
+import model.CategoryDAO;
+import model.CategoryDTO;
+import java.util.ArrayList;
 
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
@@ -34,14 +34,14 @@ public class ProductController extends HttpServlet {
     ProductDAO pdao = new ProductDAO();
     
     private void loadCategories(HttpServletRequest request) {
-    try {
-        List<CategoryDTO> list = new CategoryDAO().getAll();
-        request.setAttribute("categories", list);
-    } catch (Exception ex) {
-        log("Cannot load categories", ex);
-        request.setAttribute("categories", new ArrayList<CategoryDTO>());
+        try {
+            List<CategoryDTO> list = new CategoryDAO().getAll();
+            request.setAttribute("categories", list);
+        } catch (Exception ex) {
+            log("Cannot load categories", ex);
+            request.setAttribute("categories", new ArrayList<CategoryDTO>());
+        }
     }
-}
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,6 +66,14 @@ public class ProductController extends HttpServlet {
                 url = handleFilterByBrand(request, response);
             } else if ("productDetail".equals(action)) {
                 url = handleProductDetail(request, response);
+            } else if ("adminDashboard".equals(action)) {
+                url = handleAdminDashboard(request, response);
+            } else if ("editProduct".equals(action)) {
+                url = handleEditProduct(request, response);
+            } else if ("updateProduct".equals(action)) {
+                url = handleUpdateProduct(request, response);
+            } else if ("deleteProduct".equals(action)) {
+                url = handleDeleteProduct(request, response);
             } else {
                 System.out.println("DEBUG ProductController - Unknown action, using default");
                 url = "index.jsp";
@@ -79,6 +87,52 @@ public class ProductController extends HttpServlet {
             loadCategories(request);
             System.out.println("DEBUG ProductController - Forwarding to: " + url);
             request.getRequestDispatcher(url).forward(request, response);
+        }
+    }
+
+    /**
+     * NEW: Handle Admin Dashboard
+     */
+    private String handleAdminDashboard(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền truy cập trang này!");
+            return "error.jsp";
+        }
+        
+        try {
+            System.out.println("DEBUG handleAdminDashboard - Loading dashboard data...");
+            
+            // Load all products for dashboard
+            List<ProductDTO> allProducts = pdao.getAllProducts();
+            request.setAttribute("allProducts", allProducts);
+            
+            // Calculate statistics
+            int totalProducts = allProducts != null ? allProducts.size() : 0;
+            int activeProducts = 0;
+            int inactiveProducts = 0;
+            
+            if (allProducts != null) {
+                for (ProductDTO p : allProducts) {
+                    if (p.isStatus()) {
+                        activeProducts++;
+                    } else {
+                        inactiveProducts++;
+                    }
+                }
+            }
+            
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("activeProducts", activeProducts);
+            request.setAttribute("inactiveProducts", inactiveProducts);
+            
+            System.out.println("DEBUG handleAdminDashboard - Stats: Total=" + totalProducts + 
+                             ", Active=" + activeProducts + ", Inactive=" + inactiveProducts);
+            
+            return "adminDashboard.jsp";
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error loading dashboard: " + e.getMessage());
+            return "error.jsp";
         }
     }
 
@@ -287,10 +341,49 @@ public class ProductController extends HttpServlet {
     }
 
     /**
-     * Handle adding new product (Admin only)
+     * NEW: Handle Edit Product
      */
-    private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
-        if (AuthUtils.isAdmin(request)) {
+    private String handleEditProduct(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
+            return "error.jsp";
+        }
+        
+        try {
+            String productId = request.getParameter("id");
+            System.out.println("DEBUG handleEditProduct - ProductId: " + productId);
+            
+            if (productId == null || productId.trim().isEmpty()) {
+                request.setAttribute("message", "Product ID is required!");
+                return "error.jsp";
+            }
+            
+            ProductDTO product = pdao.getProductByID(productId);
+            if (product == null) {
+                request.setAttribute("message", "Product not found!");
+                return "error.jsp";
+            }
+            
+            request.setAttribute("product", product);
+            request.setAttribute("isEdit", true);
+            return "productForm.jsp";
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error loading product for edit: " + e.getMessage());
+            return "error.jsp";
+        }
+    }
+
+    /**
+     * NEW: Handle Update Product
+     */
+    private String handleUpdateProduct(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền cập nhật sản phẩm!");
+            return "error.jsp";
+        }
+        
+        try {
             // Get form data
             String id = request.getParameter("id");
             String name = request.getParameter("name");
@@ -302,12 +395,6 @@ public class ProductController extends HttpServlet {
             String status = request.getParameter("status");
 
             boolean hasError = false;
-
-            // Validate product ID
-            if (pdao.isProductExists(id)) {
-                request.setAttribute("idError", "This Product ID already exists.");
-                hasError = true;
-            }
 
             // Validate product name
             if (name == null || name.trim().isEmpty()) {
@@ -338,26 +425,142 @@ public class ProductController extends HttpServlet {
             }
 
             // Set default status if not provided
-            boolean status_value = "true".equals(status) || status == null; // Default to true
+            boolean status_value = "true".equals(status);
 
             // Create product object to retain form values
             ProductDTO product = new ProductDTO(id, name, description, brand, price_value, image, category, status_value);
             request.setAttribute("product", product);
+            request.setAttribute("isEdit", true);
 
             if (hasError) {
                 return "productForm.jsp";
             }
 
-            // Try to create product
-            if (!pdao.create(product)) {
-                request.setAttribute("createError", "Cannot add product!");
+            // Try to update product
+            if (!pdao.update(product)) {
+                request.setAttribute("updateError", "Cannot update product!");
                 return "productForm.jsp";
             }
 
-            request.setAttribute("message", "Add product successfully!");
+            request.setAttribute("message", "Update product successfully!");
+            response.sendRedirect("ProductController?action=adminDashboard");
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error updating product: " + e.getMessage());
+            return "error.jsp";
+        }
+    }
+
+    /**
+     * NEW: Handle Delete Product
+     */
+    private String handleDeleteProduct(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền xóa sản phẩm!");
+            return "error.jsp";
+        }
+        
+        try {
+            String productId = request.getParameter("id");
+            System.out.println("DEBUG handleDeleteProduct - ProductId: " + productId);
+            
+            if (productId == null || productId.trim().isEmpty()) {
+                request.setAttribute("message", "Product ID is required!");
+                return "error.jsp";
+            }
+            
+            if (pdao.delete(productId)) {
+                System.out.println("DEBUG handleDeleteProduct - Product deleted successfully");
+                response.sendRedirect("ProductController?action=adminDashboard");
+                return null;
+            } else {
+                request.setAttribute("message", "Cannot delete product!");
+                return "error.jsp";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error deleting product: " + e.getMessage());
+            return "error.jsp";
+        }
+    }
+
+    /**
+     * Handle adding new product (Admin only)
+     */
+    private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền thêm sản phẩm!");
+            return "error.jsp";
+        }
+        
+        // Get form data
+        String id = request.getParameter("id");
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+        String brand = request.getParameter("brand");
+        String price = request.getParameter("price");
+        String image = request.getParameter("image");
+        String categoryId = request.getParameter("categoryId");
+        String status = request.getParameter("status");
+
+        boolean hasError = false;
+
+        // Validate product ID
+        if (pdao.isProductExists(id)) {
+            request.setAttribute("idError", "This Product ID already exists.");
+            hasError = true;
+        }
+
+        // Validate product name
+        if (name == null || name.trim().isEmpty()) {
+            request.setAttribute("nameError", "Product name cannot be empty.");
+            hasError = true;
+        }
+
+        // Validate price
+        double price_value = 0;
+        try {
+            price_value = Double.parseDouble(price);
+            if (price_value < 0) {
+                request.setAttribute("priceError", "Price must be greater than zero.");
+                hasError = true;
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("priceError", "Price must be a number.");
+            hasError = true;
+        }
+
+        // Validate category
+        int category = 0;
+        try {
+            category = Integer.parseInt(categoryId);
+        } catch (NumberFormatException e) {
+            request.setAttribute("categoryError", "Category ID must be a number.");
+            hasError = true;
+        }
+
+        // Set default status if not provided
+        boolean status_value = "true".equals(status) || status == null; // Default to true
+
+        // Create product object to retain form values
+        ProductDTO product = new ProductDTO(id, name, description, brand, price_value, image, category, status_value);
+        request.setAttribute("product", product);
+
+        if (hasError) {
             return "productForm.jsp";
         }
-        return "accessDenied.jsp";
+
+        // Try to create product
+        if (!pdao.create(product)) {
+            request.setAttribute("createError", "Cannot add product!");
+            return "productForm.jsp";
+        }
+
+        request.setAttribute("message", "Add product successfully!");
+        return "productForm.jsp";
     }
 
     // Standard servlet methods
@@ -375,6 +578,6 @@ public class ProductController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Product management servlet with enhanced search functionality";
+        return "Product management servlet with enhanced search functionality and admin dashboard";
     }
 }

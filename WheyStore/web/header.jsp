@@ -1,6 +1,8 @@
 <%@ page pageEncoding="UTF-8" %>
 <%@ page import="model.UserDTO" %>
 <%@ page import="utils.AuthUtils" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.CartItemDTO" %>
 
 <style>
     body {
@@ -61,6 +63,185 @@
     .input-group .btn-search:hover {
         background-color: #8b1e16;
         color: white;
+    }
+
+    /* ===== CART DROPDOWN STYLES ===== */
+    .cart-dropdown {
+        position: relative;
+    }
+
+    .cart-button {
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: none;
+        border: none;
+    }
+
+    .cart-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .cart-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e9ecef;
+        min-width: 320px;
+        max-width: 400px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        margin-top: 5px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .cart-dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .cart-header {
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #b02a20 0%, #8b1e16 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+        font-weight: 600;
+        font-size: 14px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .cart-item {
+        padding: 12px 20px;
+        border-bottom: 1px solid #f8f9fa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item-info {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 13px;
+        margin-bottom: 2px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .cart-item-details {
+        font-size: 11px;
+        color: #666;
+    }
+
+    .cart-empty {
+        padding: 30px 20px;
+        text-align: center;
+        color: #666;
+    }
+
+    .cart-empty i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #ddd;
+    }
+
+    .cart-footer {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .cart-total {
+        font-weight: 700;
+        color: #b02a20;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .cart-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .cart-btn {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .cart-btn-primary {
+        background: #b02a20;
+        color: white;
+    }
+
+    .cart-btn-primary:hover {
+        background: #8b1e16;
+        color: white;
+        text-decoration: none;
+    }
+
+    .cart-btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .cart-btn-secondary:hover {
+        background: #545b62;
+        color: white;
+        text-decoration: none;
     }
 
     /* ===== USER DROPDOWN STYLES ===== */
@@ -159,18 +340,6 @@
         background-color: #fff5f5;
         color: #dc3545 !important;
     }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-        .user-dropdown-menu {
-            right: -10px;
-            min-width: 180px;
-        }
-
-        .search-container {
-            max-width: 400px;
-        }
-    }
 </style>
 
 <nav class="navbar navbar-expand-lg px-4 py-3">
@@ -180,7 +349,7 @@
             <i class="fas fa-dumbbell me-2"></i>GymLife
         </a>
 
-        <!-- Search Form - SIMPLIFIED -->
+        <!-- Search Form -->
         <form class="search-container" role="search" action="MainController" method="get">
             <input type="hidden" name="action" value="searchProduct">
             <div class="input-group">
@@ -205,10 +374,79 @@
             %>
 
             <div class="d-flex align-items-center">
-                <!-- Giỏ hàng -->
-                <a href="CartController?action=view" class="btn btn-outline-light me-3">
-                    <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                </a>
+                <!-- Cart Dropdown -->
+                <div class="cart-dropdown me-3">
+                    <button class="cart-button" onclick="toggleCartDropdown()" id="cartButton">
+                        <i class="fas fa-shopping-cart fa-lg"></i>
+                        <%
+                            Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
+                            int cartCount = 0;
+                            if (cart != null) {
+                                for (CartItemDTO item : cart.values()) {
+                                    cartCount += item.getQuantity();
+                                }
+                            }
+                            if (cartCount > 0) {
+                        %>
+                        <span class="cart-badge" id="cartBadge"><%= cartCount %></span>
+                        <%
+                            }
+                        %>
+                    </button>
+                    
+                    <!-- Cart Dropdown Menu -->
+                    <div class="cart-dropdown-menu" id="cartDropdownMenu">
+                        <div class="cart-header">
+                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
+                        </div>
+                        
+                        <div id="cartItems">
+                            <%
+                                if (cart != null && !cart.isEmpty()) {
+                                    java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+                                    for (CartItemDTO item : cart.values()) {
+                                        total = total.add(item.getLineTotal());
+                            %>
+                            <div class="cart-item">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-name"><%= item.getProductName() %></div>
+                                    <div class="cart-item-details">
+                                        Số lượng: <%= item.getQuantity() %> × <%= String.format("%,.0f", item.getUnitPrice()) %>₫
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <strong><%= String.format("%,.0f", item.getLineTotal()) %>₫</strong>
+                                </div>
+                            </div>
+                            <%
+                                    }
+                            %>
+                            <div class="cart-footer">
+                                <div class="cart-total">
+                                    Tổng cộng: <%= String.format("%,.0f", total) %>₫
+                                </div>
+                                <div class="cart-actions">
+                                    <a href="<%= request.getContextPath() %>/CartController?action=view" class="cart-btn cart-btn-primary">
+                                        <i class="fas fa-shopping-cart me-1"></i>Xem giỏ hàng
+                                    </a>
+                                    <a href="<%= request.getContextPath() %>/OrderController?action=checkout" class="cart-btn cart-btn-secondary">
+                                        <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                    </a>
+                                </div>
+                            </div>
+                            <%
+                                } else {
+                            %>
+                            <div class="cart-empty">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>Giỏ hàng trống</p>
+                            </div>
+                            <%
+                                }
+                            %>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- User dropdown -->
                 <div class="user-dropdown">
@@ -222,7 +460,7 @@
                 </div>
             </div>
 
-            <!-- Dropdown Menu -->
+            <!-- User Dropdown Menu -->
             <div class="user-dropdown-menu" id="userDropdownMenu">
                 <div class="dropdown-header">
                     <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
@@ -232,6 +470,9 @@
                     try {
                         if (AuthUtils.isAdmin(request)) {
                 %>
+                <a href="ProductController?action=adminDashboard" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard Admin
+                </a>
                 <a href="MainController?action=listProducts" class="dropdown-item">
                     <i class="fas fa-box"></i>Quản lý sản phẩm
                 </a>
@@ -246,11 +487,11 @@
                     }
                 %>
 
-                <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
-                    <i class="fas fa-sign-out-alt"></i>Đăng xuất
-                </a>
                 <a href="changePassword.jsp" class="dropdown-item">
                     <i class="fas fa-key"></i>Thay đổi mật khẩu
+                </a>
+                <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
+                    <i class="fas fa-sign-out-alt"></i>Đăng xuất
                 </a>
                 <div class="dropdown-divider"></div>
             </div>
@@ -258,7 +499,7 @@
         <%
             } else {
         %>
-        <!-- Login Link -->
+        <!-- Login Link for Guest Users -->
         <a href="login.jsp" class="user-info">
             <i class="fas fa-user-circle fa-2x me-2"></i>
             <div class="d-flex flex-column">
@@ -274,24 +515,76 @@
 </nav>
 
 <script>
-    function toggleUserDropdown() {
-        const dropdown = document.getElementById('userDropdownMenu');
-        dropdown.classList.toggle('show');
+    // Global variables
+    let cartDropdownOpen = false;
+    let userDropdownOpen = false;
 
-        // Close dropdown when clicking outside
-        setTimeout(() => {
-            document.addEventListener('click', closeDropdownOnClickOutside);
-        }, 10);
+    // Toggle cart dropdown
+    function toggleCartDropdown() {
+        const dropdown = document.getElementById('cartDropdownMenu');
+        const userDropdown = document.getElementById('userDropdownMenu');
+        
+        // Close user dropdown if open
+        if (userDropdownOpen) {
+            userDropdown.classList.remove('show');
+            userDropdownOpen = false;
+        }
+        
+        cartDropdownOpen = !cartDropdownOpen;
+        dropdown.classList.toggle('show', cartDropdownOpen);
+        
+        if (cartDropdownOpen) {
+            setTimeout(() => {
+                document.addEventListener('click', closeCartDropdownOnClickOutside);
+            }, 10);
+        }
     }
 
-    function closeDropdownOnClickOutside(event) {
+    // Toggle user dropdown
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const cartDropdown = document.getElementById('cartDropdownMenu');
+        
+        // Close cart dropdown if open
+        if (cartDropdownOpen) {
+            cartDropdown.classList.remove('show');
+            cartDropdownOpen = false;
+        }
+        
+        userDropdownOpen = !userDropdownOpen;
+        dropdown.classList.toggle('show', userDropdownOpen);
+        
+        if (userDropdownOpen) {
+            setTimeout(() => {
+                document.addEventListener('click', closeUserDropdownOnClickOutside);
+            }, 10);
+        }
+    }
+
+    // Close cart dropdown when clicking outside
+    function closeCartDropdownOnClickOutside(event) {
+        const dropdown = document.getElementById('cartDropdownMenu');
+        const cartButton = document.getElementById('cartButton');
+
+        if (dropdown && cartButton) {
+            if (!cartButton.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                cartDropdownOpen = false;
+                document.removeEventListener('click', closeCartDropdownOnClickOutside);
+            }
+        }
+    }
+
+    // Close user dropdown when clicking outside
+    function closeUserDropdownOnClickOutside(event) {
         const dropdown = document.getElementById('userDropdownMenu');
         const userInfo = document.getElementById('userInfoClick');
 
         if (dropdown && userInfo) {
             if (!userInfo.contains(event.target) && !dropdown.contains(event.target)) {
                 dropdown.classList.remove('show');
-                document.removeEventListener('click', closeDropdownOnClickOutside);
+                userDropdownOpen = false;
+                document.removeEventListener('click', closeUserDropdownOnClickOutside);
             }
         }
     }
@@ -301,7 +594,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with user dropdown');
+        console.log('✅ Header loaded with user dropdown and cart');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');
@@ -320,11 +613,42 @@
         // Close dropdown when pressing Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                const dropdown = document.getElementById('userDropdownMenu');
-                if (dropdown) {
-                    dropdown.classList.remove('show');
+                const cartDropdown = document.getElementById('cartDropdownMenu');
+                const userDropdown = document.getElementById('userDropdownMenu');
+                if (cartDropdown) {
+                    cartDropdown.classList.remove('show');
+                    cartDropdownOpen = false;
+                }
+                if (userDropdown) {
+                    userDropdown.classList.remove('show');
+                    userDropdownOpen = false;
                 }
             }
         });
     });
+
+    // GLOBAL: Update cart icon function (called from index.jsp)
+    function updateCartIcon() {
+        const cartBadge = document.getElementById('cartBadge');
+        if (cartBadge) {
+            let currentCount = parseInt(cartBadge.textContent) || 0;
+            cartBadge.textContent = currentCount + 1;
+            
+            // Add animation
+            cartBadge.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                cartBadge.style.transform = 'scale(1)';
+            }, 200);
+        } else {
+            // Create badge if it doesn't exist
+            const cartButton = document.getElementById('cartButton');
+            if (cartButton) {
+                const badge = document.createElement('span');
+                badge.className = 'cart-badge';
+                badge.id = 'cartBadge';
+                badge.textContent = '1';
+                cartButton.appendChild(badge);
+            }
+        }
+    }
 </script>

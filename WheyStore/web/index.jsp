@@ -30,7 +30,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <style>
-            /* ===== SIDEBAR STYLES - Gọn gàng, rõ ràng ===== */
+            /* ===== SIDEBAR STYLES ===== */
             .sidebar {
                 background-color: #f8f9fa;
                 border-radius: 10px;
@@ -116,12 +116,6 @@
                 transform: translateY(-2px);
             }
 
-            .filter-btn:disabled {
-                background: #6c757d;
-                transform: none;
-                cursor: not-allowed;
-            }
-
             /* ===== MAIN CONTENT STYLES ===== */
             .main-content {
                 background-color: white;
@@ -159,6 +153,8 @@
                 transition: all 0.3s ease;
                 overflow: hidden;
                 height: 100%;
+                display: flex;
+                flex-direction: column;
             }
 
             .product-card:hover {
@@ -166,15 +162,51 @@
                 transform: translateY(-5px);
             }
 
-            .product-image {
+            .product-image-container {
+                position: relative;
                 height: 200px;
-                object-fit: cover;
-                width: 100%;
+                overflow: hidden;
                 background-color: #f8f9fa;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .product-image {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                transition: transform 0.3s ease;
+            }
+
+            .product-image:hover {
+                transform: scale(1.05);
+            }
+
+            .product-image-placeholder {
+                width: 100%;
+                height: 200px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6c757d;
+                font-size: 14px;
+                text-align: center;
+                flex-direction: column;
+            }
+
+            .product-image-placeholder i {
+                font-size: 3rem;
+                margin-bottom: 10px;
+                opacity: 0.5;
             }
 
             .product-info {
                 padding: 15px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
             }
 
             .product-brand {
@@ -205,6 +237,13 @@
                 margin-bottom: 15px;
             }
 
+            .product-actions {
+                margin-top: auto;
+                display: flex;
+                gap: 10px;
+                flex-direction: column;
+            }
+
             .product-btn {
                 background-color: #b02a20;
                 color: white;
@@ -215,8 +254,8 @@
                 text-decoration: none;
                 transition: all 0.3s ease;
                 display: inline-block;
-                width: 100%;
                 text-align: center;
+                font-size: 14px;
             }
 
             .product-btn:hover {
@@ -224,6 +263,24 @@
                 color: white;
                 text-decoration: none;
                 transform: translateY(-2px);
+            }
+
+            .btn-cart {
+                background-color: #28a745;
+                border: 1px solid #28a745;
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+
+            .btn-cart:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+            }
+
+            .btn-cart:disabled {
+                background-color: #6c757d;
+                border-color: #6c757d;
+                cursor: not-allowed;
             }
 
             /* ===== EMPTY STATE STYLES ===== */
@@ -267,15 +324,146 @@
                 color: white;
             }
 
-            /* ===== RESPONSIVE ===== */
-            @media (max-width: 768px) {
-                .sidebar {
-                    margin-bottom: 20px;
-                }
+            /* ===== LOGIN NOTIFICATION MODAL ===== */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 9998;
+                display: none;
+            }
 
-                .main-content {
-                    padding: 15px;
-                }
+            .login-modal {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+                max-width: 400px;
+                width: 90%;
+                text-align: center;
+                display: none;
+            }
+
+            .modal-icon {
+                font-size: 3rem;
+                color: #b02a20;
+                margin-bottom: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 15px;
+            }
+
+            .modal-text {
+                color: #666;
+                margin-bottom: 25px;
+                line-height: 1.5;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .modal-btn {
+                padding: 10px 20px;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+            }
+
+            .btn-modal-login {
+                background: #b02a20;
+                color: white;
+            }
+
+            .btn-modal-login:hover {
+                background: #8b1e16;
+                color: white;
+                text-decoration: none;
+            }
+
+            .btn-modal-register {
+                background: #28a745;
+                color: white;
+            }
+
+            .btn-modal-register:hover {
+                background: #218838;
+                color: white;
+                text-decoration: none;
+            }
+
+            .btn-modal-cancel {
+                background: #6c757d;
+                color: white;
+            }
+
+            .btn-modal-cancel:hover {
+                background: #545b62;
+                color: white;
+            }
+
+            /* ===== SUCCESS NOTIFICATION ===== */
+            .success-toast {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                z-index: 9999;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                max-width: 350px;
+                display: none;
+            }
+
+            .success-toast.show {
+                display: block;
+                transform: translateX(0);
+            }
+
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .toast-icon {
+                font-size: 1.2rem;
+            }
+
+            .toast-text {
+                flex: 1;
+                font-weight: 600;
+            }
+
+            .toast-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 10px;
             }
         </style>
     </head>
@@ -291,8 +479,8 @@
         <div class="container mt-4">
             <div class="row">
 
-                <!-- ===== SIDEBAR - Gọn gàng, rõ ràng ===== -->
-                <div class="col-lg-3 col-md-4">
+                <!-- ===== SIDEBAR ===== -->
+                <div class="col-3">
                     <div class="sidebar">
                         <div class="sidebar-header">
                             <h5 class="mb-0">
@@ -326,16 +514,16 @@
                                             String name = cat.getCategoryName();
                                             if (name.equalsIgnoreCase("Whey Protein")) {
                                                 icon = "fas fa-dumbbell";
-                                            } else if (name.equalsIgnoreCase("Creatine")) {
+                                            } else if (name.equalsIgnoreCase("Protein")) {
+                                                icon = "fas fa-seedling";
+                                            } else if (name.equalsIgnoreCase("Sức Mạnh & Sức Bền")) {
                                                 icon = "fas fa-bolt";
-                                            } else if (name.equalsIgnoreCase("Vitamin & Khoáng Chất")) {
-                                                icon = "fas fa-pills";
                                             } else if (name.equalsIgnoreCase("Hỗ Trợ Giảm Mỡ")) {
                                                 icon = "fas fa-fire";
-                                            } else if (name.equalsIgnoreCase("Sinh lý & Nội tiết tố")) {
-                                                icon = "fas fa-heartbeat";
+                                            } else if (name.equalsIgnoreCase("Vitamin & Khoáng Chất")) {
+                                                icon = "fas fa-pills";
                                             } else {
-                                                icon = "fas fa-circle"; // default icon
+                                                icon = "fas fa-circle";
                                             }
                                 %>
                                 <a href="MainController?action=filterByCategory&categoryId=<%= cat.getCategoryID() %>" 
@@ -352,7 +540,7 @@
                                 %>
                             </div>
 
-                            <!-- Lọc theo giá - FIXED -->
+                            <!-- Lọc theo giá -->
                             <div class="category-section">
                                 <h6><i class="fas fa-money-bill-wave me-2"></i>LỌC THEO GIÁ</h6>
                                 <form action="MainController" method="get" class="price-filter" id="priceFilterForm">
@@ -379,7 +567,7 @@
                                         </label>
                                     </div>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" name="priceRange" value="1500000-99999999" id="price4" <%= "1500000- 99999999 ".equals(currentPriceRange) ? "checked" : "" %>>
+                                        <input class="form-check-input" type="radio" name="priceRange" value="1500000-99999999" id="price4" <%= "1500000-99999999".equals(currentPriceRange) ? "checked" : "" %>>
                                         <label class="form-check-label" for="price4">
                                             Trên 1.500.000₫
                                         </label>
@@ -396,17 +584,17 @@
                                 <%
                                     String currentBrand = request.getParameter("brand");
                                 %>
-                                <a href="MainController?action=filterByBrand&brand=Optimum" class="category-link <%= "Optimum".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>Optimum Nutrition
+                                <a href="MainController?action=filterByBrand&brand=PVL" class="category-link <%= "PVL".equals(currentBrand) ? "active" : "" %>">
+                                    <i class="fas fa-star"></i>PVL
                                 </a>
-                                <a href="MainController?action=filterByBrand&brand=MuscleTech" class="category-link <%= "MuscleTech".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>MuscleTech
+                                <a href="MainController?action=filterByBrand&brand=GHOST" class="category-link <%= "GHOST".equals(currentBrand) ? "active" : "" %>">
+                                    <i class="fas fa-star"></i>GHOST LIFESTYLE
                                 </a>
-                                <a href="MainController?action=filterByBrand&brand=Dymatize" class="category-link <%= "Dymatize".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>Dymatize
+                                <a href="MainController?action=filterByBrand&brand=Rule One" class="category-link <%= "Rule One".equals(currentBrand) ? "active" : "" %>">
+                                    <i class="fas fa-star"></i>Rule One Protein
                                 </a>
-                                <a href="MainController?action=filterByBrand&brand=BSN" class="category-link <%= "BSN".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>BSN
+                                <a href="MainController?action=filterByBrand&brand=Nutrabolics" class="category-link <%= "Nutrabolics".equals(currentBrand) ? "active" : "" %>">
+                                    <i class="fas fa-star"></i>Nutrabolics
                                 </a>
                             </div>
                         </div>
@@ -414,7 +602,7 @@
                 </div>
 
                 <!-- ===== MAIN CONTENT - Sản phẩm ===== -->
-                <div class="col-lg-9 col-md-8">
+                <div class="col-9">
                     <div class="main-content">
                         <!-- Search Results Info -->
                         <%
@@ -462,17 +650,39 @@
                                     // Hiển thị sản phẩm từ database
                                     for (ProductDTO p : products) {
                             %>
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                            <div class="col-3 mb-4">
                                 <div class="card product-card">
+                                    <!-- FIXED: Improved image handling -->
                                     <%
-                                        /* ---- Xây dựng đường dẫn chuẩn tới thư mục ảnh ---- */
-                                        String baseImagePath = request.getContextPath() + "/assets/images/products/";
-                                        String imagePath = (p.getImage() != null && !p.getImage().trim().isEmpty())? baseImagePath + p.getImage() : baseImagePath + "default.png";
+                                        /* FIXED: Sử dụng đường dẫn hình ảnh chính xác */
+                                        String contextPath = request.getContextPath();
+                                        String imageName = p.getImage();
+                                        String imagePath = null;
+                                        
+                                        // Check different possible image paths
+                                        if (imageName != null && !imageName.trim().isEmpty()) {
+                                            // FIXED: Sử dụng đường dẫn đúng theo cấu trúc project
+                                            imagePath = contextPath + "/assets/images/products/" + imageName;
+                                        }
                                     %>
-                                    <img src="<%= imagePath %>"
-                                         class="product-image"
-                                         alt="<%= p.getName() %>"
-                                         onerror="this.onerror=null; this.src='<%= baseImagePath %>default.png';">
+                                    
+                                    <div class="product-image-container">
+                                        <% if (imagePath != null) { %>
+                                            <img src="<%= imagePath %>"
+                                                 class="product-image"
+                                                 alt="<%= p.getName() %>"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div class="product-image-placeholder" style="display:none;">
+                                                <i class="fas fa-image"></i>
+                                                <span>Hình ảnh không có sẵn</span>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="product-image-placeholder">
+                                                <i class="fas fa-image"></i>
+                                                <span>Hình ảnh không có sẵn</span>
+                                            </div>
+                                        <% } %>
+                                    </div>
 
                                     <div class="product-info">
                                         <%
@@ -492,16 +702,45 @@
                                                 }
                                             %>
                                         </div>
-                                        <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
-                                           class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                        <form action="MainController" method="post" style="display:inline;">
-                                            <input type="hidden" name="action" value="add">
-                                            <input type="hidden" name="productID" value="<%= p.getId() %>">
-                                            <input type="hidden" name="qty" value="1">
-                                            <button class="btn btn-sm btn-outline-primary">Thêm vào giỏ hàng</button>
-                                        </form>
+                                        
+                                        <!-- FIXED: Product actions with login check -->
+                                        <div class="product-actions">
+                                            <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
+                                               class="btn product-btn">
+                                                <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                            </a>
+                                            
+                                            <%
+                                                // Kiểm tra nếu user đã đăng nhập
+                                                UserDTO currentUserCheck = null;
+                                                try {
+                                                    currentUserCheck = AuthUtils.getCurrentUser(request);
+                                                } catch (Exception e) {
+                                                    // Handle exception silently
+                                                }
+                                                
+                                                if (currentUserCheck != null) {
+                                                    // User đã đăng nhập - hiển thị form thêm giỏ hàng
+                                            %>
+                                            <form action="CartController" method="post" style="margin: 0;" class="add-to-cart-form">
+                                                <input type="hidden" name="action" value="add">
+                                                <input type="hidden" name="productID" value="<%= p.getId() %>">
+                                                <input type="hidden" name="qty" value="1">
+                                                <button type="submit" class="btn product-btn btn-cart">
+                                                    <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                                </button>
+                                            </form>
+                                            <%
+                                                } else {
+                                                    // User chưa đăng nhập - hiển thị button với onclick
+                                            %>
+                                            <button type="button" class="btn product-btn btn-cart" onclick="showLoginNotification()">
+                                                <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                            </button>
+                                            <%
+                                                }
+                                            %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -537,123 +776,27 @@
                                     } else {
                                         // Hiển thị sản phẩm demo khi không có data và không phải tìm kiếm
                             %>
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=PVL+ISO+Gold" 
-                                         class="product-image" alt="PVL ISO Gold">
-                                    <div class="product-info">
-                                        <div class="product-brand">PVL - Canada</div>
-                                        <h5 class="product-title">PVL ISO Gold - Premium Whey Protein With Probiotic</h5>
-                                        <div class="product-price">2.350.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/28a745/ffffff?text=GHOST+Whey" 
-                                         class="product-image" alt="GHOST Whey Protein">
-                                    <div class="product-info">
-                                        <div class="product-brand">GHOST LIFESTYLE</div>
-                                        <h5 class="product-title">GHOST Whey Protein</h5>
-                                        <div class="product-price">1.200.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/dc3545/ffffff?text=Rule+1+Protein" 
-                                         class="product-image" alt="Rule 1 Protein">
-                                    <div class="product-info">
-                                        <div class="product-brand">Rule One Protein</div>
-                                        <h5 class="product-title">Rule 1 Protein</h5>
-                                        <div class="product-price">1.950.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/ffc107/000000?text=Nutrabolics" 
-                                         class="product-image" alt="Nutrabolics Hydropure">
-                                    <div class="product-info">
-                                        <div class="product-brand">Nutrabolics Nutrition</div>
-                                        <h5 class="product-title">Nutrabolics Hydropure</h5>
-                                        <div class="product-price">1.950.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/6f42c1/ffffff?text=BareBells+Bar" 
-                                         class="product-image" alt="BareBells Bar">
-                                    <div class="product-info">
-                                        <div class="product-brand">BareBells</div>
-                                        <h5 class="product-title">BareBells Bar</h5>
-                                        <div class="product-price">80.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/17a2b8/ffffff?text=Ostrovit+Creatine" 
-                                         class="product-image" alt="Ostrovit Creatine">
-                                    <div class="product-info">
-                                        <div class="product-brand">Ostrovit</div>
-                                        <h5 class="product-title">Ostrovit Creatine Monohydrate</h5>
-                                        <div class="product-price">650.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/fd7e14/ffffff?text=Nutrex+Lipo+6" 
-                                         class="product-image" alt="Nutrex Lipo 6">
-                                    <div class="product-info">
-                                        <div class="product-brand">Nutrex</div>
-                                        <h5 class="product-title">Nutrex Lipo 6 Black Cleanse & Detox</h5>
-                                        <div class="product-price">490.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                <div class="card product-card">
-                                    <img src="https://via.placeholder.com/300x200/e74c3c/ffffff?text=CodeAge+Hair" 
-                                         class="product-image" alt="CodeAge Hair Vitamins">
-                                    <div class="product-info">
-                                        <div class="product-brand">Code Age</div>
-                                        <h5 class="product-title">CodeAge Hair Vitamins</h5>
-                                        <div class="product-price">1.550.000 ₫</div>
-                                        <a href="#" onclick="showUpdateMessage()" class="btn product-btn">
-                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                        </a>
-                                    </div>
+                            <div class="col-12">
+                                <div class="empty-state">
+                                    <i class="fas fa-box-open"></i>
+                                    <h3>Chưa có sản phẩm nào</h3>
+                                    <p>Hệ thống đang cập nhật sản phẩm. Vui lòng quay lại sau!</p>
+                                    <%
+                                        // Kiểm tra nếu user là admin thì hiển thị link thêm sản phẩm
+                                        UserDTO adminCheck = null;
+                                        try {
+                                            adminCheck = AuthUtils.getCurrentUser(request);
+                                            if (adminCheck != null && AuthUtils.isAdmin(request)) {
+                                    %>
+                                    <a href="productForm.jsp" class="btn">
+                                        <i class="fas fa-plus me-2"></i>Thêm sản phẩm đầu tiên
+                                    </a>
+                                    <%
+                                            }
+                                        } catch (Exception e) {
+                                            // Handle exception silently
+                                        }
+                                    %>
                                 </div>
                             </div>
                             <%
@@ -666,6 +809,32 @@
             </div>
         </div>
 
+        <!-- Login Notification Modal -->
+        <div class="modal-overlay" id="modalOverlay" onclick="hideLoginNotification()"></div>
+        <div class="login-modal" id="loginModal">
+            <div class="modal-icon">
+                <i class="fas fa-sign-in-alt"></i>
+            </div>
+            <div class="modal-title">Cần đăng nhập</div>
+            <div class="modal-text">
+                Bạn cần đăng nhập hoặc tạo tài khoản để thêm sản phẩm vào giỏ hàng.
+            </div>
+            <div class="modal-actions">
+                <a href="login.jsp" class="modal-btn btn-modal-login">Đăng nhập</a>
+                <a href="register.jsp" class="modal-btn btn-modal-register">Đăng ký</a>
+                <button class="modal-btn btn-modal-cancel" onclick="hideLoginNotification()">Đóng</button>
+            </div>
+        </div>
+
+        <!-- Success Toast Notification -->
+        <div class="success-toast" id="successToast">
+            <div class="toast-content">
+                <i class="fas fa-check-circle toast-icon"></i>
+                <div class="toast-text" id="toastText">Thêm sản phẩm thành công!</div>
+                <button class="toast-close" onclick="hideSuccessToast()">×</button>
+            </div>
+        </div>
+
         <!-- Include Footer -->
         <%@ include file="footer.jsp" %>
 
@@ -674,93 +843,224 @@
 
         <!-- Custom JavaScript -->
         <script>
-                                            function showUpdateMessage() {
-                                                alert('Hệ thống đang cập nhật sản phẩm. Hiện chưa có sản phẩm nào.');
-                                                return false;
-                                            }
+            // ===== LOGIN NOTIFICATION FUNCTIONS =====
+            function showLoginNotification() {
+                document.getElementById('modalOverlay').style.display = 'block';
+                document.getElementById('loginModal').style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
 
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                console.log('✅ Index page loaded successfully!');
+            function hideLoginNotification() {
+                document.getElementById('modalOverlay').style.display = 'none';
+                document.getElementById('loginModal').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }
 
-                                                // FIXED: Price filter form submission
-                                                const priceFilterForm = document.getElementById('priceFilterForm');
-                                                const priceFilterBtn = document.getElementById('priceFilterBtn');
+            // ===== SUCCESS TOAST FUNCTIONS =====
+            function showSuccessToast(message) {
+                const toast = document.getElementById('successToast');
+                const toastText = document.getElementById('toastText');
+                
+                toastText.textContent = message || 'Thêm sản phẩm thành công!';
+                toast.classList.add('show');
+                
+                // Auto hide after 3 seconds
+                setTimeout(() => {
+                    hideSuccessToast();
+                }, 3000);
+            }
 
-                                                if (priceFilterForm && priceFilterBtn) {
-                                                    priceFilterForm.addEventListener('submit', function (e) {
-                                                        // Show loading state
-                                                        const originalText = priceFilterBtn.innerHTML;
-                                                        priceFilterBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang lọc...';
-                                                        priceFilterBtn.disabled = true;
+            function hideSuccessToast() {
+                const toast = document.getElementById('successToast');
+                toast.classList.remove('show');
+            }
 
-                                                        // Check if any price range is selected
-                                                        const selectedPrice = priceFilterForm.querySelector('input[name="priceRange"]:checked');
-                                                        if (!selectedPrice) {
-                                                            e.preventDefault();
-                                                            alert('Vui lòng chọn một khoảng giá để lọc!');
-                                                            priceFilterBtn.innerHTML = originalText;
-                                                            priceFilterBtn.disabled = false;
-                                                            return false;
-                                                        }
+            // ===== PAGE INITIALIZATION =====
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('✅ Index page loaded successfully with Bootstrap!');
 
-                                                        console.log('✅ Price filter submitted with range:', selectedPrice.value);
-                                                        // Form will submit normally, loading state will persist until page reloads
-                                                    });
+                // FIXED: Price filter form submission
+                const priceFilterForm = document.getElementById('priceFilterForm');
+                const priceFilterBtn = document.getElementById('priceFilterBtn');
 
-                                                    // Auto-submit when radio button changes
-                                                    const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
-                                                    priceInputs.forEach(input => {
-                                                        input.addEventListener('change', function () {
-                                                            console.log('🔄 Price range changed to:', this.value);
-                                                            // Auto-submit after short delay
-                                                            setTimeout(() => {
-                                                                priceFilterForm.submit();
-                                                            }, 300);
-                                                        });
-                                                    });
-                                                }
+                if (priceFilterForm && priceFilterBtn) {
+                    priceFilterForm.addEventListener('submit', function (e) {
+                        // Show loading state
+                        const originalText = priceFilterBtn.innerHTML;
+                        priceFilterBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang lọc...';
+                        priceFilterBtn.disabled = true;
 
-                                                // Smooth hover effects
-                                                const cards = document.querySelectorAll('.product-card');
-                                                cards.forEach(card => {
-                                                    card.addEventListener('mouseenter', function () {
-                                                        this.style.transform = 'translateY(-5px)';
-                                                    });
+                        // Check if any price range is selected
+                        const selectedPrice = priceFilterForm.querySelector('input[name="priceRange"]:checked');
+                        if (!selectedPrice) {
+                            e.preventDefault();
+                            alert('Vui lòng chọn một khoảng giá để lọc!');
+                            priceFilterBtn.innerHTML = originalText;
+                            priceFilterBtn.disabled = false;
+                            return false;
+                        }
 
-                                                    card.addEventListener('mouseleave', function () {
-                                                        this.style.transform = 'translateY(0)';
-                                                    });
-                                                });
+                        console.log('✅ Price filter submitted with range:', selectedPrice.value);
+                    });
 
-                                                // Auto-scroll to products when filters are applied
-                                                if (window.location.search.includes('action=filter') ||
-                                                        window.location.search.includes('categoryId') ||
-                                                        window.location.search.includes('priceRange') ||
-                                                        window.location.search.includes('brand')) {
-                                                    setTimeout(() => {
-                                                        document.querySelector('.col-lg-9').scrollIntoView({
-                                                            behavior: 'smooth',
-                                                            block: 'start'
-                                                        });
-                                                    }, 100);
-                                                }
-                                            });
+                    // Auto-submit when radio button changes
+                    const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
+                    priceInputs.forEach(input => {
+                        input.addEventListener('change', function () {
+                            console.log('🔄 Price range changed to:', this.value);
+                            // Auto-submit after short delay
+                            setTimeout(() => {
+                                priceFilterForm.submit();
+                            }, 300);
+                        });
+                    });
+                }
 
-                                            // Search form validation (for header search)
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                const searchForms = document.querySelectorAll('form[role="search"]');
-                                                searchForms.forEach(form => {
-                                                    form.addEventListener('submit', function (e) {
-                                                        const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
-                                                        if (keyword && keyword.value.trim().length < 2) {
-                                                            e.preventDefault();
-                                                            alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
-                                                            keyword.focus();
-                                                            return false;
-                                                        }
-                                                    });
-                                                });
-                                            });
+                // ===== ADD TO CART FORM HANDLING =====
+                const cartForms = document.querySelectorAll('.add-to-cart-form');
+                cartForms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault(); // Prevent default form submission
+                        
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        
+                        // Show loading state
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
+                        submitBtn.disabled = true;
+                        
+                        // Get form data
+                        const formData = new FormData(this);
+                        
+                        // Submit via fetch
+                        fetch('<%= request.getContextPath() %>/CartController', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                // Show success notification
+                                const productName = this.closest('.product-card').querySelector('.product-title').textContent;
+                                showSuccessToast('Đã thêm "' + productName + '" vào giỏ hàng!');
+                                
+                                // Update cart icon if exists in header
+                                updateCartIcon();
+                                
+                                // Reset button
+                                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm!';
+                                submitBtn.classList.remove('btn-cart');
+                                submitBtn.classList.add('btn-success');
+                                
+                                // Reset after 2 seconds
+                                setTimeout(() => {
+                                    submitBtn.innerHTML = originalText;
+                                    submitBtn.classList.remove('btn-success');
+                                    submitBtn.classList.add('btn-cart');
+                                    submitBtn.disabled = false;
+                                }, 2000);
+                            } else {
+                                throw new Error('Network response was not ok');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+                            
+                            // Reset button
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        });
+                    });
+                });
+
+                // Smooth hover effects for product cards
+                const cards = document.querySelectorAll('.product-card');
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateY(-5px)';
+                    });
+
+                    card.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateY(0)';
+                    });
+                });
+
+                // Auto-scroll to products when filters are applied
+                if (window.location.search.includes('action=filter') ||
+                        window.location.search.includes('categoryId') ||
+                        window.location.search.includes('priceRange') ||
+                        window.location.search.includes('brand')) {
+                    setTimeout(() => {
+                        const mainContent = document.querySelector('.col-9');
+                        if (mainContent) {
+                            mainContent.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }, 100);
+                }
+
+                // Search form validation (for header search)
+                const searchForms = document.querySelectorAll('form[role="search"]');
+                searchForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
+                        if (keyword && keyword.value.trim().length < 2) {
+                            e.preventDefault();
+                            alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                            keyword.focus();
+                            return false;
+                        }
+                    });
+                });
+
+                // Close modal when pressing Escape
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        hideLoginNotification();
+                    }
+                });
+
+                // Image lazy loading
+                const images = document.querySelectorAll('.product-image');
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            observer.unobserve(img);
+                        }
+                    });
+                });
+
+                images.forEach(img => {
+                    imageObserver.observe(img);
+                });
+            });
+
+            // ===== UTILITY FUNCTIONS =====
+            function updateCartIcon() {
+                // Function to update cart icon in header (if exists)
+                // This will be called after successful add to cart
+                const cartBadge = document.getElementById('cartBadge');
+                if (cartBadge) {
+                    let currentCount = parseInt(cartBadge.textContent) || 0;
+                    cartBadge.textContent = currentCount + 1;
+                    
+                    // Add animation
+                    cartBadge.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        cartBadge.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            }
+
+            // ===== DEMO FUNCTION =====
+            function showUpdateMessage() {
+                alert('Hệ thống đang cập nhật sản phẩm. Hiện chưa có sản phẩm nào.');
+                return false;
+            }
         </script>
 
     </body>
