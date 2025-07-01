@@ -19,9 +19,9 @@
             <%
                 String pageTitle = (String) request.getAttribute("pageTitle");
                 if (pageTitle != null && !pageTitle.isEmpty()) {
-                    out.print(pageTitle + " - WheyStore");
+                    out.print(pageTitle + " - GymLife");
                 } else {
-                    out.print("Trang chủ - WheyStore");
+                    out.print("Trang chủ - GymLife");
                 }
             %>
         </title>
@@ -146,7 +146,7 @@
                 margin-right: 8px;
             }
 
-            /* ===== PRODUCT CARD STYLES ===== */
+            /* ===== PRODUCT CARD STYLES - FIXED FOR CONSISTENCY ===== */
             .product-card {
                 border: 1px solid #e9ecef;
                 border-radius: 12px;
@@ -237,10 +237,11 @@
                 margin-bottom: 15px;
             }
 
+            /* FIXED: Consistent button styles for both logged in and not logged in */
             .product-actions {
                 margin-top: auto;
                 display: flex;
-                gap: 10px;
+                gap: 8px;
                 flex-direction: column;
             }
 
@@ -249,13 +250,14 @@
                 color: white;
                 border: none;
                 border-radius: 8px;
-                padding: 8px 16px;
+                padding: 10px 16px;
                 font-weight: 600;
                 text-decoration: none;
                 transition: all 0.3s ease;
                 display: inline-block;
                 text-align: center;
                 font-size: 14px;
+                width: 100%;
             }
 
             .product-btn:hover {
@@ -265,22 +267,35 @@
                 transform: translateY(-2px);
             }
 
+            /* FIXED: Consistent cart button styles */
             .btn-cart {
-                background-color: #28a745;
-                border: 1px solid #28a745;
+                background-color: #28a745 !important;
+                border: 1px solid #28a745 !important;
+                color: white !important;
                 font-size: 13px;
-                padding: 6px 12px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                width: 100%;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
             }
 
             .btn-cart:hover {
-                background-color: #218838;
-                border-color: #1e7e34;
+                background-color: #218838 !important;
+                border-color: #1e7e34 !important;
+                color: white !important;
+                text-decoration: none;
+                transform: translateY(-2px);
             }
 
             .btn-cart:disabled {
-                background-color: #6c757d;
-                border-color: #6c757d;
+                background-color: #6c757d !important;
+                border-color: #6c757d !important;
                 cursor: not-allowed;
+                transform: none !important;
             }
 
             /* ===== EMPTY STATE STYLES ===== */
@@ -654,14 +669,12 @@
                                 <div class="card product-card">
                                     <!-- FIXED: Improved image handling -->
                                     <%
-                                        /* FIXED: Sử dụng đường dẫn hình ảnh chính xác */
                                         String contextPath = request.getContextPath();
                                         String imageName = p.getImage();
                                         String imagePath = null;
                                         
                                         // Check different possible image paths
                                         if (imageName != null && !imageName.trim().isEmpty()) {
-                                            // FIXED: Sử dụng đường dẫn đúng theo cấu trúc project
                                             imagePath = contextPath + "/assets/images/products/" + imageName;
                                         }
                                     %>
@@ -703,10 +716,10 @@
                                             %>
                                         </div>
                                         
-                                        <!-- FIXED: Product actions with login check -->
+                                        <!-- FIXED: Product actions with consistent styling -->
                                         <div class="product-actions">
                                             <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
-                                               class="btn product-btn">
+                                               class="product-btn">
                                                 <i class="fas fa-eye me-2"></i>Xem chi tiết
                                             </a>
                                             
@@ -720,21 +733,19 @@
                                                 }
                                                 
                                                 if (currentUserCheck != null) {
-                                                    // User đã đăng nhập - hiển thị form thêm giỏ hàng
+                                                    // User đã đăng nhập - FIXED: Use AJAX for add to cart
                                             %>
-                                            <form action="CartController" method="post" style="margin: 0;" class="add-to-cart-form">
-                                                <input type="hidden" name="action" value="add">
-                                                <input type="hidden" name="productID" value="<%= p.getId() %>">
-                                                <input type="hidden" name="qty" value="1">
-                                                <button type="submit" class="btn product-btn btn-cart">
-                                                    <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
-                                                </button>
-                                            </form>
+                                            <button type="button" 
+                                                    class="btn-cart add-to-cart-btn" 
+                                                    data-product-id="<%= p.getId() %>"
+                                                    data-product-name="<%= p.getName() %>">
+                                                <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                            </button>
                                             <%
                                                 } else {
                                                     // User chưa đăng nhập - hiển thị button với onclick
                                             %>
-                                            <button type="button" class="btn product-btn btn-cart" onclick="showLoginNotification()">
+                                            <button type="button" class="btn-cart" onclick="showLoginNotification()">
                                                 <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
                                             </button>
                                             <%
@@ -877,7 +888,7 @@
 
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('✅ Index page loaded successfully with Bootstrap!');
+                console.log('✅ Index page loaded successfully with fixed cart functionality!');
 
                 // FIXED: Price filter form submission
                 const priceFilterForm = document.getElementById('priceFilterForm');
@@ -916,59 +927,82 @@
                     });
                 }
 
-                // ===== ADD TO CART FORM HANDLING =====
-                const cartForms = document.querySelectorAll('.add-to-cart-form');
-                cartForms.forEach(form => {
-                    form.addEventListener('submit', function(e) {
-                        e.preventDefault(); // Prevent default form submission
-                        
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.innerHTML;
+                // ===== FIXED: ADD TO CART HANDLING WITH AJAX =====
+                const cartButtons = document.querySelectorAll('.add-to-cart-btn');
+                cartButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-product-id');
+                        const productName = this.getAttribute('data-product-name');
+                        const originalText = this.innerHTML;
                         
                         // Show loading state
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
-                        submitBtn.disabled = true;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
+                        this.disabled = true;
                         
-                        // Get form data
-                        const formData = new FormData(this);
+                        // Create form data
+                        const formData = new FormData();
+                        formData.append('action', 'add');
+                        formData.append('productID', productId);
+                        formData.append('qty', '1');
                         
-                        // Submit via fetch
+                        console.log('🛒 Adding product to cart:', productId);
+                        
+                        // Submit via AJAX
                         fetch('<%= request.getContextPath() %>/CartController', {
                             method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
                             body: formData
                         })
                         .then(response => {
                             if (response.ok) {
-                                // Show success notification
-                                const productName = this.closest('.product-card').querySelector('.product-title').textContent;
-                                showSuccessToast('Đã thêm "' + productName + '" vào giỏ hàng!');
-                                
-                                // Update cart icon if exists in header
-                                updateCartIcon();
-                                
-                                // Reset button
-                                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm!';
-                                submitBtn.classList.remove('btn-cart');
-                                submitBtn.classList.add('btn-success');
-                                
-                                // Reset after 2 seconds
-                                setTimeout(() => {
-                                    submitBtn.innerHTML = originalText;
-                                    submitBtn.classList.remove('btn-success');
-                                    submitBtn.classList.add('btn-cart');
-                                    submitBtn.disabled = false;
-                                }, 2000);
+                                return response.json();
                             } else {
                                 throw new Error('Network response was not ok');
                             }
                         })
+                        .then(data => {
+                            if (data.success) {
+                                // Show success notification
+                                showSuccessToast('Đã thêm "' + productName + '" vào giỏ hàng!');
+                                
+                                // Update cart icon if exists in header
+                                if (typeof updateCartIcon === 'function') {
+                                    updateCartIcon();
+                                }
+                                
+                                // Show success state
+                                this.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm!';
+                                this.classList.remove('btn-cart');
+                                this.classList.add('btn-success');
+                                
+                                // Reset after 2 seconds
+                                setTimeout(() => {
+                                    this.innerHTML = originalText;
+                                    this.classList.remove('btn-success');
+                                    this.classList.add('btn-cart');
+                                    this.disabled = false;
+                                }, 2000);
+                                
+                                console.log('✅ Product added to cart successfully');
+                            } else {
+                                throw new Error(data.message || 'Add to cart failed');
+                            }
+                        })
                         .catch(error => {
-                            console.error('Error:', error);
-                            alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+                            console.error('❌ Error adding to cart:', error);
+                            
+                            // Check if user needs to login
+                            if (error.message && error.message.includes('login')) {
+                                showLoginNotification();
+                            } else {
+                                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+                            }
                             
                             // Reset button
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
+                            this.innerHTML = originalText;
+                            this.disabled = false;
                         });
                     });
                 });
@@ -1053,6 +1087,16 @@
                     setTimeout(() => {
                         cartBadge.style.transform = 'scale(1)';
                     }, 200);
+                } else {
+                    // Create badge if it doesn't exist
+                    const cartButton = document.getElementById('cartButton');
+                    if (cartButton) {
+                        const badge = document.createElement('span');
+                        badge.className = 'cart-badge';
+                        badge.id = 'cartBadge';
+                        badge.textContent = '1';
+                        cartButton.appendChild(badge);
+                    }
                 }
             }
 

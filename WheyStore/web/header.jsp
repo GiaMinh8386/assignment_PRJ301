@@ -12,6 +12,7 @@
     .navbar {
         background-color: #b02a20 !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-height: 70px; /* FIXED: Consistent height */
     }
 
     .navbar-brand {
@@ -19,6 +20,7 @@
         font-weight: bold;
         color: white !important;
         text-decoration: none;
+        flex-shrink: 0; /* FIXED: Prevent shrinking */
     }
 
     .navbar-brand:hover {
@@ -26,10 +28,12 @@
         text-decoration: none;
     }
 
+    /* FIXED: Consistent search container layout */
     .search-container {
+        flex: 1; /* Take available space */
         max-width: 600px;
         margin: 0 auto;
-        flex: 1;
+        padding: 0 20px; /* Add padding to prevent crowding */
     }
 
     .input-group {
@@ -38,6 +42,7 @@
         border: 2px solid #fff;
         background-color: white;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        width: 100%; /* FIXED: Full width within container */
     }
 
     .input-group .form-control {
@@ -45,6 +50,7 @@
         box-shadow: none;
         font-size: 14px;
         padding: 12px 20px;
+        flex: 1; /* FIXED: Take remaining space */
     }
 
     .input-group .form-control:focus {
@@ -58,11 +64,21 @@
         border: none;
         padding: 0 25px;
         transition: all 0.3s ease;
+        flex-shrink: 0; /* FIXED: Prevent button from shrinking */
     }
 
     .input-group .btn-search:hover {
         background-color: #8b1e16;
         color: white;
+    }
+
+    /* FIXED: Consistent user section layout */
+    .user-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-shrink: 0; /* FIXED: Prevent shrinking */
+        min-width: 200px; /* FIXED: Minimum width to prevent cramping */
     }
 
     /* ===== CART DROPDOWN STYLES ===== */
@@ -121,7 +137,7 @@
         border-radius: 10px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         border: 1px solid #e9ecef;
-        min-width: 320px;
+        min-width: 350px;
         max-width: 400px;
         opacity: 0;
         visibility: hidden;
@@ -340,17 +356,48 @@
         background-color: #fff5f5;
         color: #dc3545 !important;
     }
+
+    /* FIXED: Responsive design */
+    @media (max-width: 991px) {
+        .search-container {
+            order: 3;
+            width: 100%;
+            margin-top: 10px;
+            padding: 0;
+        }
+        
+        .user-section {
+            order: 2;
+            min-width: auto;
+        }
+        
+        .navbar-brand {
+            order: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cart-dropdown-menu {
+            min-width: 300px;
+            right: -50px;
+        }
+        
+        .navbar {
+            min-height: auto;
+            padding: 10px 0;
+        }
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg px-4 py-3">
-    <div class="container-fluid d-flex align-items-center">
+    <div class="container-fluid d-flex align-items-center flex-wrap">
         <!-- Logo -->
         <a class="navbar-brand me-4" href="MainController?action=home">
             <i class="fas fa-dumbbell me-2"></i>GymLife
         </a>
 
-        <!-- Search Form -->
-        <form class="search-container" role="search" action="MainController" method="get">
+        <!-- Search Form - FIXED: Consistent layout -->
+        <form class="search-container d-flex" role="search" action="MainController" method="get">
             <input type="hidden" name="action" value="searchProduct">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm..." name="keyword" />
@@ -360,8 +407,8 @@
             </div>
         </form>
 
-        <!-- User Info -->
-        <div class="ms-4 d-flex align-items-center">
+        <!-- User Section - FIXED: Consistent layout -->
+        <div class="user-section">
             <%
                 UserDTO currentUser = null;
                 try {
@@ -373,89 +420,87 @@
                 if (currentUser != null) {
             %>
 
-            <div class="d-flex align-items-center">
-                <!-- Cart Dropdown -->
-                <div class="cart-dropdown me-3">
-                    <button class="cart-button" onclick="toggleCartDropdown()" id="cartButton">
-                        <i class="fas fa-shopping-cart fa-lg"></i>
-                        <%
-                            Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
-                            int cartCount = 0;
-                            if (cart != null) {
-                                for (CartItemDTO item : cart.values()) {
-                                    cartCount += item.getQuantity();
-                                }
+            <!-- Cart Dropdown -->
+            <div class="cart-dropdown">
+                <button class="cart-button" onclick="toggleCartDropdown()" id="cartButton">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <%
+                        Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
+                        int cartCount = 0;
+                        if (cart != null) {
+                            for (CartItemDTO item : cart.values()) {
+                                cartCount += item.getQuantity();
                             }
-                            if (cartCount > 0) {
-                        %>
-                        <span class="cart-badge" id="cartBadge"><%= cartCount %></span>
-                        <%
-                            }
-                        %>
-                    </button>
+                        }
+                        if (cartCount > 0) {
+                    %>
+                    <span class="cart-badge" id="cartBadge"><%= cartCount %></span>
+                    <%
+                        }
+                    %>
+                </button>
+                
+                <!-- Cart Dropdown Menu -->
+                <div class="cart-dropdown-menu" id="cartDropdownMenu">
+                    <div class="cart-header">
+                        <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
+                    </div>
                     
-                    <!-- Cart Dropdown Menu -->
-                    <div class="cart-dropdown-menu" id="cartDropdownMenu">
-                        <div class="cart-header">
-                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
+                    <div id="cartItems">
+                        <%
+                            if (cart != null && !cart.isEmpty()) {
+                                java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+                                for (CartItemDTO item : cart.values()) {
+                                    total = total.add(item.getLineTotal());
+                        %>
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name"><%= item.getProductName() %></div>
+                                <div class="cart-item-details">
+                                    Số lượng: <%= item.getQuantity() %> × <%= String.format("%,.0f", item.getUnitPrice()) %>₫
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <strong><%= String.format("%,.0f", item.getLineTotal()) %>₫</strong>
+                            </div>
                         </div>
-                        
-                        <div id="cartItems">
-                            <%
-                                if (cart != null && !cart.isEmpty()) {
-                                    java.math.BigDecimal total = java.math.BigDecimal.ZERO;
-                                    for (CartItemDTO item : cart.values()) {
-                                        total = total.add(item.getLineTotal());
-                            %>
-                            <div class="cart-item">
-                                <div class="cart-item-info">
-                                    <div class="cart-item-name"><%= item.getProductName() %></div>
-                                    <div class="cart-item-details">
-                                        Số lượng: <%= item.getQuantity() %> × <%= String.format("%,.0f", item.getUnitPrice()) %>₫
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <strong><%= String.format("%,.0f", item.getLineTotal()) %>₫</strong>
-                                </div>
-                            </div>
-                            <%
-                                    }
-                            %>
-                            <div class="cart-footer">
-                                <div class="cart-total">
-                                    Tổng cộng: <%= String.format("%,.0f", total) %>₫
-                                </div>
-                                <div class="cart-actions">
-                                    <a href="<%= request.getContextPath() %>/CartController?action=view" class="cart-btn cart-btn-primary">
-                                        <i class="fas fa-shopping-cart me-1"></i>Xem giỏ hàng
-                                    </a>
-                                    <a href="<%= request.getContextPath() %>/OrderController?action=checkout" class="cart-btn cart-btn-secondary">
-                                        <i class="fas fa-credit-card me-1"></i>Thanh toán
-                                    </a>
-                                </div>
-                            </div>
-                            <%
-                                } else {
-                            %>
-                            <div class="cart-empty">
-                                <i class="fas fa-shopping-cart"></i>
-                                <p>Giỏ hàng trống</p>
-                            </div>
-                            <%
+                        <%
                                 }
-                            %>
+                        %>
+                        <div class="cart-footer">
+                            <div class="cart-total">
+                                Tổng cộng: <%= String.format("%,.0f", total) %>₫
+                            </div>
+                            <div class="cart-actions">
+                                <a href="<%= request.getContextPath() %>/CartController?action=view" class="cart-btn cart-btn-primary">
+                                    <i class="fas fa-edit me-1"></i>Chỉnh sửa giỏ hàng
+                                </a>
+                                <a href="<%= request.getContextPath() %>/OrderController?action=checkout" class="cart-btn cart-btn-secondary">
+                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                </a>
+                            </div>
                         </div>
+                        <%
+                            } else {
+                        %>
+                        <div class="cart-empty">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Giỏ hàng trống</p>
+                        </div>
+                        <%
+                            }
+                        %>
                     </div>
                 </div>
+            </div>
 
-                <!-- User dropdown -->
-                <div class="user-dropdown">
-                    <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
-                        <i class="fas fa-user-circle fa-2x me-2"></i>
-                        <div class="d-flex flex-column">
-                            <span style="font-size: 14px;">Xin chào</span>
-                            <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
-                        </div>
+            <!-- User dropdown -->
+            <div class="user-dropdown">
+                <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
+                    <i class="fas fa-user-circle fa-2x me-2"></i>
+                    <div class="d-flex flex-column">
+                        <span style="font-size: 14px;">Xin chào</span>
+                        <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
                     </div>
                 </div>
             </div>
@@ -495,23 +540,23 @@
                 </a>
                 <div class="dropdown-divider"></div>
             </div>
+
+            <%
+                } else {
+            %>
+            <!-- Login Link for Guest Users -->
+            <a href="login.jsp" class="user-info">
+                <i class="fas fa-user-circle fa-2x me-2"></i>
+                <div class="d-flex flex-column">
+                    <span style="font-size: 14px;">Đăng nhập</span>
+                    <strong style="font-size: 16px;">Tài khoản</strong>
+                </div>
+            </a>
+            <%
+                }
+            %>
         </div>
-        <%
-            } else {
-        %>
-        <!-- Login Link for Guest Users -->
-        <a href="login.jsp" class="user-info">
-            <i class="fas fa-user-circle fa-2x me-2"></i>
-            <div class="d-flex flex-column">
-                <span style="font-size: 14px;">Đăng nhập</span>
-                <strong style="font-size: 16px;">Tài khoản</strong>
-            </div>
-        </a>
-        <%
-            }
-        %>
     </div>
-</div>
 </nav>
 
 <script>
@@ -594,7 +639,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with user dropdown and cart');
+        console.log('✅ Header loaded with consistent layout');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');

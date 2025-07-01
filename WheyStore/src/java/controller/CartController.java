@@ -1,12 +1,5 @@
 package controller;
 
-//import jakarta.servlet.*;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//import java.util.*;
-//import model.*;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -22,9 +15,6 @@ public class CartController extends HttpServlet {
     /*------------------------------------------------------------*/
     private final ProductDAO productDAO = new ProductDAO();
     private final CartItemDAO cartDAO = new CartItemDAO();
-
-    // Header default for AJAX requests
-    private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
     /*------------------------------------------------------------*/
     /* Main Dispatcher                                            */
@@ -67,6 +57,9 @@ public class CartController extends HttpServlet {
                 case "clear":
                     url = handleClear(req, resp);
                     break;
+                case "sync":  // 🔧 FIXED: Added missing case
+                    url = handleSyncCart(req, resp);
+                    break;
                 default:
                     req.setAttribute("message", "Unknown action: " + action);
                     break;
@@ -85,7 +78,7 @@ public class CartController extends HttpServlet {
     }
 
     /*------------------------------------------------------------*/
-    /* 1. ADD TO CART - FIXED                                     */
+    /* 1. ADD TO CART - ENHANCED FOR BETTER AJAX/FORM HANDLING   */
     /*------------------------------------------------------------*/
     private String handleAdd(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
@@ -106,25 +99,25 @@ public class CartController extends HttpServlet {
             qty = 1;
         }
 
+        // 🔧 FIXED: Better error handling for AJAX vs Form submissions
+        boolean isAjax = isAjaxRequest(req);
+
         // Validate product ID
         if (pid == null || pid.trim().isEmpty()) {
             System.out.println("DEBUG handleAdd - Product ID is null or empty");
-            req.setAttribute("message", "Product ID is required!");
-            return "error.jsp";
+            return handleError(resp, "Product ID is required!", isAjax);
         }
 
         /* 1. Check if product exists and is active */
         ProductDTO product = productDAO.getProductByID(pid);
         if (product == null) {
             System.out.println("DEBUG handleAdd - Product not found: " + pid);
-            req.setAttribute("message", "Product not found!");
-            return "error.jsp";
+            return handleError(resp, "Product not found!", isAjax);
         }
 
         if (!product.isStatus()) {
             System.out.println("DEBUG handleAdd - Product is inactive: " + pid);
-            req.setAttribute("message", "Product is not available!");
-            return "error.jsp";
+            return handleError(resp, "Product is not available!", isAjax);
         }
 
         /* 2. Get or create cart in session */
@@ -162,19 +155,29 @@ public class CartController extends HttpServlet {
             }
         }
 
-        /* 5. FIXED: Always redirect to prevent form resubmission */
-        String referer = req.getHeader("referer");
-        if (referer == null || referer.trim().isEmpty()) {
-            referer = req.getContextPath() + "/MainController?action=home";
+        /* 5. ENHANCED: Better response handling */
+        if (isAjax) {
+            // AJAX request - return JSON response
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\": true, \"message\": \"Sản phẩm đã được thêm vào giỏ hàng!\"}");
+            System.out.println("DEBUG handleAdd - AJAX response sent");
+            return null;
+        } else {
+            // Form submission - redirect to prevent form resubmission
+            String referer = req.getHeader("referer");
+            if (referer == null || referer.trim().isEmpty()) {
+                referer = req.getContextPath() + "/MainController?action=home";
+            }
+            
+            System.out.println("DEBUG handleAdd - Redirecting to: " + referer);
+            resp.sendRedirect(referer);
+            return null;
         }
-        
-        System.out.println("DEBUG handleAdd - Redirecting to: " + referer);
-        resp.sendRedirect(referer);
-        return null; // No forward needed
     }
 
     /*------------------------------------------------------------*/
-    /* 2. UPDATE QUANTITY - FIXED                                 */
+    /* 2. UPDATE QUANTITY - ENHANCED WITH BETTER ERROR HANDLING  */
     /*------------------------------------------------------------*/
     private String handleUpdate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
@@ -183,9 +186,12 @@ public class CartController extends HttpServlet {
 
         System.out.println("DEBUG handleUpdate - ProductID: " + pid + ", New Quantity: " + qtyRaw);
 
+        boolean isAjax = isAjaxRequest(req);
+
         if (pid == null || qtyRaw == null) {
-            req.setAttribute("message", "Missing parameters for update!");
-            return "cart.jsp";
+            String errorMsg = "Missing parameters for update!";
+            System.out.println("DEBUG handleUpdate - " + errorMsg);
+            return handleError(resp, errorMsg, isAjax);
         }
 
         int qty;
@@ -193,66 +199,93 @@ public class CartController extends HttpServlet {
             qty = Integer.parseInt(qtyRaw);
             if (qty < 1) {
                 // If quantity is 0 or negative, remove item
+                System.out.println("DEBUG handleUpdate - Quantity < 1, removing item");
                 return handleRemove(req, resp);
             }
         } catch (NumberFormatException e) {
-            req.setAttribute("message", "Invalid quantity!");
-            return "cart.jsp";
+            String errorMsg = "Invalid quantity: " + qtyRaw;
+            System.out.println("DEBUG handleUpdate - " + errorMsg);
+            return handleError(resp, errorMsg, isAjax);
         }
 
         /* Update cart in session */
         HttpSession session = req.getSession(false);
+        boolean updateSuccess = false;
+        
         if (session != null) {
             Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
             if (cart != null && cart.containsKey(pid)) {
-                cart.get(pid).setQuantity(qty);
-                System.out.println("DEBUG handleUpdate - Updated quantity in session");
+                CartItemDTO item = cart.get(pid);
+                item.setQuantity(qty);
+                updateSuccess = true;
+                System.out.println("DEBUG handleUpdate - Updated quantity in session to: " + qty);
+                System.out.println("DEBUG handleUpdate - New line total: " + item.getLineTotal());
             }
 
             /* Update database if user is logged in */
             UserDTO user = (UserDTO) session.getAttribute("user");
-            if (user != null) {
+            if (user != null && updateSuccess) {
                 try {
                     cartDAO.updateQuantity(user.getUserID(), pid, qty);
                     System.out.println("DEBUG handleUpdate - Updated quantity in database");
                 } catch (Exception e) {
                     System.out.println("DEBUG handleUpdate - Database update failed: " + e.getMessage());
+                    // Don't fail the whole operation for DB issues
                 }
             }
         }
 
-        /* FIXED: Redirect back to cart with context path */
-        resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
-        return null;
+        if (!updateSuccess) {
+            String errorMsg = "Item not found in cart or session expired";
+            System.out.println("DEBUG handleUpdate - " + errorMsg);
+            return handleError(resp, errorMsg, isAjax);
+        }
+
+        /* ENHANCED: Better response handling */
+        if (isAjax) {
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\": true, \"message\": \"Cập nhật số lượng thành công!\"}");
+            System.out.println("DEBUG handleUpdate - AJAX response sent");
+            return null;
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
+            return null;
+        }
     }
 
     /*------------------------------------------------------------*/
-    /* 3. REMOVE ITEM - FIXED                                     */
+    /* 3. REMOVE ITEM - ENHANCED                                  */
     /*------------------------------------------------------------*/
     private String handleRemove(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         String pid = req.getParameter("productID");
         System.out.println("DEBUG handleRemove - ProductID: " + pid);
 
+        boolean isAjax = isAjaxRequest(req);
+
         if (pid == null) {
-            req.setAttribute("message", "Product ID is required for removal!");
-            return "cart.jsp";
+            String errorMsg = "Product ID is required for removal!";
+            return handleError(resp, errorMsg, isAjax);
         }
 
         /* Remove from session cart */
+        boolean removeSuccess = false;
         HttpSession session = req.getSession(false);
+        
         if (session != null) {
             Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
             if (cart != null) {
                 CartItemDTO removed = cart.remove(pid);
                 if (removed != null) {
+                    removeSuccess = true;
                     System.out.println("DEBUG handleRemove - Removed from session: " + removed.getProductName());
                 }
             }
 
             /* Remove from database if user is logged in */
             UserDTO user = (UserDTO) session.getAttribute("user");
-            if (user != null) {
+            if (user != null && removeSuccess) {
                 try {
                     cartDAO.remove(user.getUserID(), pid);
                     System.out.println("DEBUG handleRemove - Removed from database");
@@ -262,13 +295,27 @@ public class CartController extends HttpServlet {
             }
         }
 
-        /* FIXED: Redirect back to cart with context path */
-        resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
-        return null;
+        if (!removeSuccess) {
+            String errorMsg = "Item not found in cart";
+            System.out.println("DEBUG handleRemove - " + errorMsg);
+            return handleError(resp, errorMsg, isAjax);
+        }
+
+        /* ENHANCED: Better response handling */
+        if (isAjax) {
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\": true, \"message\": \"Đã xóa sản phẩm khỏi giỏ hàng!\"}");
+            System.out.println("DEBUG handleRemove - AJAX response sent");
+            return null;
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
+            return null;
+        }
     }
 
     /*------------------------------------------------------------*/
-    /* 4. VIEW CART - FIXED                                       */
+    /* 4. VIEW CART - SAME AS BEFORE                              */
     /*------------------------------------------------------------*/
     private String handleView(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
@@ -316,11 +363,13 @@ public class CartController extends HttpServlet {
     }
 
     /*------------------------------------------------------------*/
-    /* 5. CLEAR CART - FIXED                                      */
+    /* 5. CLEAR CART - ENHANCED                                   */
     /*------------------------------------------------------------*/
     private String handleClear(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         System.out.println("DEBUG handleClear - Clearing cart");
+
+        boolean isAjax = isAjaxRequest(req);
 
         /* Clear session cart */
         HttpSession session = req.getSession(false);
@@ -340,8 +389,99 @@ public class CartController extends HttpServlet {
             }
         }
 
-        /* FIXED: Redirect back to cart view with context path */
-        resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
+        /* ENHANCED: Better response handling */
+        if (isAjax) {
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\": true, \"message\": \"Đã xóa toàn bộ giỏ hàng!\"}");
+            System.out.println("DEBUG handleClear - AJAX response sent");
+            return null;
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/CartController?action=view");
+            return null;
+        }
+    }
+
+    /*------------------------------------------------------------*/
+    /* 6. SYNC CART - FIXED TO BE CALLED PROPERLY                */
+    /*------------------------------------------------------------*/
+    private String handleSyncCart(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        
+        System.out.println("DEBUG handleSyncCart - Syncing cart from database");
+        
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            UserDTO user = (UserDTO) session.getAttribute("user");
+            if (user != null) {
+                try {
+                    // Load cart from database
+                    List<CartItemDTO> dbCart = cartDAO.getCart(user.getUserID());
+                    Map<String, CartItemDTO> cart = new HashMap<>();
+                    
+                    for (CartItemDTO item : dbCart) {
+                        cart.put(item.getProductID(), item);
+                    }
+                    
+                    // Update session
+                    session.setAttribute("cart", cart);
+                    System.out.println("DEBUG handleSyncCart - Synced " + cart.size() + " items from database");
+                    
+                    // Return JSON response for AJAX
+                    resp.setContentType("application/json");
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.getWriter().write("{\"success\": true, \"itemCount\": " + cart.size() + "}");
+                    return null;
+                    
+                } catch (Exception e) {
+                    System.out.println("DEBUG handleSyncCart - Sync failed: " + e.getMessage());
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    resp.setContentType("application/json");
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.getWriter().write("{\"success\": false, \"message\": \"Sync failed\"}");
+                    return null;
+                }
+            }
+        }
+        
+        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write("{\"success\": false, \"message\": \"User not logged in\"}");
         return null;
+    }
+
+    /*------------------------------------------------------------*/
+    /* UTILITY METHODS - NEW                                      */
+    /*------------------------------------------------------------*/
+    
+    /**
+     * 🔧 FIXED: Better AJAX detection
+     */
+    private boolean isAjaxRequest(HttpServletRequest req) {
+        String requestedWith = req.getHeader("X-Requested-With");
+        String contentType = req.getHeader("Content-Type");
+        String accept = req.getHeader("Accept");
+        
+        return "XMLHttpRequest".equals(requestedWith) ||
+               (contentType != null && contentType.contains("application/json")) ||
+               (accept != null && accept.contains("application/json"));
+    }
+    
+    /**
+     * 🔧 FIXED: Unified error handling for AJAX vs Form
+     */
+    private String handleError(HttpServletResponse resp, String errorMessage, boolean isAjax) throws IOException {
+        System.out.println("DEBUG handleError - " + errorMessage + " (isAjax: " + isAjax + ")");
+        
+        if (isAjax) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\": false, \"message\": \"" + errorMessage + "\"}");
+            return null;
+        } else {
+            // For form submissions, return error page
+            return "error.jsp";
+        }
     }
 }
