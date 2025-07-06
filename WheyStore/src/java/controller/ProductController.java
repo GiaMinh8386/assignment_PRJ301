@@ -56,6 +56,9 @@ public class ProductController extends HttpServlet {
                 url = handleProductAdding(request, response);
             } else if ("listProducts".equals(action)) {
                 url = handleListProducts(request, response);
+            } else if ("listAllProducts".equals(action)) {
+                // FIX 1: ✅ FIXED - Proper handling for dashboard all products view
+                url = handleListAllProductsInDashboard(request, response);
             } else if ("searchProduct".equals(action)) {
                 url = handleSearchProduct(request, response);
             } else if ("filterByCategory".equals(action)) {
@@ -86,12 +89,19 @@ public class ProductController extends HttpServlet {
         } finally {
             loadCategories(request);
             System.out.println("DEBUG ProductController - Forwarding to: " + url);
-            request.getRequestDispatcher(url).forward(request, response);
+            
+            // FIX 1: ✅ Only redirect for listAllProducts, forward for others
+            if (url != null && url.startsWith("redirect:")) {
+                String redirectUrl = url.substring("redirect:".length());
+                response.sendRedirect(redirectUrl);
+            } else if (url != null) {
+                request.getRequestDispatcher(url).forward(request, response);
+            }
         }
     }
 
     /**
-     * NEW: Handle Admin Dashboard
+     * FIX 1: ✅ FIXED - Handle Admin Dashboard with proper all products display
      */
     private String handleAdminDashboard(HttpServletRequest request, HttpServletResponse response) {
         if (!AuthUtils.isAdmin(request)) {
@@ -102,9 +112,21 @@ public class ProductController extends HttpServlet {
         try {
             System.out.println("DEBUG handleAdminDashboard - Loading dashboard data...");
             
+            // Check if we should show all products or just preview
+            String showAll = request.getParameter("showAll");
+            
             // Load all products for dashboard
             List<ProductDTO> allProducts = pdao.getAllProducts();
             request.setAttribute("allProducts", allProducts);
+            
+            // FIX 1: ✅ FIXED - Proper handling of showAll parameter
+            if ("true".equals(showAll)) {
+                request.setAttribute("showAllProducts", true);
+                System.out.println("DEBUG handleAdminDashboard - Showing all " + (allProducts != null ? allProducts.size() : 0) + " products");
+            } else {
+                request.setAttribute("showAllProducts", false);
+                System.out.println("DEBUG handleAdminDashboard - Showing preview (10 products max)");
+            }
             
             // Calculate statistics
             int totalProducts = allProducts != null ? allProducts.size() : 0;
@@ -132,6 +154,53 @@ public class ProductController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("message", "Error loading dashboard: " + e.getMessage());
+            return "error.jsp";
+        }
+    }
+
+    /**
+     * FIX 1: ✅ FIXED - Handle list all products in dashboard properly
+     */
+    private String handleListAllProductsInDashboard(HttpServletRequest request, HttpServletResponse response) {
+        if (!AuthUtils.isAdmin(request)) {
+            request.setAttribute("message", "Bạn không có quyền truy cập trang này!");
+            return "error.jsp";
+        }
+        
+        try {
+            System.out.println("DEBUG handleListAllProductsInDashboard - Loading all products in dashboard");
+            
+            // Load all products for dashboard
+            List<ProductDTO> allProducts = pdao.getAllProducts();
+            request.setAttribute("allProducts", allProducts);
+            request.setAttribute("showAllProducts", true); // Show all products
+            
+            // Calculate statistics
+            int totalProducts = allProducts != null ? allProducts.size() : 0;
+            int activeProducts = 0;
+            int inactiveProducts = 0;
+            
+            if (allProducts != null) {
+                for (ProductDTO p : allProducts) {
+                    if (p.isStatus()) {
+                        activeProducts++;
+                    } else {
+                        inactiveProducts++;
+                    }
+                }
+            }
+            
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("activeProducts", activeProducts);
+            request.setAttribute("inactiveProducts", inactiveProducts);
+            
+            System.out.println("DEBUG handleListAllProductsInDashboard - Loaded " + totalProducts + " products");
+            
+            return "adminDashboard.jsp"; // Return to dashboard with all products shown
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error loading all products: " + e.getMessage());
             return "error.jsp";
         }
     }
@@ -341,7 +410,7 @@ public class ProductController extends HttpServlet {
     }
 
     /**
-     * NEW: Handle Edit Product
+     * Handle Edit Product
      */
     private String handleEditProduct(HttpServletRequest request, HttpServletResponse response) {
         if (!AuthUtils.isAdmin(request)) {
@@ -375,7 +444,7 @@ public class ProductController extends HttpServlet {
     }
 
     /**
-     * NEW: Handle Update Product
+     * Handle Update Product
      */
     private String handleUpdateProduct(HttpServletRequest request, HttpServletResponse response) {
         if (!AuthUtils.isAdmin(request)) {
@@ -443,8 +512,7 @@ public class ProductController extends HttpServlet {
             }
 
             request.setAttribute("message", "Update product successfully!");
-            response.sendRedirect("ProductController?action=adminDashboard");
-            return null;
+            return "redirect:" + request.getContextPath() + "/ProductController?action=adminDashboard";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -454,7 +522,7 @@ public class ProductController extends HttpServlet {
     }
 
     /**
-     * NEW: Handle Delete Product
+     * Handle Delete Product
      */
     private String handleDeleteProduct(HttpServletRequest request, HttpServletResponse response) {
         if (!AuthUtils.isAdmin(request)) {
@@ -473,8 +541,7 @@ public class ProductController extends HttpServlet {
             
             if (pdao.delete(productId)) {
                 System.out.println("DEBUG handleDeleteProduct - Product deleted successfully");
-                response.sendRedirect("ProductController?action=adminDashboard");
-                return null;
+                return "redirect:" + request.getContextPath() + "/ProductController?action=adminDashboard";
             } else {
                 request.setAttribute("message", "Cannot delete product!");
                 return "error.jsp";
@@ -488,7 +555,7 @@ public class ProductController extends HttpServlet {
     }
 
     /**
-     * Handle adding new product (Admin only)
+     * FIX 2: ✅ FIXED - Enhanced product adding with proper navigation
      */
     private String handleProductAdding(HttpServletRequest request, HttpServletResponse response) {
         if (!AuthUtils.isAdmin(request)) {
@@ -559,7 +626,9 @@ public class ProductController extends HttpServlet {
             return "productForm.jsp";
         }
 
-        request.setAttribute("message", "Add product successfully!");
+        // FIX 2: ✅ FIXED - Set success message and show navigation buttons
+        request.setAttribute("message", "Thêm sản phẩm thành công!");
+        request.setAttribute("showSuccessActions", true);
         return "productForm.jsp";
     }
 

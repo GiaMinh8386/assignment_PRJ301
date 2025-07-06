@@ -12,7 +12,7 @@
     .navbar {
         background-color: #b02a20 !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        min-height: 70px; /* FIXED: Consistent height */
+        min-height: 70px;
     }
 
     .navbar-brand {
@@ -20,7 +20,7 @@
         font-weight: bold;
         color: white !important;
         text-decoration: none;
-        flex-shrink: 0; /* FIXED: Prevent shrinking */
+        flex-shrink: 0;
     }
 
     .navbar-brand:hover {
@@ -28,12 +28,11 @@
         text-decoration: none;
     }
 
-    /* FIXED: Consistent search container layout */
     .search-container {
-        flex: 1; /* Take available space */
+        flex: 1;
         max-width: 600px;
         margin: 0 auto;
-        padding: 0 20px; /* Add padding to prevent crowding */
+        padding: 0 20px;
     }
 
     .input-group {
@@ -42,7 +41,7 @@
         border: 2px solid #fff;
         background-color: white;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        width: 100%; /* FIXED: Full width within container */
+        width: 100%;
     }
 
     .input-group .form-control {
@@ -50,7 +49,7 @@
         box-shadow: none;
         font-size: 14px;
         padding: 12px 20px;
-        flex: 1; /* FIXED: Take remaining space */
+        flex: 1;
     }
 
     .input-group .form-control:focus {
@@ -64,7 +63,7 @@
         border: none;
         padding: 0 25px;
         transition: all 0.3s ease;
-        flex-shrink: 0; /* FIXED: Prevent button from shrinking */
+        flex-shrink: 0;
     }
 
     .input-group .btn-search:hover {
@@ -72,13 +71,12 @@
         color: white;
     }
 
-    /* FIXED: Consistent user section layout */
     .user-section {
         display: flex;
         align-items: center;
         gap: 15px;
-        flex-shrink: 0; /* FIXED: Prevent shrinking */
-        min-width: 200px; /* FIXED: Minimum width to prevent cramping */
+        flex-shrink: 0;
+        min-width: 200px;
     }
 
     /* ===== CART DROPDOWN STYLES ===== */
@@ -357,7 +355,7 @@
         color: #dc3545 !important;
     }
 
-    /* FIXED: Responsive design */
+    /* Responsive design */
     @media (max-width: 991px) {
         .search-container {
             order: 3;
@@ -396,7 +394,7 @@
             <i class="fas fa-dumbbell me-2"></i>GymLife
         </a>
 
-        <!-- Search Form - FIXED: Consistent layout -->
+        <!-- Search Form -->
         <form class="search-container d-flex" role="search" action="MainController" method="get">
             <input type="hidden" name="action" value="searchProduct">
             <div class="input-group">
@@ -407,7 +405,7 @@
             </div>
         </form>
 
-        <!-- User Section - FIXED: Consistent layout -->
+        <!-- User Section -->
         <div class="user-section">
             <%
                 UserDTO currentUser = null;
@@ -472,10 +470,11 @@
                                 Tổng cộng: <%= String.format("%,.0f", total) %>₫
                             </div>
                             <div class="cart-actions">
-                                <a href="<%= request.getContextPath() %>/CartController?action=view" class="cart-btn cart-btn-primary">
+                                <!-- ✅ FIXED: Corrected cart link URL -->
+                                <a href="CartController?action=view" class="cart-btn cart-btn-primary">
                                     <i class="fas fa-edit me-1"></i>Chỉnh sửa giỏ hàng
                                 </a>
-                                <a href="<%= request.getContextPath() %>/OrderController?action=checkout" class="cart-btn cart-btn-secondary">
+                                <a href="OrderController?action=checkout" class="cart-btn cart-btn-secondary">
                                     <i class="fas fa-credit-card me-1"></i>Thanh toán
                                 </a>
                             </div>
@@ -518,9 +517,7 @@
                 <a href="ProductController?action=adminDashboard" class="dropdown-item">
                     <i class="fas fa-tachometer-alt"></i>Dashboard Admin
                 </a>
-                <a href="MainController?action=listProducts" class="dropdown-item">
-                    <i class="fas fa-box"></i>Quản lý sản phẩm
-                </a>
+              
                 <a href="productForm.jsp" class="dropdown-item">
                     <i class="fas fa-plus"></i>Thêm sản phẩm
                 </a>
@@ -639,7 +636,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with consistent layout');
+        console.log('✅ Header loaded with complete cart dropdown fix');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');

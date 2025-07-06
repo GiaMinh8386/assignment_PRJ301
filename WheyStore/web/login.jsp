@@ -124,6 +124,17 @@
                 margin-top: 15px;
                 font-size: 0.9rem;
             }
+
+            /* 🔧 ADDED: Success message styling */
+            .success-message {
+                background: #d1e7dd;
+                color: #0f5132;
+                border: 1px solid #badbcc;
+                border-radius: 10px;
+                padding: 10px;
+                margin-top: 15px;
+                font-size: 0.9rem;
+            }
             
             .divider {
                 margin: 20px 0;
@@ -225,9 +236,12 @@
                 Object objMessage = request.getAttribute("message");
                 String message = (objMessage == null) ? "" : objMessage.toString();
                 if (!message.isEmpty()) {
+                    // 🔧 FIXED: Check if it's a success message
+                    boolean isSuccess = message.contains("thành công") || message.contains("Đăng nhập thành công") || 
+                                       message.contains("successful") || message.contains("success");
             %>
-            <div class="error-message">
-                <i class="fas fa-exclamation-triangle me-2"></i><%= message %>
+            <div class="<%= isSuccess ? "success-message" : "error-message" %>">
+                <i class="fas fa-<%= isSuccess ? "check-circle" : "exclamation-triangle" %> me-2"></i><%= message %>
             </div>
             <%
                 }
@@ -246,10 +260,10 @@
             </div>
 
             <div class="quick-links">
-                <a href="index_1.jsp">
+                <a href="MainController?action=home">
                     <i class="fas fa-home me-1"></i>Về trang chủ
                 </a>
-                            </div>
+            </div>
         </div>
 
         <% } %>

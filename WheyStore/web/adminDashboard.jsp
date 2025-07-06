@@ -331,7 +331,7 @@
             </div>
         </div>
 
-        <!-- Products Table -->
+        <!-- FIX 1: ✅ FIXED - Products Table with proper all products display -->
         <div class="products-table">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5><i class="fas fa-table me-2"></i>Danh sách sản phẩm</h5>
@@ -360,10 +360,16 @@
                     </thead>
                     <tbody>
                         <%
+                            // FIX 1: ✅ FIXED - Check if we should show all products or just preview
+                            Boolean showAllProducts = (Boolean) request.getAttribute("showAllProducts");
+                            boolean showAll = showAllProducts != null && showAllProducts;
+                            
                             if (allProducts != null && !allProducts.isEmpty()) {
                                 int count = 0;
+                                int maxDisplay = showAll ? allProducts.size() : 10; // Show all or just 10
+                                
                                 for (ProductDTO product : allProducts) {
-                                    if (count >= 10) break; // Chỉ hiển thị 10 sản phẩm đầu tiên
+                                    if (count >= maxDisplay) break;
                                     count++;
                         %>
                         <tr>
@@ -421,13 +427,28 @@
                         </tr>
                         <%
                                 }
-                                if (allProducts.size() > 10) {
+                                
+                                // FIX 1: ✅ FIXED - Show "View All" button only when not showing all and there are more products
+                                if (!showAll && allProducts.size() > 10) {
                         %>
                         <tr>
                             <td colspan="7" class="text-center py-3">
-                                <a href="MainController?action=listProducts" class="btn btn-outline-primary">
+                                <button onclick="showAllProducts()" class="btn btn-outline-primary">
                                     <i class="fas fa-list me-2"></i>Xem tất cả <%= allProducts.size() %> sản phẩm
-                                </a>
+                                </button>
+                            </td>
+                        </tr>
+                        <%
+                                }
+                                
+                                // FIX 1: ✅ FIXED - Show "Show Less" button when showing all products and there are more than 10
+                                if (showAll && allProducts.size() > 10) {
+                        %>
+                        <tr>
+                            <td colspan="7" class="text-center py-3">
+                                <button onclick="showLessProducts()" class="btn btn-outline-secondary">
+                                    <i class="fas fa-compress me-2"></i>Thu gọn (hiển thị 10 sản phẩm đầu)
+                                </button>
                             </td>
                         </tr>
                         <%
@@ -530,6 +551,15 @@
             
             console.log('✅ Admin Dashboard loaded successfully!');
         });
+        
+        // FIX 1: ✅ FIXED - Functions to show/hide all products in dashboard
+        function showAllProducts() {
+            window.location.href = 'ProductController?action=listAllProducts';
+        }
+        
+        function showLessProducts() {
+            window.location.href = 'ProductController?action=adminDashboard';
+        }
         
         function refreshData() {
             const btn = event.target.closest('button');

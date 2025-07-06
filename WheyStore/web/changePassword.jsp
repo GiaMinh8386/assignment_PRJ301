@@ -164,7 +164,8 @@
             color: #0f5132;
         }
         
-        .password-requirements {
+        /* 🔧 CHANGED: Password tips (suggestions only) */
+        .password-tips {
             background: #e7f3ff;
             border: 1px solid #b8daff;
             border-radius: 8px;
@@ -173,17 +174,24 @@
             font-size: 0.85rem;
         }
         
-        .requirement-item {
+        .tip-header {
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 8px;
+        }
+        
+        .tip-item {
             display: flex;
             align-items: center;
             margin-bottom: 5px;
+            color: #666;
         }
         
-        .requirement-item:last-child {
+        .tip-item:last-child {
             margin-bottom: 0;
         }
         
-        .requirement-icon {
+        .tip-icon {
             width: 16px;
             margin-right: 8px;
             color: #0066cc;
@@ -194,16 +202,22 @@
             margin-top: 20px;
         }
         
-        .back-link a {
-            color: #b02a20;
-            text-decoration: none;
-            font-weight: 500;
+        .btn-back {
             transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
-        .back-link a:hover {
-            color: #8b1e16;
-            text-decoration: underline;
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(-3px);
+            color: #f8f9fa;
+            text-decoration: none;
         }
         
         @media (max-width: 576px) {
@@ -219,16 +233,6 @@
                 padding: 20px;
             }
         }
-        
-        btn-back:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    transform: translateX(-3px);
-    color: #f8f9fa !important;
-}
-
-.btn-back {
-    transition: all 0.3s ease;
-}
     </style>
 </head>
 <body>
@@ -287,20 +291,30 @@
                                 </button>
                             </div>
                             
-                            <!-- Password Requirements -->
-                            <div class="password-requirements">
-                                <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Yêu cầu mật khẩu:</h6>
-                                <div class="requirement-item">
-                                    <i class="fas fa-check requirement-icon"></i>
-                                    <span>Ít nhất 6 ký tự</span>
+                            <!-- 🔧 CHANGED: Password Tips (suggestions only, not requirements) -->
+                            <div class="password-tips">
+                                <div class="tip-header">
+                                    <i class="fas fa-lightbulb me-2"></i>Gợi ý tạo mật khẩu mạnh:
                                 </div>
-                                <div class="requirement-item">
-                                    <i class="fas fa-check requirement-icon"></i>
-                                    <span>Khác với mật khẩu hiện tại</span>
+                                <div class="tip-item">
+                                    <i class="fas fa-info-circle tip-icon"></i>
+                                    <span>Nên có ít nhất 6 ký tự</span>
                                 </div>
-                                <div class="requirement-item">
-                                    <i class="fas fa-check requirement-icon"></i>
-                                    <span>Nên kết hợp chữ và số</span>
+                                <div class="tip-item">
+                                    <i class="fas fa-info-circle tip-icon"></i>
+                                    <span>Kết hợp chữ thường, chữ hoa và số</span>
+                                </div>
+                                <div class="tip-item">
+                                    <i class="fas fa-info-circle tip-icon"></i>
+                                    <span>Có thể thêm ký tự đặc biệt (!@#$%^&*)</span>
+                                </div>
+                                <div class="tip-item">
+                                    <i class="fas fa-info-circle tip-icon"></i>
+                                    <span>Tránh sử dụng thông tin cá nhân dễ đoán</span>
+                                </div>
+                                <div class="text-muted mt-2" style="font-size: 0.8rem;">
+                                    <i class="fas fa-info me-1"></i>
+                                    <em>Đây chỉ là gợi ý - bạn có thể đặt mật khẩu theo ý muốn</em>
                                 </div>
                             </div>
                         </div>
@@ -350,11 +364,11 @@
             </div>
             
             <!-- Back Link -->
-            <div class="mb-3">
-    <a href="welcome.jsp" class="btn-back text-white fw-bold text-decoration-none d-inline-flex align-items-center px-3 py-2 rounded">
-        <i class="fas fa-arrow-left me-2"></i>Quay lại trang chủ
-    </a>
-</div>
+            <div class="back-link">
+                <a href="welcome.jsp" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại trang chủ
+                </a>
+            </div>
         </div>
     </div>
 
@@ -378,32 +392,28 @@
             }
         }
         
-        // Form validation
+        // 🔧 SIMPLIFIED: Form validation (only basic checks)
         document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const currentPassword = document.getElementById('currentPassword').value;
             
-            // Check if new password matches confirm password
+            // ✅ ONLY CHECK: Passwords match
             if (newPassword !== confirmPassword) {
                 e.preventDefault();
                 alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
                 return false;
             }
             
-            // Check if new password is different from current
+            // ✅ ONLY CHECK: New password different from current
             if (newPassword === currentPassword) {
                 e.preventDefault();
                 alert('Mật khẩu mới phải khác với mật khẩu hiện tại!');
                 return false;
             }
             
-            // Check password length
-            if (newPassword.length < 6) {
-                e.preventDefault();
-                alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
-                return false;
-            }
+            // ✅ REMOVED: Minimum length requirement (let user decide)
+            // ✅ REMOVED: Complexity requirements (just suggestions now)
             
             // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
@@ -431,8 +441,37 @@
             }, 1000);
         }
         
+        // 🔧 ADDED: Password strength indicator (visual only, not enforced)
+        document.getElementById('newPassword').addEventListener('input', function() {
+            const password = this.value;
+            const tips = document.querySelectorAll('.tip-item');
+            
+            // Reset all tips
+            tips.forEach(tip => {
+                tip.style.color = '#666';
+                const icon = tip.querySelector('.tip-icon');
+                icon.className = 'fas fa-info-circle tip-icon';
+            });
+            
+            // Visual feedback (not enforcement)
+            if (password.length >= 6) {
+                tips[0].style.color = '#28a745';
+                tips[0].querySelector('.tip-icon').className = 'fas fa-check-circle tip-icon';
+            }
+            
+            if (/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+                tips[1].style.color = '#28a745';
+                tips[1].querySelector('.tip-icon').className = 'fas fa-check-circle tip-icon';
+            }
+            
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                tips[2].style.color = '#28a745';
+                tips[2].querySelector('.tip-icon').className = 'fas fa-check-circle tip-icon';
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ Change Password page loaded successfully!');
+            console.log('✅ Change Password page loaded with simplified validation!');
         });
     </script>
 

@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ... (giữ nguyên style cũ) ... */
         body {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
@@ -112,7 +111,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Success/Error notification styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -155,6 +153,24 @@
             background: #c82333;
             transform: scale(1.1);
         }
+
+        .table th {
+            background-color: #f8f9fa;
+            border: none;
+            font-weight: 600;
+            color: #333;
+            padding: 15px;
+        }
+        
+        .table td {
+            border: none;
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+        }
     </style>
 </head>
 <body>
@@ -165,23 +181,31 @@
     <div class="container">
         <div class="cart-container">
             <%
+                // 🔧 FIX: Use exact same logic as debug version that worked
                 Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) request.getAttribute("cartItems");
                 Integer totalItems = (Integer) request.getAttribute("totalItems");
                 java.math.BigDecimal totalAmount = (java.math.BigDecimal) request.getAttribute("totalAmount");
+                
+                // Debug info (remove this later)
+                System.out.println("🔍 DEBUG cart.jsp - cart is null: " + (cart == null));
+                if (cart != null) {
+                    System.out.println("🔍 DEBUG cart.jsp - cart size: " + cart.size());
+                    System.out.println("🔍 DEBUG cart.jsp - cart class: " + cart.getClass().getName());
+                }
                 
                 if (cart == null || cart.isEmpty()) {
             %>
             <!-- Empty Cart State -->
             <div class="cart-header">
                 <h2><i class="fas fa-shopping-cart me-3"></i>Giỏ hàng của bạn</h2>
-                <p>Quản lý sản phẩm yêu thích</p>
+                
             </div>
             
             <div class="text-center py-5">
                 <i class="fas fa-shopping-cart fa-5x text-muted mb-3"></i>
                 <h3>Giỏ hàng trống!</h3>
                 <p>Bạn chưa có sản phẩm nào trong giỏ hàng.<br>
-                Hãy khám phá các sản phẩm tuyệt vời của chúng tôi.</p>
+               Hãy tiếp tục quay trở về trang chủ xem những sản phẩm khác nhá <3</p>
                 <a href="MainController?action=home" class="btn btn-primary btn-lg">
                     <i class="fas fa-shopping-bag me-2"></i>Bắt đầu mua sắm
                 </a>
@@ -243,7 +267,7 @@
                                 </td>
                                 <td>
                                     <div class="quantity-controls">
-                                        <button type="button" class="quantity-btn" onclick="decreaseQuantity('<%= item.getProductID() %>')">
+                                        <button type="button" class="quantity-btn" data-action="decrease" data-product-id="<%= item.getProductID() %>">
                                             <i class="fas fa-minus"></i>
                                         </button>
                                         <input type="number" 
@@ -254,7 +278,7 @@
                                                class="quantity-input"
                                                data-product-id="<%= item.getProductID() %>"
                                                data-original-value="<%= item.getQuantity() %>">
-                                        <button type="button" class="quantity-btn" onclick="increaseQuantity('<%= item.getProductID() %>')">
+                                        <button type="button" class="quantity-btn" data-action="increase" data-product-id="<%= item.getProductID() %>">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
@@ -312,8 +336,8 @@
                             
                             <!-- Checkout Button -->
                             <%
-                                model.UserDTO currentUser = (model.UserDTO) session.getAttribute("user");
-                                if (currentUser != null) {
+                                UserDTO checkoutUser = (UserDTO) session.getAttribute("user");
+                                if (checkoutUser != null) {
                             %>
                             <button type="button" class="btn btn-success w-100 mt-3" onclick="proceedCheckout()">
                                 <i class="fas fa-credit-card me-2"></i>Tiến hành thanh toán
@@ -365,294 +389,200 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // 🔧 FIXED: Improved cart management functions
-        const CartManager = {
-            contextPath: '<%= request.getContextPath() %>',
-            
-            // Show/Hide loading overlay
-            showLoading() {
-                document.getElementById('loadingOverlay').style.display = 'flex';
-            },
-
-            hideLoading() {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            },
-
-            // Show notification
-            showNotification(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                const icon = document.getElementById('notificationIcon');
-                const text = document.getElementById('notificationText');
-                
-                // Set icon and style based on type
-                if (type === 'success') {
-                    notification.className = 'notification success show';
-                    icon.className = 'fas fa-check-circle me-2';
-                } else {
-                    notification.className = 'notification error show';
-                    icon.className = 'fas fa-exclamation-circle me-2';
-                }
-                
-                text.textContent = message;
-                
-                // Auto hide after 4 seconds
-                setTimeout(() => {
-                    this.hideNotification();
-                }, 4000);
-            },
-
-            hideNotification() {
-                const notification = document.getElementById('notification');
-                notification.classList.remove('show');
-            },
-
-            // 🔧 FIXED: Enhanced AJAX request function
-            async makeRequest(action, data) {
-                console.log(`🔄 Making ${action} request:`, data);
-                
-                this.showLoading();
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('action', action);
-                    
-                    // Add all data to form
-                    for (const [key, value] of Object.entries(data)) {
-                        formData.append(key, value);
-                    }
-
-                    const response = await fetch(`${this.contextPath}/CartController`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'  // Important for AJAX detection
-                        },
-                        body: formData
-                    });
-
-                    this.hideLoading();
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('✅ Request successful:', result);
-                        
-                        if (result.success) {
-                            this.showNotification(result.message);
-                            
-                            // Reload page after successful update/remove to show changes
-                            if (action === 'update' || action === 'remove' || action === 'clear') {
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1000);
-                            }
-                            
-                            return true;
-                        } else {
-                            this.showNotification(result.message || 'Có lỗi xảy ra!', 'error');
-                            return false;
-                        }
-                    } else {
-                        // Try to get error message from response
-                        try {
-                            const errorResult = await response.json();
-                            this.showNotification(errorResult.message || 'Có lỗi xảy ra!', 'error');
-                        } catch {
-                            this.showNotification('Có lỗi xảy ra khi kết nối server!', 'error');
-                        }
-                        return false;
-                    }
-                } catch (error) {
-                    this.hideLoading();
-                    console.error('❌ Request error:', error);
-                    this.showNotification('Có lỗi xảy ra: ' + error.message, 'error');
-                    return false;
-                }
-            },
-
-            // Update quantity
-            async updateQuantity(productId, newQuantity) {
-                console.log(`🔄 Updating quantity for ${productId} to ${newQuantity}`);
-                
-                if (newQuantity < 1) {
-                    if (confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-                        return await this.removeItem(productId);
-                    } else {
-                        // Reset input value
-                        document.getElementById(`qty-${productId}`).value = 1;
-                        return false;
-                    }
-                }
-                
-                return await this.makeRequest('update', {
-                    productID: productId,
-                    qty: newQuantity
-                });
-            },
-
-            // Remove item
-            async removeItem(productId) {
-                console.log(`🗑️ Removing product: ${productId}`);
-                
-                return await this.makeRequest('remove', {
-                    productID: productId
-                });
-            },
-
-            // Clear cart
-            async clearCart() {
-                console.log('🗑️ Clearing entire cart');
-                
-                return await this.makeRequest('clear', {});
-            }
-        };
-
-        // 🔧 FIXED: Global functions for easier calling from HTML
+        // 🔧 FIXED: Simple functions for button clicks
         function increaseQuantity(productId) {
-            const input = document.getElementById(`qty-${productId}`);
+            console.log('🔄 Increase quantity for:', productId);
+            const input = document.getElementById('qty-' + productId);
+            if (!input) {
+                console.error('❌ Input not found for product:', productId);
+                return;
+            }
+            
             const currentValue = parseInt(input.value) || 1;
+            console.log('📊 Current value:', currentValue);
+            
             if (currentValue < 99) {
                 const newValue = currentValue + 1;
                 input.value = newValue;
-                CartManager.updateQuantity(productId, newValue);
+                console.log('📈 New value:', newValue);
+                
+                // Submit form immediately
+                submitQuantityUpdate(productId, newValue);
+            } else {
+                alert('Số lượng tối đa là 99!');
             }
         }
 
         function decreaseQuantity(productId) {
-            const input = document.getElementById(`qty-${productId}`);
+            console.log('🔄 Decrease quantity for:', productId);
+            const input = document.getElementById('qty-' + productId);
+            if (!input) {
+                console.error('❌ Input not found for product:', productId);
+                return;
+            }
+            
             const currentValue = parseInt(input.value) || 1;
+            console.log('📊 Current value:', currentValue);
+            
             if (currentValue > 1) {
                 const newValue = currentValue - 1;
                 input.value = newValue;
-                CartManager.updateQuantity(productId, newValue);
+                console.log('📉 New value:', newValue);
+                
+                // Submit form immediately
+                submitQuantityUpdate(productId, newValue);
+            } else {
+                // Ask if user wants to remove item
+                if (confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                    removeItem(productId);
+                }
             }
         }
 
+        function submitQuantityUpdate(productId, newQuantity) {
+            console.log('📝 Submitting quantity update:', productId, '=', newQuantity);
+            
+            // Create and submit form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<%= request.getContextPath() %>/CartController';
+            form.style.display = 'none';
+            
+            // Add action parameter
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'update';
+            form.appendChild(actionInput);
+            
+            // Add product ID parameter
+            const productInput = document.createElement('input');
+            productInput.type = 'hidden';
+            productInput.name = 'productID';
+            productInput.value = productId;
+            form.appendChild(productInput);
+            
+            // Add quantity parameter
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'hidden';
+            qtyInput.name = 'qty';
+            qtyInput.value = newQuantity;
+            form.appendChild(qtyInput);
+            
+            // Add to DOM and submit
+            document.body.appendChild(form);
+            form.submit();
+        }
+
         function removeItem(productId) {
+            console.log('🗑️ Remove item:', productId);
+            
             if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-                CartManager.removeItem(productId);
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '<%= request.getContextPath() %>/CartController';
+                form.style.display = 'none';
+                
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'remove';
+                form.appendChild(actionInput);
+                
+                const productInput = document.createElement('input');
+                productInput.type = 'hidden';
+                productInput.name = 'productID';
+                productInput.value = productId;
+                form.appendChild(productInput);
+                
+                document.body.appendChild(form);
+                form.submit();
             }
         }
 
         function clearCart() {
+            console.log('🗑️ Clear entire cart');
+            
             if (confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?\nHành động này không thể hoàn tác!')) {
-                CartManager.clearCart();
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '<%= request.getContextPath() %>/CartController';
+                form.style.display = 'none';
+                
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'clear';
+                form.appendChild(actionInput);
+                
+                document.body.appendChild(form);
+                form.submit();
             }
         }
 
         function proceedCheckout() {
-            // Show development message
-            alert('⚠️ Chức năng thanh toán đang được phát triển!\n\nHiện tại chỉ có thể chỉnh sửa giỏ hàng.\nVui lòng quay lại sau để sử dụng tính năng này.');
-            console.log('💳 Checkout clicked but not implemented yet');
+            alert('⚠️ Chức năng thanh toán đang được phát triển!');
         }
 
-        function hideNotification() {
-            CartManager.hideNotification();
-        }
-
-        // 🔧 FIXED: Enhanced event listeners
+        // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Cart page loaded successfully!');
             
-            // Handle quantity input changes with improved debouncing
-            const quantityInputs = document.querySelectorAll('.quantity-input');
-            let typingTimers = {};
-            
-            quantityInputs.forEach(input => {
-                const productId = input.dataset.productId;
-                
-                // Handle direct input changes with debouncing
-                input.addEventListener('input', function() {
-                    const value = parseInt(this.value) || 1;
+            // 🔧 FIXED: Use data attributes instead of onclick to avoid double execution
+            const quantityButtons = document.querySelectorAll('.quantity-btn');
+            quantityButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent any bubbling
                     
-                    // Clear existing timer
-                    if (typingTimers[productId]) {
-                        clearTimeout(typingTimers[productId]);
+                    const action = this.dataset.action; // 'increase' or 'decrease'
+                    const productId = this.dataset.productId;
+                    
+                    console.log('🖱️ Button clicked:', action, 'for product:', productId);
+                    
+                    if (action === 'increase') {
+                        console.log('➕ Increase button clicked');
+                        increaseQuantity(productId);
+                    } else if (action === 'decrease') {
+                        console.log('➖ Decrease button clicked');
+                        decreaseQuantity(productId);
                     }
+                });
+            });
+            
+            // Handle manual quantity input changes
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            quantityInputs.forEach(input => {
+                let originalValue = parseInt(input.value) || 1;
+                
+                input.addEventListener('change', function() {
+                    const productId = this.dataset.productId;
+                    const newValue = parseInt(this.value) || 1;
                     
-                    // Validate input
-                    if (value < 1) {
+                    console.log('📝 Manual input change:', productId, 'from', originalValue, 'to', newValue);
+                    
+                    if (newValue < 1) {
                         this.value = 1;
                         return;
                     }
-                    if (value > 99) {
+                    if (newValue > 99) {
                         this.value = 99;
                         return;
                     }
                     
-                    // Set new timer
-                    typingTimers[productId] = setTimeout(() => {
-                        const originalValue = parseInt(this.dataset.originalValue) || 1;
-                        if (value !== originalValue) {
-                            console.log(`📝 Input changed for ${productId}: ${originalValue} → ${value}`);
-                            CartManager.updateQuantity(productId, value);
-                        }
-                    }, 1500); // Wait 1.5 seconds after user stops typing
-                });
-
-                // Handle enter key for immediate update
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        if (typingTimers[productId]) {
-                            clearTimeout(typingTimers[productId]);
-                        }
-                        
-                        const value = parseInt(this.value) || 1;
-                        const originalValue = parseInt(this.dataset.originalValue) || 1;
-                        
-                        if (value !== originalValue) {
-                            console.log(`⏎ Enter pressed for ${productId}: updating to ${value}`);
-                            CartManager.updateQuantity(productId, value);
-                        }
+                    if (newValue !== originalValue) {
+                        submitQuantityUpdate(productId, newValue);
                     }
                 });
-
-                // Handle focus events for better UX
+                
+                // Update original value when focused
                 input.addEventListener('focus', function() {
-                    this.select(); // Select all text when focused
-                });
-
-                input.addEventListener('blur', function() {
-                    // Ensure minimum value on blur
-                    if (parseInt(this.value) < 1) {
-                        this.value = 1;
-                    }
+                    originalValue = parseInt(this.value) || 1;
                 });
             });
             
-            // Add smooth animations to table rows
-            const tableRows = document.querySelectorAll('tbody tr');
-            tableRows.forEach((row, index) => {
-                row.style.opacity = '0';
-                row.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    row.style.transition = 'all 0.5s ease';
-                    row.style.opacity = '1';
-                    row.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Ctrl/Cmd + D = Clear cart
-                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                    e.preventDefault();
-                    clearCart();
-                }
-                
-                // Escape = Go back to shopping
-                if (e.key === 'Escape') {
-                    window.location.href = 'MainController?action=home';
-                }
-            });
-            
-            console.log('🛒 Cart management system ready!');
-            console.log('💡 Keyboard shortcuts: Ctrl+D (clear), Escape (back)');
-        });
-        
-        // Performance monitoring
-        window.addEventListener('load', function() {
-            const loadTime = performance.now();
-            console.log(`⚡ Cart page loaded in ${Math.round(loadTime)}ms`);
+            console.log('🎯 Found', quantityButtons.length, 'quantity buttons');
+            console.log('🎯 Found', quantityInputs.length, 'quantity inputs');
         });
     </script>
 

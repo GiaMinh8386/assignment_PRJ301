@@ -146,7 +146,7 @@
                 margin-right: 8px;
             }
 
-            /* ===== PRODUCT CARD STYLES - FIXED FOR CONSISTENCY ===== */
+            /* FIX 3: ✅ FIXED - Enhanced product card styles with better image handling */
             .product-card {
                 border: 1px solid #e9ecef;
                 border-radius: 12px;
@@ -172,15 +172,21 @@
                 justify-content: center;
             }
 
+            /* FIX 3: ✅ FIXED - Improved image styles */
             .product-image {
                 max-width: 100%;
                 max-height: 100%;
                 object-fit: contain;
                 transition: transform 0.3s ease;
+                border: none;
             }
 
             .product-image:hover {
                 transform: scale(1.05);
+            }
+
+            .product-image.loaded {
+                opacity: 1;
             }
 
             .product-image-placeholder {
@@ -667,32 +673,43 @@
                             %>
                             <div class="col-3 mb-4">
                                 <div class="card product-card">
-                                    <!-- FIXED: Improved image handling -->
+                                    <!-- FIX 3: ✅ FIXED - Enhanced image handling with better error management -->
                                     <%
                                         String contextPath = request.getContextPath();
                                         String imageName = p.getImage();
                                         String imagePath = null;
+                                        boolean hasValidImage = false;
                                         
-                                        // Check different possible image paths
+                                        // Enhanced image path logic
                                         if (imageName != null && !imageName.trim().isEmpty()) {
-                                            imagePath = contextPath + "/assets/images/products/" + imageName;
+                                            if (imageName.startsWith("http://") || imageName.startsWith("https://")) {
+                                                // External URL
+                                                imagePath = imageName;
+                                                hasValidImage = true;
+                                            } else if (imageName.startsWith("/") || imageName.startsWith("assets/")) {
+                                                // Relative path
+                                                imagePath = contextPath + (imageName.startsWith("/") ? imageName : "/assets/images/products/" + imageName);
+                                                hasValidImage = true;
+                                            } else {
+                                                // Filename only
+                                                imagePath = contextPath + "/assets/images/products/" + imageName;
+                                                hasValidImage = true;
+                                            }
                                         }
                                     %>
                                     
                                     <div class="product-image-container">
-                                        <% if (imagePath != null) { %>
+                                        <% if (hasValidImage) { %>
                                             <img src="<%= imagePath %>"
                                                  class="product-image"
                                                  alt="<%= p.getName() %>"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="product-image-placeholder" style="display:none;">
-                                                <i class="fas fa-image"></i>
-                                                <span>Hình ảnh không có sẵn</span>
-                                            </div>
+                                                 loading="lazy"
+                                                 onerror="handleImageError(this, '<%= p.getName() %>', '<%= p.getBrand() != null ? p.getBrand() : "" %>')">
                                         <% } else { %>
                                             <div class="product-image-placeholder">
                                                 <i class="fas fa-image"></i>
-                                                <span>Hình ảnh không có sẵn</span>
+                                                <div><%= p.getBrand() != null ? p.getBrand() : "Product" %></div>
+                                                <small><%= p.getFormattedPrice() %></small>
                                             </div>
                                         <% } %>
                                     </div>
@@ -854,6 +871,23 @@
 
         <!-- Custom JavaScript -->
         <script>
+            // FIX 3: ✅ FIXED - Enhanced image error handling
+            function handleImageError(img, productName, productBrand) {
+                console.log('🖼️ Image failed to load for product:', productName);
+                
+                // Create placeholder content
+                const placeholder = document.createElement('div');
+                placeholder.className = 'product-image-placeholder';
+                placeholder.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <div>${productBrand || 'Product'}</div>
+                    <small>Hình ảnh không có sẵn</small>
+                `;
+                
+                // Replace image with placeholder
+                img.parentNode.replaceChild(placeholder, img);
+            }
+
             // ===== LOGIN NOTIFICATION FUNCTIONS =====
             function showLoginNotification() {
                 document.getElementById('modalOverlay').style.display = 'block';
@@ -888,7 +922,7 @@
 
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('✅ Index page loaded successfully with fixed cart functionality!');
+                console.log('✅ Index page loaded successfully with FIXED image handling!');
 
                 // FIXED: Price filter form submission
                 const priceFilterForm = document.getElementById('priceFilterForm');
@@ -1056,13 +1090,21 @@
                     }
                 });
 
-                // Image lazy loading
+                // FIX 3: ✅ FIXED - Enhanced image lazy loading with error handling
                 const images = document.querySelectorAll('.product-image');
                 const imageObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             const img = entry.target;
                             img.classList.add('loaded');
+                            
+                            // Add error handling for lazy loaded images
+                            img.addEventListener('error', function() {
+                                const productName = this.alt || 'Unknown Product';
+                                const productBrand = this.closest('.product-card')?.querySelector('.product-brand')?.textContent || '';
+                                handleImageError(this, productName, productBrand);
+                            });
+                            
                             observer.unobserve(img);
                         }
                     });
@@ -1071,6 +1113,8 @@
                 images.forEach(img => {
                     imageObserver.observe(img);
                 });
+
+                console.log('🖼️ Image handling system initialized with error recovery');
             });
 
             // ===== UTILITY FUNCTIONS =====
