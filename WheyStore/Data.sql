@@ -122,3 +122,12 @@ CREATE TABLE [dbo].[tblCartItems] (
     [added_at] [datetime] DEFAULT GETDATE()
 );
 GO
+
+-- 8. Favorites (Danh sách sản phẩm yêu thích của người dùng)
+CREATE TABLE [dbo].[tblFavorites] (
+    [favoriteID] [int] PRIMARY KEY IDENTITY(1,1),
+    [userID] [nvarchar](50)  FOREIGN KEY REFERENCES tblUsers(userID),
+    [productID] [nvarchar](50)  FOREIGN KEY REFERENCES tblProducts(productID),
+    [added_at] [datetime] DEFAULT GETDATE()
+);
+GO

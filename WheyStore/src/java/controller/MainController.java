@@ -1,36 +1,34 @@
 package controller;
 
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import model.FavoriteDAO;
+import java.util.ArrayList;
+import java.util.List;
+import model.ProductDAO;
+import model.ProductDTO;
+import model.CategoryDAO;
+import model.CategoryDTO;
 
-//import java.io.IOException;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import model.CategoryDAO;
-//import model.CategoryDTO;
-
-   import java.io.IOException;
-    import java.sql.SQLException;
-   import java.util.ArrayList;
-    import javax.servlet.ServletException;
-   import javax.servlet.annotation.WebServlet;
-   import javax.servlet.http.HttpServlet;
-   import javax.servlet.http.HttpServletRequest;
-   import javax.servlet.http.HttpServletResponse;
-   import java.util.List;
-   import model.ProductDAO;
-   import model.ProductDTO;
-   import model.CategoryDAO;
-    import model.CategoryDTO;
-  
-
-
+//   import java.io.IOException;
+//    import java.sql.SQLException;
+//   import java.util.ArrayList;
+//    import javax.servlet.ServletException;
+//   import javax.servlet.annotation.WebServlet;
+//   import javax.servlet.http.HttpServlet;
+//   import javax.servlet.http.HttpServletRequest;
+//   import javax.servlet.http.HttpServletResponse;
+//   import java.util.List;
+//   import model.ProductDAO;
+//   import model.ProductDTO;
+//   import model.CategoryDAO;
+//    import model.CategoryDTO;
+//  
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
@@ -66,6 +64,11 @@ public class MainController extends HttpServlet {
                 || "remove".equals(action)
                 || "update".equals(action)
                 || "view".equals(action);
+    }
+
+    private boolean isFavoriteAction(String action) {
+        return "toggleFavorite".equals(action)
+                || "viewFavorites".equals(action);   // tuỳ bạn có dùng hay không
     }
 
     /*--------------------------------------------------------------
@@ -109,10 +112,12 @@ public class MainController extends HttpServlet {
             } else if (isProductAction(action)) {
                 System.out.println("DEBUG MainController - Forwarding to ProductController");
                 url = "ProductController";
-
             } else if (isCartAction(action)) {
                 System.out.println("DEBUG MainController - Forwarding to CartController");
                 url = "CartController";
+            } else if (isFavoriteAction(action)) {
+                System.out.println("DEBUG MainController - Forwarding to FavoriteController");
+                url = "FavoriteController";
             } else {
                 System.out.println("DEBUG MainController - Unknown action: " + action);
                 request.setAttribute("message", "Unknown action: " + action);

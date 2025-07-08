@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
-         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         version="3.0">
-
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee           http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <display-name>WheyStore Consultation Portal</display-name>
     <description>WheyStore - Online supplement store with consultation features</description>
-
     <!-- Main Controller Servlet -->
     <servlet>
         <servlet-name>MainController</servlet-name>
         <servlet-class>controller.MainController</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>FavoriteController</servlet-name>
+        <servlet-class>controller.FavoriteController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainController</servlet-name>
         <url-pattern>/MainController</url-pattern>
     </servlet-mapping>
-
     <!-- User Controller Servlet -->
     <servlet>
         <servlet-name>UserController</servlet-name>
@@ -28,7 +25,6 @@
         <servlet-name>UserController</servlet-name>
         <url-pattern>/UserController</url-pattern>
     </servlet-mapping>
-
     <!-- Product Controller Servlet -->
     <servlet>
         <servlet-name>ProductController</servlet-name>
@@ -38,7 +34,6 @@
         <servlet-name>ProductController</servlet-name>
         <url-pattern>/ProductController</url-pattern>
     </servlet-mapping>
-
     <!-- Cart Controller Servlet -->
     <servlet>
         <servlet-name>CartController</servlet-name>
@@ -48,7 +43,6 @@
         <servlet-name>CartController</servlet-name>
         <url-pattern>/CartController</url-pattern>
     </servlet-mapping>
-
     <!-- Order Controller Servlet -->
     <servlet>
         <servlet-name>OrderController</servlet-name>
@@ -58,19 +52,20 @@
         <servlet-name>OrderController</servlet-name>
         <url-pattern>/OrderController</url-pattern>
     </servlet-mapping>
-
     <!-- Session Configuration -->
+    <servlet-mapping>
+        <servlet-name>FavoriteController</servlet-name>
+        <url-pattern>/FavoriteController</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
     <!-- Welcome Files -->
     <welcome-file-list>
         <welcome-file>index_1.jsp</welcome-file>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>MainController</welcome-file>
     </welcome-file-list>
-
     <!-- Error Pages -->
     <error-page>
         <error-code>404</error-code>
@@ -80,7 +75,6 @@
         <error-code>500</error-code>
         <location>/error.jsp</location>
     </error-page>
-
     <!-- Character Encoding Filter -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -94,5 +88,4 @@
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
 </web-app>

@@ -122,9 +122,15 @@
     }
 
     @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
     }
 
     .cart-dropdown-menu {
@@ -363,12 +369,12 @@
             margin-top: 10px;
             padding: 0;
         }
-        
+
         .user-section {
             order: 2;
             min-width: auto;
         }
-        
+
         .navbar-brand {
             order: 1;
         }
@@ -379,7 +385,7 @@
             min-width: 300px;
             right: -50px;
         }
-        
+
         .navbar {
             min-height: auto;
             padding: 10px 0;
@@ -418,6 +424,12 @@
                 if (currentUser != null) {
             %>
 
+
+            <!-- Favorite Icon -->
+            <a href="MainController?action=viewFavorites" class="cart-button" title="Yêu thích">
+                <i class="fas fa-heart fa-lg" style="color: white;"></i>
+            </a>
+
             <!-- Cart Dropdown -->
             <div class="cart-dropdown">
                 <button class="cart-button" onclick="toggleCartDropdown()" id="cartButton">
@@ -437,13 +449,13 @@
                         }
                     %>
                 </button>
-                
+
                 <!-- Cart Dropdown Menu -->
                 <div class="cart-dropdown-menu" id="cartDropdownMenu">
                     <div class="cart-header">
                         <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
                     </div>
-                    
+
                     <div id="cartItems">
                         <%
                             if (cart != null && !cart.isEmpty()) {
@@ -517,7 +529,7 @@
                 <a href="ProductController?action=adminDashboard" class="dropdown-item">
                     <i class="fas fa-tachometer-alt"></i>Dashboard Admin
                 </a>
-              
+
                 <a href="productForm.jsp" class="dropdown-item">
                     <i class="fas fa-plus"></i>Thêm sản phẩm
                 </a>
@@ -565,16 +577,16 @@
     function toggleCartDropdown() {
         const dropdown = document.getElementById('cartDropdownMenu');
         const userDropdown = document.getElementById('userDropdownMenu');
-        
+
         // Close user dropdown if open
         if (userDropdownOpen) {
             userDropdown.classList.remove('show');
             userDropdownOpen = false;
         }
-        
+
         cartDropdownOpen = !cartDropdownOpen;
         dropdown.classList.toggle('show', cartDropdownOpen);
-        
+
         if (cartDropdownOpen) {
             setTimeout(() => {
                 document.addEventListener('click', closeCartDropdownOnClickOutside);
@@ -586,16 +598,16 @@
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdownMenu');
         const cartDropdown = document.getElementById('cartDropdownMenu');
-        
+
         // Close cart dropdown if open
         if (cartDropdownOpen) {
             cartDropdown.classList.remove('show');
             cartDropdownOpen = false;
         }
-        
+
         userDropdownOpen = !userDropdownOpen;
         dropdown.classList.toggle('show', userDropdownOpen);
-        
+
         if (userDropdownOpen) {
             setTimeout(() => {
                 document.addEventListener('click', closeUserDropdownOnClickOutside);
@@ -675,7 +687,7 @@
         if (cartBadge) {
             let currentCount = parseInt(cartBadge.textContent) || 0;
             cartBadge.textContent = currentCount + 1;
-            
+
             // Add animation
             cartBadge.style.transform = 'scale(1.3)';
             setTimeout(() => {
