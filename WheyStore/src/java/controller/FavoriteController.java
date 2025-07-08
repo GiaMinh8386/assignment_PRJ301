@@ -4,12 +4,28 @@
  */
 package controller;
 
+//import java.io.IOException;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.annotation.WebServlet;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
+//import java.util.List;
+//import model.ProductDAO;
+//import model.ProductDTO;
+//import utils.AuthUtils;
+//import model.CategoryDAO;
+//import model.CategoryDTO;
+//import java.util.ArrayList;
+//import model.FavoriteDAO;
+//import model.UserDTO;
+
 import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
@@ -20,10 +36,6 @@ import java.util.ArrayList;
 import model.FavoriteDAO;
 import model.UserDTO;
 
-/**
- *
- * @author ASUS
- */
 @WebServlet(name = "FavoriteController", urlPatterns = {"/FavoriteController"})
 public class FavoriteController extends HttpServlet {
 
@@ -48,33 +60,28 @@ public class FavoriteController extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-        String url = null;                 // default: KHÔNG forward nếu null
+        String url = null;
 
         try {
             String action = request.getParameter("action");
             System.out.println("DEBUG FavoriteController - Action: " + action);
 
             if ("toggleFavorite".equals(action)) {
-                // xử lý like / unlike
-                url = handleToggleFavorite(request, response);  // trả null để không forward
+                url = handleToggleFavorite(request, response);
             } else if ("viewFavorites".equals(action)) {
-                // (tuỳ chọn) nếu bạn muốn gọi controller thay vì favorite.jsp
                 url = handleViewFavorites(request, response);
             } else {
-                System.out.println("DEBUG FavoriteController - Unknown action");
-                request.setAttribute("message", "Unknown action: " + action);
-                url = "error.jsp";
+                System.out.println("DEBUG FavoriteController - Unknown action, redirecting to viewFavorites");
+                url = handleViewFavorites(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message",
-                    "System error occurred: " + e.getMessage());
+            request.setAttribute("message", "System error occurred: " + e.getMessage());
             url = "error.jsp";
         } finally {
             loadCategories(request);
 
-            // Nếu url != null thì forward/redirect
             if (url != null) {
                 if (url.startsWith("redirect:")) {
                     response.sendRedirect(url.substring("redirect:".length()));
@@ -86,48 +93,74 @@ public class FavoriteController extends HttpServlet {
     }
 
     /*--------------------------------------------------------------
-     * 1. LIKE / UNLIKE – trả về "liked" hoặc "unliked" (KHÔNG forward)
+     * 1. LIKE / UNLIKE – toggle favorite status
      *-------------------------------------------------------------*/
     private String handleToggleFavorite(HttpServletRequest request,
-            HttpServletResponse response)
-            throws Exception {
-
-        UserDTO user = AuthUtils.getCurrentUser(request);
-        if (user == null) {                       // chưa đăng nhập
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;                          // không forward
-        }
-
-        String pid = request.getParameter("productID");  // productID
-        if (pid == null || pid.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
-        }
-
-        boolean likedNow = new FavoriteDAO()
-                .toggle(user.getUserID(), pid);
-
-        String referer = request.getHeader("referer");
-        return "redirect:" + (referer != null ? referer : "MainController?action=listProducts");
-    }
-
-    /*--------------------------------------------------------------
-     * 2. (Tuỳ chọn) XEM DANH SÁCH YÊU THÍCH bằng controller
-     *-------------------------------------------------------------*/
-    private String handleViewFavorites(HttpServletRequest request,
-            HttpServletResponse response)
-            throws Exception {
+            HttpServletResponse response) throws Exception {
 
         UserDTO user = AuthUtils.getCurrentUser(request);
         if (user == null) {
-            // chuyển hướng tới login
-            return "redirect:" + request.getContextPath() + "/login.jsp";
+            return "redirect:login.jsp";
         }
 
-        // Lấy danh sách đã thích
-        request.setAttribute("favorites",
-                new FavoriteDAO().getFavorites(user.getUserID()));
-        return "favorite.jsp";
+        String pid = request.getParameter("productID");
+        if (pid == null || pid.trim().isEmpty()) {
+            request.setAttribute("message", "Product ID is required");
+            return "error.jsp";
+        }
+
+        System.out.println("DEBUG toggleFavorite - User: " + user.getUserID() + ", Product: " + pid);
+
+        try {
+            FavoriteDAO favoriteDAO = new FavoriteDAO();
+            boolean isNowFavorite = favoriteDAO.toggle(user.getUserID(), pid);
+            
+            System.out.println("DEBUG toggleFavorite - Result: " + (isNowFavorite ? "Added" : "Removed"));
+            
+            // Redirect back to the referring page or to favorites list
+            String referer = request.getHeader("referer");
+            if (referer != null && !referer.isEmpty()) {
+                return "redirect:" + referer;
+            } else {
+                return "redirect:FavoriteController?action=viewFavorites";
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("DEBUG toggleFavorite - Error: " + e.getMessage());
+            request.setAttribute("message", "Error toggling favorite: " + e.getMessage());
+            return "error.jsp";
+        }
+    }
+
+    /*--------------------------------------------------------------
+     * 2. XEM DANH SÁCH YÊU THÍCH
+     *-------------------------------------------------------------*/
+    private String handleViewFavorites(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        UserDTO user = AuthUtils.getCurrentUser(request);
+        if (user == null) {
+            return "redirect:login.jsp";
+        }
+
+        System.out.println("DEBUG viewFavorites - Loading favorites for user: " + user.getUserID());
+
+        try {
+            FavoriteDAO favoriteDAO = new FavoriteDAO();
+            List<ProductDTO> favorites = favoriteDAO.getFavorites(user.getUserID());
+            
+            System.out.println("DEBUG viewFavorites - Found " + (favorites != null ? favorites.size() : 0) + " favorites");
+            
+            request.setAttribute("favorites", favorites);
+            return "favorite.jsp";
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("DEBUG viewFavorites - Error: " + e.getMessage());
+            request.setAttribute("message", "Error loading favorites: " + e.getMessage());
+            return "error.jsp";
+        }
     }
 
     /*--------------------------------------------------------------*/
@@ -145,6 +178,6 @@ public class FavoriteController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handle favorite (like/unlike, view list) without touching MainController";
+        return "Handle favorite operations (toggle, view list)";
     }
 }

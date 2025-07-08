@@ -361,6 +361,17 @@
         color: #dc3545 !important;
     }
 
+    /* ===== FAVORITE BUTTON STYLES ===== */
+    .favorite-button {
+        color: #e91e63;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-button:hover {
+        color: #c2185b;
+        transform: scale(1.1);
+    }
+
     /* Responsive design */
     @media (max-width: 991px) {
         .search-container {
@@ -424,10 +435,9 @@
                 if (currentUser != null) {
             %>
 
-
-            <!-- Favorite Icon -->
-            <a href="MainController?action=viewFavorites" class="cart-button" title="Yêu thích">
-                <i class="fas fa-heart fa-lg" style="color: white;"></i>
+            <!-- ✅ FIXED: Favorite Icon -->
+            <a href="FavoriteController?action=viewFavorites" class="cart-button favorite-button" title="Sản phẩm yêu thích">
+                <i class="fas fa-heart fa-lg"></i>
             </a>
 
             <!-- Cart Dropdown -->
@@ -648,7 +658,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with complete cart dropdown fix');
+        console.log('✅ Header loaded with complete cart dropdown and favorite icon');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');

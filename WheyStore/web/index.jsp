@@ -304,6 +304,15 @@
                 transform: none !important;
             }
 
+            /* ===== FAVORITE BUTTON STYLES ===== */
+            .btn-favorite:hover {
+                background-color: #e91e63 !important;
+                border-color: #e91e63 !important;
+                color: white !important;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
             /* ===== EMPTY STATE STYLES ===== */
             .empty-state {
                 text-align: center;
@@ -733,7 +742,7 @@
                                             %>
                                         </div>
                                         
-                                        <!-- FIXED: Product actions with consistent styling -->
+                                        <!-- ✅ FIXED: Product actions with favorite button -->
                                         <div class="product-actions">
                                             <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
                                                class="product-btn">
@@ -758,12 +767,25 @@
                                                     data-product-name="<%= p.getName() %>">
                                                 <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
                                             </button>
+                                            
+                                            <!-- ✅ FIXED: Favorite Button -->
+                                            <form action="FavoriteController" method="post" style="margin-top: 8px;">
+                                                <input type="hidden" name="action" value="toggleFavorite">
+                                                <input type="hidden" name="productID" value="<%= p.getId() %>">
+                                                <button type="submit" class="btn-favorite">
+                                                    <i class="fas fa-heart me-1"></i>Yêu thích
+                                                </button>
+                                            </form>
                                             <%
                                                 } else {
                                                     // User chưa đăng nhập - hiển thị button với onclick
                                             %>
                                             <button type="button" class="btn-cart" onclick="showLoginNotification()">
                                                 <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                            </button>
+                                            
+                                            <button type="button" class="btn-favorite" onclick="showLoginNotification()" style="margin-top: 8px;">
+                                                <i class="fas fa-heart me-1"></i>Yêu thích
                                             </button>
                                             <%
                                                 }
@@ -845,7 +867,7 @@
             </div>
             <div class="modal-title">Cần đăng nhập</div>
             <div class="modal-text">
-                Bạn cần đăng nhập hoặc tạo tài khoản để thêm sản phẩm vào giỏ hàng.
+                Bạn cần đăng nhập hoặc tạo tài khoản để thực hiện chức năng này.
             </div>
             <div class="modal-actions">
                 <a href="login.jsp" class="modal-btn btn-modal-login">Đăng nhập</a>
@@ -906,7 +928,7 @@
                 const toast = document.getElementById('successToast');
                 const toastText = document.getElementById('toastText');
                 
-                toastText.textContent = message || 'Thêm sản phẩm thành công!';
+                toastText.textContent = message || 'Thao tác thành công!';
                 toast.classList.add('show');
                 
                 // Auto hide after 3 seconds
@@ -922,7 +944,7 @@
 
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('✅ Index page loaded successfully with FIXED image handling!');
+                console.log('✅ Index page loaded successfully with favorite functionality!');
 
                 // FIXED: Price filter form submission
                 const priceFilterForm = document.getElementById('priceFilterForm');
@@ -1041,6 +1063,27 @@
                     });
                 });
 
+                // ===== FAVORITE FORM HANDLING =====
+                const favoriteForms = document.querySelectorAll('form[action="FavoriteController"]');
+                favoriteForms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        
+                        // Show loading state
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...';
+                        submitBtn.disabled = true;
+                        
+                        // Reset button if form submission takes too long
+                        setTimeout(() => {
+                            if (submitBtn.disabled) {
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        }, 5000);
+                    });
+                });
+
                 // Smooth hover effects for product cards
                 const cards = document.querySelectorAll('.product-card');
                 cards.forEach(card => {
@@ -1115,6 +1158,8 @@
                 });
 
                 console.log('🖼️ Image handling system initialized with error recovery');
+                console.log('❤️ Favorite functionality initialized');
+                console.log('🛒 Cart functionality initialized');
             });
 
             // ===== UTILITY FUNCTIONS =====
@@ -1153,3 +1198,19 @@
 
     </body>
 </html>
+                                     {
+                background-color: transparent !important;
+                border: 2px solid #e91e63 !important;
+                color: #e91e63 !important;
+                font-size: 13px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                width: 100%;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .btn-favorite

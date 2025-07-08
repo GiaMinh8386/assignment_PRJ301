@@ -1,34 +1,35 @@
 package controller;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+//import java.io.IOException;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.annotation.WebServlet;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
+//import java.sql.SQLException;
+//import model.FavoriteDAO;
+//import java.util.ArrayList;
+//import java.util.List;
+//import model.ProductDAO;
+//import model.ProductDTO;
+//import model.CategoryDAO;
+//import model.CategoryDTO;
+
+   import java.io.IOException;
 import java.sql.SQLException;
-import model.FavoriteDAO;
 import java.util.ArrayList;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.FavoriteDAO;
 import model.ProductDAO;
 import model.ProductDTO;
 import model.CategoryDAO;
 import model.CategoryDTO;
-
-//   import java.io.IOException;
-//    import java.sql.SQLException;
-//   import java.util.ArrayList;
-//    import javax.servlet.ServletException;
-//   import javax.servlet.annotation.WebServlet;
-//   import javax.servlet.http.HttpServlet;
-//   import javax.servlet.http.HttpServletRequest;
-//   import javax.servlet.http.HttpServletResponse;
-//   import java.util.List;
-//   import model.ProductDAO;
-//   import model.ProductDTO;
-//   import model.CategoryDAO;
-//    import model.CategoryDTO;
-//  
+ 
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
@@ -66,9 +67,10 @@ public class MainController extends HttpServlet {
                 || "view".equals(action);
     }
 
+    // ✅ FIXED: Complete favorite actions
     private boolean isFavoriteAction(String action) {
         return "toggleFavorite".equals(action)
-                || "viewFavorites".equals(action);   // tuỳ bạn có dùng hay không
+                || "viewFavorites".equals(action);
     }
 
     /*--------------------------------------------------------------
@@ -116,6 +118,7 @@ public class MainController extends HttpServlet {
                 System.out.println("DEBUG MainController - Forwarding to CartController");
                 url = "CartController";
             } else if (isFavoriteAction(action)) {
+                // ✅ FIXED: Complete favorite handling
                 System.out.println("DEBUG MainController - Forwarding to FavoriteController");
                 url = "FavoriteController";
             } else {
@@ -152,6 +155,6 @@ public class MainController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Main routing servlet with enhanced product and category support";
+        return "Main routing servlet with enhanced product, category and favorite support";
     }
 }
