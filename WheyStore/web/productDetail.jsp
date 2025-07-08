@@ -224,6 +224,33 @@
                 color: white;
             }
 
+            .btn-favorite {
+                background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+                border: none;
+                color: white;
+                padding: 12px 20px;
+                font-size: 14px;
+                font-weight: 600;
+                border-radius: 25px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+                min-width: 120px;
+                text-align: center;
+            }
+
+            .btn-favorite:hover {
+                background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%);
+                transform: translateY(-2px);
+                color: white;
+                box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+            }
+
+            .btn-favorite:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 10px rgba(233, 30, 99, 0.5);
+            }
+
             .product-features {
                 background: #f8f9fa;
                 padding: 20px;
@@ -253,25 +280,6 @@
                 border-radius: 15px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 margin-top: 30px;
-            }
-
-            @media (max-width: 768px) {
-                .product-image-section,
-                .product-info-section {
-                    padding: 20px;
-                }
-
-                .product-title {
-                    font-size: 1.5rem;
-                }
-
-                .product-price {
-                    font-size: 2rem;
-                }
-
-                .action-buttons {
-                    flex-direction: column;
-                }
             }
         </style>
     </head>
@@ -433,13 +441,15 @@
 
                             <%--  Form YÊU THÍCH --%>
                             <% if (currentUser != null) { %>
-                            <form action="MainController" method="post" style="display:inline;">
-                                <input type="hidden" name="action"    value="toggleFavorite">
-                                <input type="hidden" name="productID" value="<%= product.getId() %>">
-                                <button type="submit" class="btn btn-danger ms-2">
-                                    <i class="fas fa-heart me-1"></i> Yêu thích
-                                </button>
-                            </form>
+                            <div class="d-flex justify-content-center mt-3">
+                                <form action="MainController" method="post" style="display:inline;">
+                                    <input type="hidden" name="action"    value="toggleFavorite">
+                                    <input type="hidden" name="productID" value="<%= product.getId() %>">
+                                    <button type="submit" class="btn-favorite">
+                                        <i class="fas fa-heart me-2"></i>Yêu thích
+                                    </button>
+                                </form>
+                            </div>
                             <% } %>
 
                             <!-- Back to Products -->

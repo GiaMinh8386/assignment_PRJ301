@@ -146,7 +146,7 @@
                 margin-right: 8px;
             }
 
-            /* FIX 3: ✅ FIXED - Enhanced product card styles with better image handling */
+            /* ===== ENHANCED PRODUCT CARD STYLES ===== */
             .product-card {
                 border: 1px solid #e9ecef;
                 border-radius: 12px;
@@ -172,7 +172,6 @@
                 justify-content: center;
             }
 
-            /* FIX 3: ✅ FIXED - Improved image styles */
             .product-image {
                 max-width: 100%;
                 max-height: 100%;
@@ -243,7 +242,7 @@
                 margin-bottom: 15px;
             }
 
-            /* FIXED: Consistent button styles for both logged in and not logged in */
+            /* ===== ENHANCED PRODUCT ACTIONS ===== */
             .product-actions {
                 margin-top: auto;
                 display: flex;
@@ -273,7 +272,6 @@
                 transform: translateY(-2px);
             }
 
-            /* FIXED: Consistent cart button styles */
             .btn-cart {
                 background-color: #28a745 !important;
                 border: 1px solid #28a745 !important;
@@ -304,13 +302,57 @@
                 transform: none !important;
             }
 
-            /* ===== FAVORITE BUTTON STYLES ===== */
-            .btn-favorite:hover {
-                background-color: #e91e63 !important;
-                border-color: #e91e63 !important;
-                color: white !important;
+            /* ===== BEAUTIFUL FAVORITE BUTTON STYLES ===== */
+            .favorite-actions {
+                margin-top: 8px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .btn-favorite-home {
+                background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600;
+                border-radius: 20px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 3px 10px rgba(233, 30, 99, 0.3);
+                min-width: 100px;
+                text-align: center;
                 text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .btn-favorite-home:hover {
+                background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%);
                 transform: translateY(-2px);
+                color: white;
+                text-decoration: none;
+                box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+            }
+
+            .btn-favorite-home:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 8px rgba(233, 30, 99, 0.5);
+            }
+
+            .btn-favorite-home i {
+                font-size: 11px;
+                animation: heartBeat 2s ease-in-out infinite;
+            }
+
+            @keyframes heartBeat {
+                0% { transform: scale(1); }
+                14% { transform: scale(1.1); }
+                28% { transform: scale(1); }
+                42% { transform: scale(1.1); }
+                70% { transform: scale(1); }
             }
 
             /* ===== EMPTY STATE STYLES ===== */
@@ -682,7 +724,7 @@
                             %>
                             <div class="col-3 mb-4">
                                 <div class="card product-card">
-                                    <!-- FIX 3: ✅ FIXED - Enhanced image handling with better error management -->
+                                    <!-- Enhanced image handling with better error management -->
                                     <%
                                         String contextPath = request.getContextPath();
                                         String imageName = p.getImage();
@@ -742,7 +784,7 @@
                                             %>
                                         </div>
                                         
-                                        <!-- ✅ FIXED: Product actions with favorite button -->
+                                        <!-- Product actions with consistent styling -->
                                         <div class="product-actions">
                                             <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
                                                class="product-btn">
@@ -768,14 +810,16 @@
                                                 <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
                                             </button>
                                             
-                                            <!-- ✅ FIXED: Favorite Button -->
-                                            <form action="FavoriteController" method="post" style="margin-top: 8px;">
-                                                <input type="hidden" name="action" value="toggleFavorite">
-                                                <input type="hidden" name="productID" value="<%= p.getId() %>">
-                                                <button type="submit" class="btn-favorite">
-                                                    <i class="fas fa-heart me-1"></i>Yêu thích
-                                                </button>
-                                            </form>
+                                            <!-- BEAUTIFUL FAVORITE BUTTON FOR HOME PAGE -->
+                                            <div class="favorite-actions">
+                                                <form action="FavoriteController" method="post" style="display:inline;">
+                                                    <input type="hidden" name="action" value="toggleFavorite">
+                                                    <input type="hidden" name="productID" value="<%= p.getId() %>">
+                                                    <button type="submit" class="btn-favorite-home">
+                                                        <i class="fas fa-heart"></i>Yêu thích
+                                                    </button>
+                                                </form>
+                                            </div>
                                             <%
                                                 } else {
                                                     // User chưa đăng nhập - hiển thị button với onclick
@@ -784,9 +828,12 @@
                                                 <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
                                             </button>
                                             
-                                            <button type="button" class="btn-favorite" onclick="showLoginNotification()" style="margin-top: 8px;">
-                                                <i class="fas fa-heart me-1"></i>Yêu thích
-                                            </button>
+                                            <!-- FAVORITE BUTTON FOR NON-LOGGED IN USERS -->
+                                            <div class="favorite-actions">
+                                                <button type="button" class="btn-favorite-home" onclick="showLoginNotification()">
+                                                    <i class="fas fa-heart"></i>Yêu thích
+                                                </button>
+                                            </div>
                                             <%
                                                 }
                                             %>
@@ -867,7 +914,7 @@
             </div>
             <div class="modal-title">Cần đăng nhập</div>
             <div class="modal-text">
-                Bạn cần đăng nhập hoặc tạo tài khoản để thực hiện chức năng này.
+                Bạn cần đăng nhập hoặc tạo tài khoản để thêm sản phẩm vào giỏ hàng hoặc yêu thích.
             </div>
             <div class="modal-actions">
                 <a href="login.jsp" class="modal-btn btn-modal-login">Đăng nhập</a>
@@ -893,7 +940,7 @@
 
         <!-- Custom JavaScript -->
         <script>
-            // FIX 3: ✅ FIXED - Enhanced image error handling
+            // Enhanced image error handling
             function handleImageError(img, productName, productBrand) {
                 console.log('🖼️ Image failed to load for product:', productName);
                 
@@ -928,7 +975,7 @@
                 const toast = document.getElementById('successToast');
                 const toastText = document.getElementById('toastText');
                 
-                toastText.textContent = message || 'Thao tác thành công!';
+                toastText.textContent = message || 'Thêm sản phẩm thành công!';
                 toast.classList.add('show');
                 
                 // Auto hide after 3 seconds
@@ -944,9 +991,9 @@
 
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('✅ Index page loaded successfully with favorite functionality!');
+                console.log('✅ Index page loaded successfully with BEAUTIFUL favorite buttons!');
 
-                // FIXED: Price filter form submission
+                // Price filter form submission
                 const priceFilterForm = document.getElementById('priceFilterForm');
                 const priceFilterBtn = document.getElementById('priceFilterBtn');
 
@@ -983,7 +1030,7 @@
                     });
                 }
 
-                // ===== FIXED: ADD TO CART HANDLING WITH AJAX =====
+                // ===== ADD TO CART HANDLING WITH AJAX =====
                 const cartButtons = document.querySelectorAll('.add-to-cart-btn');
                 cartButtons.forEach(button => {
                     button.addEventListener('click', function() {
@@ -1063,24 +1110,17 @@
                     });
                 });
 
-                // ===== FAVORITE FORM HANDLING =====
-                const favoriteForms = document.querySelectorAll('form[action="FavoriteController"]');
-                favoriteForms.forEach(form => {
-                    form.addEventListener('submit', function(e) {
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.innerHTML;
+                // ===== FAVORITE BUTTON HANDLING =====
+                const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
+                favoriteButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        // Add heart animation
+                        const icon = this.querySelector('i');
+                        icon.style.animation = 'heartBeat 0.6s ease-in-out';
                         
-                        // Show loading state
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...';
-                        submitBtn.disabled = true;
-                        
-                        // Reset button if form submission takes too long
                         setTimeout(() => {
-                            if (submitBtn.disabled) {
-                                submitBtn.innerHTML = originalText;
-                                submitBtn.disabled = false;
-                            }
-                        }, 5000);
+                            icon.style.animation = 'heartBeat 2s ease-in-out infinite';
+                        }, 600);
                     });
                 });
 
@@ -1133,7 +1173,7 @@
                     }
                 });
 
-                // FIX 3: ✅ FIXED - Enhanced image lazy loading with error handling
+                // Enhanced image lazy loading with error handling
                 const images = document.querySelectorAll('.product-image');
                 const imageObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
@@ -1158,8 +1198,7 @@
                 });
 
                 console.log('🖼️ Image handling system initialized with error recovery');
-                console.log('❤️ Favorite functionality initialized');
-                console.log('🛒 Cart functionality initialized');
+                console.log('💖 Beautiful favorite buttons ready!');
             });
 
             // ===== UTILITY FUNCTIONS =====
@@ -1198,19 +1237,3 @@
 
     </body>
 </html>
-                                     {
-                background-color: transparent !important;
-                border: 2px solid #e91e63 !important;
-                color: #e91e63 !important;
-                font-size: 13px;
-                padding: 8px 12px;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                width: 100%;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-            }
-
-            .btn-favorite

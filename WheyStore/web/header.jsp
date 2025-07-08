@@ -79,6 +79,49 @@
         min-width: 200px;
     }
 
+    /* ===== FAVORITE BUTTON STYLES ===== */
+    .favorite-button {
+        position: relative;
+    }
+
+    .favorite-link {
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 10px 15px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .favorite-link:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .favorite-link i {
+        color: #ff69b4;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    .favorite-link:hover i {
+        color: #ff1493;
+        transform: scale(1.1);
+        text-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
+    }
+
     /* ===== CART DROPDOWN STYLES ===== */
     .cart-dropdown {
         position: relative;
@@ -360,48 +403,6 @@
         background-color: #fff5f5;
         color: #dc3545 !important;
     }
-
-    /* ===== FAVORITE BUTTON STYLES ===== */
-    .favorite-button {
-        color: #e91e63;
-        transition: all 0.3s ease;
-    }
-
-    .favorite-button:hover {
-        color: #c2185b;
-        transform: scale(1.1);
-    }
-
-    /* Responsive design */
-    @media (max-width: 991px) {
-        .search-container {
-            order: 3;
-            width: 100%;
-            margin-top: 10px;
-            padding: 0;
-        }
-
-        .user-section {
-            order: 2;
-            min-width: auto;
-        }
-
-        .navbar-brand {
-            order: 1;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .cart-dropdown-menu {
-            min-width: 300px;
-            right: -50px;
-        }
-
-        .navbar {
-            min-height: auto;
-            padding: 10px 0;
-        }
-    }
 </style>
 
 <nav class="navbar navbar-expand-lg px-4 py-3">
@@ -435,10 +436,12 @@
                 if (currentUser != null) {
             %>
 
-            <!-- ✅ FIXED: Favorite Icon -->
-            <a href="FavoriteController?action=viewFavorites" class="cart-button favorite-button" title="Sản phẩm yêu thích">
-                <i class="fas fa-heart fa-lg"></i>
-            </a>
+            <!-- Favorite Icon -->
+            <div class="favorite-button">
+                <a href="MainController?action=viewFavorites" class="favorite-link" title="Yêu thích">
+                    <i class="fas fa-heart fa-lg"></i>
+                </a>
+            </div>
 
             <!-- Cart Dropdown -->
             <div class="cart-dropdown">
@@ -658,7 +661,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with complete cart dropdown and favorite icon');
+        console.log('✅ Header loaded with complete cart dropdown fix');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');
