@@ -2,15 +2,28 @@ package model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class OrderDTO {
-    private int orderID;
+
+    private int orderID;          // <-- INT
     private String userID;
     private Timestamp orderDate;
     private BigDecimal totalAmount;
     private String status;
+    private List<OrderDetailDTO> details;
 
-    public OrderDTO() {}
+    public OrderDTO() {
+    }
+
+    public OrderDTO(int orderID, String userID, Timestamp orderDate, BigDecimal totalAmount, String status, List<OrderDetailDTO> details) {
+        this.orderID = orderID;
+        this.userID = userID;
+        this.orderDate = orderDate;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.details = details;
+    }
 
     public OrderDTO(int orderID, String userID, Timestamp orderDate, BigDecimal totalAmount, String status) {
         this.orderID = orderID;
@@ -59,4 +72,13 @@ public class OrderDTO {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public List<OrderDetailDTO> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<OrderDetailDTO> details) {
+        this.details = details;
+    }
+   
 }

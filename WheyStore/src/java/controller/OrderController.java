@@ -25,15 +25,14 @@ import utils.AuthUtils;
 //import model.OrderDetailDTO;
 //import model.UserDTO;
 //import utils.AuthUtils;
-   
 @WebServlet(name = "OrderController", urlPatterns = {"/OrderController"})
 public class OrderController extends HttpServlet {
 
     private final OrderDAO orderDAO = new OrderDAO();
 
     /* ============================================= */
-    /*                MAIN DISPATCHER                */
-    /* ============================================= */
+ /*                MAIN DISPATCHER                */
+ /* ============================================= */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -66,8 +65,8 @@ public class OrderController extends HttpServlet {
     }
 
     /* ============================================= */
-    /*                 1. CREATE ORDER               */
-    /* ============================================= */
+ /*                 1. CREATE ORDER               */
+ /* ============================================= */
     private String handleCreateOrder(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession(false);
@@ -76,14 +75,14 @@ public class OrderController extends HttpServlet {
             return "login.jsp";
         }
 
-        /* Lấy giỏ hàng */
+        // Lấy giỏ hàng từ session
         Map<String, CartItemDTO> cart = (Map<String, CartItemDTO>) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
             request.setAttribute("message", "Cart is empty!");
             return "cart.jsp";
         }
 
-        /* Tính tổng & chuẩn bị OrderDetail */
+        // Tính tổng và chuẩn bị OrderDetail
         BigDecimal total = BigDecimal.ZERO;
         List<OrderDetailDTO> details = new ArrayList<>();
 
@@ -92,37 +91,39 @@ public class OrderController extends HttpServlet {
             total = total.add(line);
 
             details.add(new OrderDetailDTO(
-                    0,          // orderDetailID (identity)
-                    0,          // orderID sẽ gán trong DAO
+                    0, 0, // ID tự động
                     item.getProductID(),
                     item.getQuantity(),
                     item.getUnitPrice()
             ));
         }
 
-        /* Tạo OrderDTO */
+        // Tạo OrderDTO
         UserDTO user = (UserDTO) session.getAttribute("user");
         OrderDTO order = new OrderDTO();
         order.setUserID(user.getUserID());
         order.setTotalAmount(total);
         order.setStatus("Pending");
+        order.setDetails(details); // ✅ BỔ SUNG để hỗ trợ DAO overload
 
-        /* Lưu DB (transaction) */
-        int newOrderId = orderDAO.createOrder(order, details);
+        // Gọi DAO
+        int newOrderId = orderDAO.createOrder(order, details); // vẫn dùng hàm 2 đối số
+        order.setOrderID(newOrderId); // ✅ Optional – nếu cần hiển thị lại mã đơn
 
-        /* Clear cart */
+        // Clear giỏ hàng
         session.removeAttribute("cart");
 
-        /* Forward dữ liệu */
+        // Forward sang trang kết quả
         request.setAttribute("newOrderId", newOrderId);
         request.setAttribute("orderTotal", total);
+        request.setAttribute("order", order); // ✅ Optional – nếu view cần thêm
 
         return "checkoutSuccess.jsp";
     }
 
     /* ============================================= */
-    /*              2. VIEW ORDERS BY USER           */
-    /* ============================================= */
+ /*              2. VIEW ORDERS BY USER           */
+ /* ============================================= */
     private String handleViewOrders(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession(false);
@@ -136,38 +137,35 @@ public class OrderController extends HttpServlet {
         return "orderHistory.jsp";
     }
 
-    /* ============================================= */
-    /*              3. VIEW ORDER DETAIL             */
-    /* ============================================= */
-    private String handleViewOrderDetail(HttpServletRequest request, HttpServletResponse response) throws Exception {
+ /* ============================================= */
+ /*              3. VIEW ORDER DETAIL             */
+ /* ============================================= */
+    private String handleViewOrderDetail(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         String idStr = request.getParameter("orderID");
         if (idStr == null) {
-            request.setAttribute("message", "Order ID is required");
+            request.setAttribute("message", "Thiếu mã đơn hàng!");
             return "error.jsp";
         }
 
         int orderID = Integer.parseInt(idStr);
-        List<OrderDTO> tmp = orderDAO.getAllOrders();               // có thể thay bằng getById
-        OrderDTO target = tmp.stream()
-                             .filter(o -> o.getOrderID() == orderID)
-                             .findFirst()
-                             .orElse(null);
-
-        if (target == null) {
-            request.setAttribute("message", "Order not found");
+        OrderDTO order = orderDAO.getOrderById(orderID);
+        if (order == null) {
+            request.setAttribute("message", "Không tìm thấy đơn hàng!");
             return "error.jsp";
         }
 
         List<OrderDetailDTO> details = orderDAO.getOrderDetails(orderID);
-        request.setAttribute("order", target);
+
+        request.setAttribute("order", order);
         request.setAttribute("orderDetails", details);
         return "orderDetail.jsp";
     }
 
     /* ============================================= */
-    /*           4. ADMIN UPDATE ORDER STATUS        */
-    /* ============================================= */
+ /*           4. ADMIN UPDATE ORDER STATUS        */
+ /* ============================================= */
     private String handleUpdateOrderStatus(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         if (!AuthUtils.isAdmin(request)) {
@@ -194,7 +192,18 @@ public class OrderController extends HttpServlet {
     }
 
     /* =========== STANDARD SERVLET METHODS ========= */
-    @Override protected void doGet (HttpServletRequest r,HttpServletResponse s) throws ServletException,IOException { processRequest(r,s); }
-    @Override protected void doPost(HttpServletRequest r,HttpServletResponse s) throws ServletException,IOException { processRequest(r,s); }
-    @Override public   String getServletInfo() { return "Order processing servlet"; }
+    @Override
+    protected void doGet(HttpServletRequest r, HttpServletResponse s) throws ServletException, IOException {
+        processRequest(r, s);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest r, HttpServletResponse s) throws ServletException, IOException {
+        processRequest(r, s);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Order processing servlet";
+    }
 }

@@ -554,6 +554,11 @@
                     }
                 %>
 
+                <!-- ✅ NEW – LỊCH SỬ ĐƠN HÀNG -->
+                <a href="OrderController?action=viewOrders" class="dropdown-item">
+                    <i class="fas fa-box me-2"></i>Lịch sử đơn hàng            
+                </a> 
+
                 <a href="changePassword.jsp" class="dropdown-item">
                     <i class="fas fa-key"></i>Thay đổi mật khẩu
                 </a>

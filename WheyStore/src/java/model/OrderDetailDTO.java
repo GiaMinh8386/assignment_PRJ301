@@ -3,13 +3,15 @@ package model;
 import java.math.BigDecimal;
 
 public class OrderDetailDTO {
-    private int orderDetailID;
+
+    private int orderDetailID;   // nếu muốn dùng sau
     private int orderID;
     private String productID;
     private int quantity;
     private BigDecimal unitPrice;
 
-    public OrderDetailDTO() {}
+    public OrderDetailDTO() {
+    }
 
     public OrderDetailDTO(int orderDetailID, int orderID, String productID, int quantity, BigDecimal unitPrice) {
         this.orderDetailID = orderDetailID;
@@ -58,4 +60,10 @@ public class OrderDetailDTO {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    @Override
+    public String toString() {
+        return "OrderDetailDTO{" + "orderDetailID=" + orderDetailID + ", orderID=" + orderID + ", productID=" + productID + ", quantity=" + quantity + ", unitPrice=" + unitPrice + '}';
+    }
+    
 }
