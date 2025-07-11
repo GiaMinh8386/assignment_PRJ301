@@ -4,28 +4,12 @@
  */
 package controller;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.ProductDAO;
-import model.ProductDTO;
-import utils.AuthUtils;
-import model.CategoryDAO;
-import model.CategoryDTO;
-import java.util.ArrayList;
-import model.FavoriteDAO;
-import model.UserDTO;
-
 //import java.io.IOException;
-//import javax.servlet.ServletException;
-//import javax.servlet.annotation.WebServlet;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.annotation.WebServlet;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
 //import java.util.List;
 //import model.ProductDAO;
 //import model.ProductDTO;
@@ -35,6 +19,22 @@ import model.UserDTO;
 //import java.util.ArrayList;
 //import model.FavoriteDAO;
 //import model.UserDTO;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.ProductDAO;
+import model.ProductDTO;
+import utils.AuthUtils;
+import model.CategoryDAO;
+import model.CategoryDTO;
+import java.util.ArrayList;
+import model.FavoriteDAO;
+import model.UserDTO;
 
 @WebServlet(name = "FavoriteController", urlPatterns = {"/FavoriteController"})
 public class FavoriteController extends HttpServlet {

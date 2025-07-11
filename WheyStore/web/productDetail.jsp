@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="model.ProductDTO" %>
+<%@ page import="model.ReviewDAO" %>
+<%@ page import="model.ReviewDTO" %>
 <%@ page import="utils.AuthUtils" %>
+<%@ page import="java.util.List" %>
 <%@ page errorPage="error.jsp" %>
 
 <%
@@ -16,7 +19,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><%= product.getName() %> - WheyStore</title>
+        <title><%= product.getName() %> - GymLife</title>
 
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -246,11 +249,6 @@
                 box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
             }
 
-            .btn-favorite:active {
-                transform: translateY(0);
-                box-shadow: 0 2px 10px rgba(233, 30, 99, 0.5);
-            }
-
             .product-features {
                 background: #f8f9fa;
                 padding: 20px;
@@ -274,12 +272,165 @@
                 font-size: 16px;
             }
 
-            .related-products {
+            /* ===== REVIEW SECTION STYLES ===== */
+            .reviews-section {
                 background: white;
                 padding: 30px;
                 border-radius: 15px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 margin-top: 30px;
+            }
+
+            .review-summary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 10px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .average-rating {
+                font-size: 3rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+
+            .rating-stars {
+                font-size: 1.5rem;
+                color: #ffc107;
+                margin-bottom: 10px;
+            }
+
+            .review-count {
+                font-size: 1.1rem;
+                opacity: 0.9;
+            }
+
+            .review-form {
+                background: #f8f9fa;
+                padding: 25px;
+                border-radius: 10px;
+                margin-bottom: 30px;
+            }
+
+            .star-rating {
+                display: flex;
+                gap: 5px;
+                margin-bottom: 15px;
+            }
+
+            .star-rating input[type="radio"] {
+                display: none;
+            }
+
+            .star-rating label {
+                font-size: 2rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+
+            .star-rating input[type="radio"]:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107;
+            }
+
+            .review-item {
+                border-bottom: 1px solid #e9ecef;
+                padding: 20px 0;
+            }
+
+            .review-item:last-child {
+                border-bottom: none;
+            }
+
+            .review-header {
+                display: flex;
+                justify-content: between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .reviewer-info {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .reviewer-avatar {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #b02a20 0%, #8b1e16 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 600;
+            }
+
+            .reviewer-name {
+                font-weight: 600;
+                color: #333;
+            }
+
+            .review-date {
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .review-rating {
+                color: #ffc107;
+                font-size: 1.2rem;
+            }
+
+            .review-comment {
+                color: #555;
+                line-height: 1.6;
+                margin-top: 10px;
+            }
+
+            .review-actions {
+                margin-top: 15px;
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn-review-action {
+                padding: 5px 15px;
+                border: none;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-edit-review {
+                background: #17a2b8;
+                color: white;
+            }
+
+            .btn-edit-review:hover {
+                background: #138496;
+                color: white;
+            }
+
+            .btn-delete-review {
+                background: #dc3545;
+                color: white;
+            }
+
+            .btn-delete-review:hover {
+                background: #c82333;
+                color: white;
+            }
+
+            .alert-review {
+                border-radius: 10px;
+                margin-bottom: 20px;
             }
         </style>
     </head>
@@ -381,7 +532,6 @@
                                 <% } %>
                             </div>
 
-
                             <!-- Description -->
                             <% if (product.getDescription() != null && !product.getDescription().trim().isEmpty()) { %>
                             <div class="product-description">
@@ -439,11 +589,11 @@
                                 </div>
                             </form>
 
-                            <%--  Form YÊU THÍCH --%>
+                            <!-- Favorite Button -->
                             <% if (currentUser != null) { %>
                             <div class="d-flex justify-content-center mt-3">
-                                <form action="MainController" method="post" style="display:inline;">
-                                    <input type="hidden" name="action"    value="toggleFavorite">
+                                <form action="FavoriteController" method="post" style="display:inline;">
+                                    <input type="hidden" name="action" value="toggleFavorite">
                                     <input type="hidden" name="productID" value="<%= product.getId() %>">
                                     <button type="submit" class="btn-favorite">
                                         <i class="fas fa-heart me-2"></i>Yêu thích
@@ -453,7 +603,7 @@
                             <% } %>
 
                             <!-- Back to Products -->
-                            <div class="text-center">
+                            <div class="text-center mt-3">
                                 <a href="MainController?action=home" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách sản phẩm
                                 </a>
@@ -463,17 +613,192 @@
                 </div>
             </div>
 
-            <!-- Related Products Section -->
-            <div class="related-products">
+            <!-- ===== REVIEWS SECTION ===== -->
+            <div class="reviews-section">
                 <h4 class="mb-4">
-                    <i class="fas fa-heart text-danger me-2"></i>Sản phẩm liên quan
+                    <i class="fas fa-star text-warning me-2"></i>Đánh giá sản phẩm
                 </h4>
-                <div class="row">
-                    <!-- You can add related products here -->
-                    <div class="col-12 text-center text-muted">
-                        <i class="fas fa-box-open fa-3x mb-3"></i>
-                        <p>Sản phẩm liên quan sẽ được cập nhật sớm</p>
+
+                <%
+                    // Lấy thông tin review summary và danh sách reviews
+                    ReviewDAO reviewDAO = new ReviewDAO();
+                    ReviewDAO.ReviewSummaryDTO reviewSummary = null;
+                    List<ReviewDTO> reviews = null;
+                    boolean hasUserReviewed = false;
+                    
+                    try {
+                        reviewSummary = reviewDAO.getReviewSummary(product.getId());
+                        reviews = reviewDAO.getReviewsByProduct(product.getId());
+                        
+                        if (currentUser != null) {
+                            hasUserReviewed = reviewDAO.hasUserReviewed(product.getId(), currentUser.getUserID());
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error loading reviews: " + e.getMessage());
+                        reviewSummary = new ReviewDAO.ReviewSummaryDTO(0.0, 0);
+                        reviews = new java.util.ArrayList<>();
+                    }
+                %>
+
+                <!-- Review Summary -->
+                <div class="review-summary">
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <div class="average-rating"><%= reviewSummary.getFormattedRating() %></div>
+                            <div class="rating-stars"><%= reviewSummary.getStarDisplay() %></div>
+                            <div class="review-count"><%= reviewSummary.getTotalReviews() %> đánh giá</div>
+                        </div>
+                        <div class="col-8 d-flex align-items-center">
+                            <div>
+                                <h5 class="mb-2">Điểm đánh giá trung bình</h5>
+                                <p class="mb-0">Dựa trên <%= reviewSummary.getTotalReviews() %> đánh giá từ khách hàng đã mua sản phẩm</p>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Review Form -->
+                <% if (currentUser != null && !hasUserReviewed) { %>
+                <div class="review-form">
+                    <h5 class="mb-3"><i class="fas fa-edit me-2"></i>Viết đánh giá của bạn</h5>
+                    
+                    <!-- Show messages -->
+                    <%
+                        String error = request.getParameter("error");
+                        String success = request.getParameter("success");
+                        
+                        if (error != null) {
+                            String errorMsg = "";
+                            switch(error) {
+                                case "rating_required": errorMsg = "Vui lòng chọn số sao đánh giá!"; break;
+                                case "invalid_rating": errorMsg = "Đánh giá phải từ 1 đến 5 sao!"; break;
+                                case "already_reviewed": errorMsg = "Bạn đã đánh giá sản phẩm này rồi!"; break;
+                                case "add_failed": errorMsg = "Không thể thêm đánh giá. Vui lòng thử lại!"; break;
+                                default: errorMsg = "Có lỗi xảy ra!";
+                            }
+                    %>
+                    <div class="alert alert-danger alert-review">
+                        <i class="fas fa-exclamation-triangle me-2"></i><%= errorMsg %>
+                    </div>
+                    <% } %>
+                    
+                    <% if (success != null) {
+                        String successMsg = "";
+                        switch(success) {
+                            case "review_added": successMsg = "Cảm ơn bạn đã đánh giá sản phẩm!"; break;
+                            case "review_updated": successMsg = "Đánh giá của bạn đã được cập nhật!"; break;
+                            case "review_deleted": successMsg = "Đánh giá đã được xóa!"; break;
+                            default: successMsg = "Thành công!";
+                        }
+                    %>
+                    <div class="alert alert-success alert-review">
+                        <i class="fas fa-check-circle me-2"></i><%= successMsg %>
+                    </div>
+                    <% } %>
+                    
+                    <form action="ReviewController" method="post">
+                        <input type="hidden" name="action" value="addReview">
+                        <input type="hidden" name="productID" value="<%= product.getId() %>">
+                        
+                        <!-- Star Rating -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Đánh giá của bạn:</label>
+                            <div class="star-rating">
+                                <input type="radio" name="rating" value="5" id="star5">
+                                <label for="star5">★</label>
+                                <input type="radio" name="rating" value="4" id="star4">
+                                <label for="star4">★</label>
+                                <input type="radio" name="rating" value="3" id="star3">
+                                <label for="star3">★</label>
+                                <input type="radio" name="rating" value="2" id="star2">
+                                <label for="star2">★</label>
+                                <input type="radio" name="rating" value="1" id="star1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Comment -->
+                        <div class="mb-3">
+                            <label for="comment" class="form-label fw-bold">Chia sẻ trải nghiệm của bạn:</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="4" 
+                                    placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                        </button>
+                    </form>
+                </div>
+                <% } else if (currentUser != null && hasUserReviewed) { %>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Bạn đã đánh giá sản phẩm này. <a href="ReviewController?action=viewUserReviews">Xem đánh giá của bạn</a>
+                </div>
+                <% } else { %>
+                <div class="alert alert-warning">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    <a href="login.jsp">Đăng nhập</a> để viết đánh giá sản phẩm
+                </div>
+                <% } %>
+
+                <!-- Reviews List -->
+                <div class="reviews-list">
+                    <h5 class="mb-3">
+                        <i class="fas fa-comments me-2"></i>Đánh giá từ khách hàng 
+                        <span class="badge bg-primary"><%= reviews.size() %></span>
+                    </h5>
+                    
+                    <% if (reviews != null && !reviews.isEmpty()) { %>
+                        <% for (ReviewDTO review : reviews) { %>
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <%= review.getUserName() != null && !review.getUserName().isEmpty() 
+                                            ? review.getUserName().substring(0, 1).toUpperCase() : "U" %>
+                                    </div>
+                                    <div>
+                                        <div class="reviewer-name"><%= review.getUserName() %></div>
+                                        <div class="review-date"><%= review.getFormattedDate() %></div>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
+                                    <%= review.getStarDisplay() %>
+                                </div>
+                            </div>
+                            
+                            <% if (review.getComment() != null && !review.getComment().trim().isEmpty()) { %>
+                            <div class="review-comment">
+                                <%= review.getComment() %>
+                            </div>
+                            <% } %>
+                            
+                            <!-- Review Actions (cho user sở hữu hoặc admin) -->
+                            <% if (currentUser != null && 
+                                  (currentUser.getUserID().equals(review.getUserID()) || AuthUtils.isAdmin(request))) { %>
+                            <div class="review-actions">
+                                <% if (currentUser.getUserID().equals(review.getUserID())) { %>
+                                <button class="btn-review-action btn-edit-review" 
+                                        onclick="editReview(<%= review.getReviewID() %>, <%= review.getRating() %>, '<%= review.getComment() %>')">
+                                    <i class="fas fa-edit me-1"></i>Sửa
+                                </button>
+                                <% } %>
+                                
+                                <button class="btn-review-action btn-delete-review" 
+                                        onclick="deleteReview(<%= review.getReviewID() %>)">
+                                    <i class="fas fa-trash me-1"></i>Xóa
+                                </button>
+                            </div>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">Chưa có đánh giá nào</h6>
+                        <p class="text-muted">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -485,144 +810,216 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
-                                        // Quantity controls
-                                        function increaseQuantity() {
-                                            const input = document.getElementById('quantityInput');
-                                            const currentValue = parseInt(input.value);
-                                            if (currentValue < 99) {
-                                                input.value = currentValue + 1;
-                                            }
-                                        }
+            // Quantity controls
+            function increaseQuantity() {
+                const input = document.getElementById('quantityInput');
+                const currentValue = parseInt(input.value);
+                if (currentValue < 99) {
+                    input.value = currentValue + 1;
+                }
+            }
 
-                                        function decreaseQuantity() {
-                                            const input = document.getElementById('quantityInput');
-                                            const currentValue = parseInt(input.value);
-                                            if (currentValue > 1) {
-                                                input.value = currentValue - 1;
-                                            }
-                                        }
+            function decreaseQuantity() {
+                const input = document.getElementById('quantityInput');
+                const currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            }
 
-                                        // Buy now functionality
-                                        function buyNow() {
-                                            // Add to cart first, then redirect to cart
-                                            const form = document.getElementById('addToCartForm');
-                                            const formData = new FormData(form);
+            // Buy now functionality
+            function buyNow() {
+                const form = document.getElementById('addToCartForm');
+                const formData = new FormData(form);
 
-                                            fetch(form.action, {
-                                                method: 'POST',
-                                                body: formData
-                                            })
-                                                    .then(response => {
-                                                        if (response.ok) {
-                                                            // Redirect to cart page
-                                                            window.location.href = 'CartController?action=view';
-                                                        } else {
-                                                            // Fallback: submit form normally
-                                                            form.submit();
-                                                            setTimeout(() => {
-                                                                window.location.href = 'CartController?action=view';
-                                                            }, 1000);
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error:', error);
-                                                        // Fallback: submit form normally
-                                                        form.submit();
-                                                        setTimeout(() => {
-                                                            window.location.href = 'CartController?action=view';
-                                                        }, 1000);
-                                                    });
-                                        }
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = 'CartController?action=view';
+                    } else {
+                        form.submit();
+                        setTimeout(() => {
+                            window.location.href = 'CartController?action=view';
+                        }, 1000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    form.submit();
+                    setTimeout(() => {
+                        window.location.href = 'CartController?action=view';
+                    }, 1000);
+                });
+            }
 
-                                        // Enhanced form submission
-                                        document.getElementById('addToCartForm').addEventListener('submit', function (e) {
-                                            e.preventDefault();
+            // Enhanced form submission
+            document.getElementById('addToCartForm').addEventListener('submit', function (e) {
+                e.preventDefault();
 
-                                            const submitBtn = this.querySelector('.btn-add-cart');
-                                            const originalText = submitBtn.innerHTML;
+                const submitBtn = this.querySelector('.btn-add-cart');
+                const originalText = submitBtn.innerHTML;
 
-                                            // Show loading state
-                                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
-                                            submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
+                submitBtn.disabled = true;
 
-                                            // Submit form
-                                            const formData = new FormData(this);
-                                            fetch(this.action, {
-                                                method: 'POST',
-                                                body: formData
-                                            })
-                                                    .then(response => {
-                                                        if (response.ok) {
-                                                            // Show success state
-                                                            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm thành công!';
-                                                            submitBtn.classList.remove('btn-add-cart');
-                                                            submitBtn.classList.add('btn-success');
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm thành công!';
+                        submitBtn.classList.remove('btn-add-cart');
+                        submitBtn.classList.add('btn-success');
 
-                                                            // Show notification if available
-                                                            if (window.cartManager) {
-                                                                window.cartManager.showCartNotification('<%= product.getName() %>');
-                                                            }
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.classList.remove('btn-success');
+                            submitBtn.classList.add('btn-add-cart');
+                            submitBtn.disabled = false;
+                        }, 3000);
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    this.submit();
+                });
+            });
 
-                                                            // Reset button after 3 seconds
-                                                            setTimeout(() => {
-                                                                submitBtn.innerHTML = originalText;
-                                                                submitBtn.classList.remove('btn-success');
-                                                                submitBtn.classList.add('btn-add-cart');
-                                                                submitBtn.disabled = false;
-                                                            }, 3000);
-                                                        } else {
-                                                            throw new Error('Network response was not ok');
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error:', error);
-                                                        // Reset button and submit normally
-                                                        submitBtn.innerHTML = originalText;
-                                                        submitBtn.disabled = false;
-                                                        this.submit();
-                                                    });
-                                        });
+            // ===== REVIEW FUNCTIONS =====
+            
+            // Star rating interaction
+            document.addEventListener('DOMContentLoaded', function() {
+                const starRating = document.querySelector('.star-rating');
+                if (starRating) {
+                    const stars = starRating.querySelectorAll('label');
+                    const radios = starRating.querySelectorAll('input[type="radio"]');
+                    
+                    stars.forEach((star, index) => {
+                        star.addEventListener('mouseover', function() {
+                            // Highlight stars up to hovered star
+                            stars.forEach((s, i) => {
+                                if (i >= index) {
+                                    s.style.color = '#ffc107';
+                                } else {
+                                    s.style.color = '#ddd';
+                                }
+                            });
+                        });
+                        
+                        star.addEventListener('click', function() {
+                            // Set the corresponding radio button
+                            radios[index].checked = true;
+                        });
+                    });
+                    
+                    starRating.addEventListener('mouseleave', function() {
+                        // Reset colors based on selection
+                        const checkedIndex = Array.from(radios).findIndex(radio => radio.checked);
+                        stars.forEach((star, index) => {
+                            if (checkedIndex >= 0 && index >= checkedIndex) {
+                                star.style.color = '#ffc107';
+                            } else {
+                                star.style.color = '#ddd';
+                            }
+                        });
+                    });
+                }
+                
+                console.log('✅ Product Detail page with Reviews loaded successfully!');
+            });
 
-                                        // Image zoom effect
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const productImage = document.querySelector('.product-main-image');
-                                            if (productImage) {
-                                                productImage.addEventListener('click', function () {
-                                                    // Simple image zoom modal (you can enhance this)
-                                                    const modal = document.createElement('div');
-                                                    modal.style.cssText = `
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(0,0,0,0.8);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            z-index: 9999;
-                            cursor: pointer;
-                        `;
+            // Delete review function
+            function deleteReview(reviewID) {
+                if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'ReviewController';
+                    form.style.display = 'none';
 
-                                                    const zoomedImage = document.createElement('img');
-                                                    zoomedImage.src = this.src;
-                                                    zoomedImage.style.cssText = `
-                            max-width: 90%;
-                            max-height: 90%;
-                            object-fit: contain;
-                        `;
+                    const actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'deleteReview';
+                    form.appendChild(actionInput);
 
-                                                    modal.appendChild(zoomedImage);
-                                                    document.body.appendChild(modal);
+                    const reviewIdInput = document.createElement('input');
+                    reviewIdInput.type = 'hidden';
+                    reviewIdInput.name = 'reviewID';
+                    reviewIdInput.value = reviewID;
+                    form.appendChild(reviewIdInput);
 
-                                                    modal.addEventListener('click', function () {
-                                                        document.body.removeChild(modal);
-                                                    });
-                                                });
-                                            }
+                    const productIdInput = document.createElement('input');
+                    productIdInput.type = 'hidden';
+                    productIdInput.name = 'productID';
+                    productIdInput.value = '<%= product.getId() %>';
+                    form.appendChild(productIdInput);
 
-                                            console.log('✅ Product Detail page loaded successfully!');
-                                        });
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+
+            // Edit review function (simple version - opens prompt)
+            function editReview(reviewID, currentRating, currentComment) {
+                const newRating = prompt('Nhập đánh giá mới (1-5 sao):', currentRating);
+                if (newRating === null) return;
+                
+                const rating = parseInt(newRating);
+                if (isNaN(rating) || rating < 1 || rating > 5) {
+                    alert('Đánh giá phải từ 1 đến 5 sao!');
+                    return;
+                }
+                
+                const newComment = prompt('Nhập bình luận mới:', currentComment || '');
+                if (newComment === null) return;
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'ReviewController';
+                form.style.display = 'none';
+
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'updateReview';
+                form.appendChild(actionInput);
+
+                const reviewIdInput = document.createElement('input');
+                reviewIdInput.type = 'hidden';
+                reviewIdInput.name = 'reviewID';
+                reviewIdInput.value = reviewID;
+                form.appendChild(reviewIdInput);
+
+                const productIdInput = document.createElement('input');
+                productIdInput.type = 'hidden';
+                productIdInput.name = 'productID';
+                productIdInput.value = '<%= product.getId() %>';
+                form.appendChild(productIdInput);
+
+                const ratingInput = document.createElement('input');
+                ratingInput.type = 'hidden';
+                ratingInput.name = 'rating';
+                ratingInput.value = rating;
+                form.appendChild(ratingInput);
+
+                const commentInput = document.createElement('input');
+                commentInput.type = 'hidden';
+                commentInput.name = 'comment';
+                commentInput.value = newComment;
+                form.appendChild(commentInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
         </script>
 
     </body>

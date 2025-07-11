@@ -242,7 +242,7 @@
                 margin-bottom: 15px;
             }
 
-            /* ===== ENHANCED PRODUCT ACTIONS ===== */
+            /* ===== ✅ CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH ===== */
             .product-actions {
                 margin-top: auto;
                 display: flex;
@@ -250,12 +250,13 @@
                 flex-direction: column;
             }
 
-            .product-btn {
+            /* Nút "Xem chi tiết" - full width */
+            .product-btn-detail {
                 background-color: #b02a20;
                 color: white;
                 border: none;
                 border-radius: 8px;
-                padding: 10px 16px;
+                padding: 12px 16px;
                 font-weight: 600;
                 text-decoration: none;
                 transition: all 0.3s ease;
@@ -265,44 +266,14 @@
                 width: 100%;
             }
 
-            .product-btn:hover {
+            .product-btn-detail:hover {
                 background-color: #8b1e16;
                 color: white;
                 text-decoration: none;
                 transform: translateY(-2px);
             }
 
-            .btn-cart {
-                background-color: #28a745 !important;
-                border: 1px solid #28a745 !important;
-                color: white !important;
-                font-size: 13px;
-                padding: 8px 12px;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                width: 100%;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-            }
-
-            .btn-cart:hover {
-                background-color: #218838 !important;
-                border-color: #1e7e34 !important;
-                color: white !important;
-                text-decoration: none;
-                transform: translateY(-2px);
-            }
-
-            .btn-cart:disabled {
-                background-color: #6c757d !important;
-                border-color: #6c757d !important;
-                cursor: not-allowed;
-                transform: none !important;
-            }
-
-            /* ===== BEAUTIFUL FAVORITE BUTTON STYLES ===== */
+            /* ===== BEAUTIFUL FAVORITE BUTTON STYLES - Giữ nguyên style cũ ===== */
             .favorite-actions {
                 margin-top: 8px;
                 display: flex;
@@ -490,53 +461,6 @@
                 background: #545b62;
                 color: white;
             }
-
-            /* ===== SUCCESS NOTIFICATION ===== */
-            .success-toast {
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                z-index: 9999;
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-                max-width: 350px;
-                display: none;
-            }
-
-            .success-toast.show {
-                display: block;
-                transform: translateX(0);
-            }
-
-            .toast-content {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .toast-icon {
-                font-size: 1.2rem;
-            }
-
-            .toast-text {
-                flex: 1;
-                font-weight: 600;
-            }
-
-            .toast-close {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 1.2rem;
-                cursor: pointer;
-                padding: 0;
-                margin-left: 10px;
-            }
         </style>
     </head>
     <body>
@@ -706,18 +630,9 @@
                             %>
                         </h4>
 
-                        <!-- Debug Information -->
-                        <%
-                            List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
-                            if (products != null) {
-                                out.println("<!-- DEBUG: Found " + products.size() + " products -->");
-                            } else {
-                                out.println("<!-- DEBUG: Products list is null -->");
-                            }
-                        %>
-
                         <div class="row">
                             <%
+                                List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
                                 if (products != null && !products.isEmpty()) {
                                     // Hiển thị sản phẩm từ database
                                     for (ProductDTO p : products) {
@@ -784,34 +699,28 @@
                                             %>
                                         </div>
                                         
-                                        <!-- Product actions with consistent styling -->
+                                        <!-- ✅ CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH -->
                                         <div class="product-actions">
+                                            <!-- 1️⃣ NÚT XEM CHI TIẾT - full width -->
                                             <a href="MainController?action=productDetail&id=<%= p.getId() %>" 
-                                               class="product-btn">
+                                               class="product-btn-detail">
                                                 <i class="fas fa-eye me-2"></i>Xem chi tiết
                                             </a>
                                             
-                                            <%
-                                                // Kiểm tra nếu user đã đăng nhập
-                                                UserDTO currentUserCheck = null;
-                                                try {
-                                                    currentUserCheck = AuthUtils.getCurrentUser(request);
-                                                } catch (Exception e) {
-                                                    // Handle exception silently
-                                                }
-                                                
-                                                if (currentUserCheck != null) {
-                                                    // User đã đăng nhập - FIXED: Use AJAX for add to cart
-                                            %>
-                                            <button type="button" 
-                                                    class="btn-cart add-to-cart-btn" 
-                                                    data-product-id="<%= p.getId() %>"
-                                                    data-product-name="<%= p.getName() %>">
-                                                <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
-                                            </button>
-                                            
-                                            <!-- BEAUTIFUL FAVORITE BUTTON FOR HOME PAGE -->
+                                            <!-- 2️⃣ FAVORITE ACTIONS - canh giữa với style cũ -->
                                             <div class="favorite-actions">
+                                                <%
+                                                    // Kiểm tra nếu user đã đăng nhập
+                                                    UserDTO currentUserCheck = null;
+                                                    try {
+                                                        currentUserCheck = AuthUtils.getCurrentUser(request);
+                                                    } catch (Exception e) {
+                                                        // Handle exception silently
+                                                    }
+                                                    
+                                                    if (currentUserCheck != null) {
+                                                        // User đã đăng nhập
+                                                %>
                                                 <form action="FavoriteController" method="post" style="display:inline;">
                                                     <input type="hidden" name="action" value="toggleFavorite">
                                                     <input type="hidden" name="productID" value="<%= p.getId() %>">
@@ -819,24 +728,17 @@
                                                         <i class="fas fa-heart"></i>Yêu thích
                                                     </button>
                                                 </form>
-                                            </div>
-                                            <%
-                                                } else {
-                                                    // User chưa đăng nhập - hiển thị button với onclick
-                                            %>
-                                            <button type="button" class="btn-cart" onclick="showLoginNotification()">
-                                                <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
-                                            </button>
-                                            
-                                            <!-- FAVORITE BUTTON FOR NON-LOGGED IN USERS -->
-                                            <div class="favorite-actions">
+                                                <%
+                                                    } else {
+                                                        // User chưa đăng nhập
+                                                %>
                                                 <button type="button" class="btn-favorite-home" onclick="showLoginNotification()">
                                                     <i class="fas fa-heart"></i>Yêu thích
                                                 </button>
+                                                <%
+                                                    }
+                                                %>
                                             </div>
-                                            <%
-                                                }
-                                            %>
                                         </div>
                                     </div>
                                 </div>
@@ -914,21 +816,12 @@
             </div>
             <div class="modal-title">Cần đăng nhập</div>
             <div class="modal-text">
-                Bạn cần đăng nhập hoặc tạo tài khoản để thêm sản phẩm vào giỏ hàng hoặc yêu thích.
+                Bạn cần đăng nhập hoặc tạo tài khoản để thêm sản phẩm vào yêu thích.
             </div>
             <div class="modal-actions">
                 <a href="login.jsp" class="modal-btn btn-modal-login">Đăng nhập</a>
                 <a href="register.jsp" class="modal-btn btn-modal-register">Đăng ký</a>
                 <button class="modal-btn btn-modal-cancel" onclick="hideLoginNotification()">Đóng</button>
-            </div>
-        </div>
-
-        <!-- Success Toast Notification -->
-        <div class="success-toast" id="successToast">
-            <div class="toast-content">
-                <i class="fas fa-check-circle toast-icon"></i>
-                <div class="toast-text" id="toastText">Thêm sản phẩm thành công!</div>
-                <button class="toast-close" onclick="hideSuccessToast()">×</button>
             </div>
         </div>
 
@@ -970,28 +863,9 @@
                 document.body.style.overflow = 'auto'; // Restore scrolling
             }
 
-            // ===== SUCCESS TOAST FUNCTIONS =====
-            function showSuccessToast(message) {
-                const toast = document.getElementById('successToast');
-                const toastText = document.getElementById('toastText');
-                
-                toastText.textContent = message || 'Thêm sản phẩm thành công!';
-                toast.classList.add('show');
-                
-                // Auto hide after 3 seconds
-                setTimeout(() => {
-                    hideSuccessToast();
-                }, 3000);
-            }
-
-            function hideSuccessToast() {
-                const toast = document.getElementById('successToast');
-                toast.classList.remove('show');
-            }
-
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('✅ Index page loaded successfully with BEAUTIFUL favorite buttons!');
+                console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
 
                 // Price filter form submission
                 const priceFilterForm = document.getElementById('priceFilterForm');
@@ -1030,97 +904,19 @@
                     });
                 }
 
-                // ===== ADD TO CART HANDLING WITH AJAX =====
-                const cartButtons = document.querySelectorAll('.add-to-cart-btn');
-                cartButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const productId = this.getAttribute('data-product-id');
-                        const productName = this.getAttribute('data-product-name');
-                        const originalText = this.innerHTML;
-                        
-                        // Show loading state
-                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
-                        this.disabled = true;
-                        
-                        // Create form data
-                        const formData = new FormData();
-                        formData.append('action', 'add');
-                        formData.append('productID', productId);
-                        formData.append('qty', '1');
-                        
-                        console.log('🛒 Adding product to cart:', productId);
-                        
-                        // Submit via AJAX
-                        fetch('<%= request.getContextPath() %>/CartController', {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Network response was not ok');
-                            }
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                // Show success notification
-                                showSuccessToast('Đã thêm "' + productName + '" vào giỏ hàng!');
-                                
-                                // Update cart icon if exists in header
-                                if (typeof updateCartIcon === 'function') {
-                                    updateCartIcon();
-                                }
-                                
-                                // Show success state
-                                this.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm!';
-                                this.classList.remove('btn-cart');
-                                this.classList.add('btn-success');
-                                
-                                // Reset after 2 seconds
-                                setTimeout(() => {
-                                    this.innerHTML = originalText;
-                                    this.classList.remove('btn-success');
-                                    this.classList.add('btn-cart');
-                                    this.disabled = false;
-                                }, 2000);
-                                
-                                console.log('✅ Product added to cart successfully');
-                            } else {
-                                throw new Error(data.message || 'Add to cart failed');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('❌ Error adding to cart:', error);
-                            
-                            // Check if user needs to login
-                            if (error.message && error.message.includes('login')) {
-                                showLoginNotification();
-                            } else {
-                                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
-                            }
-                            
-                            // Reset button
-                            this.innerHTML = originalText;
-                            this.disabled = false;
-                        });
-                    });
-                });
-
                 // ===== FAVORITE BUTTON HANDLING =====
                 const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
                 favoriteButtons.forEach(button => {
                     button.addEventListener('click', function(e) {
                         // Add heart animation
                         const icon = this.querySelector('i');
-                        icon.style.animation = 'heartBeat 0.6s ease-in-out';
-                        
-                        setTimeout(() => {
-                            icon.style.animation = 'heartBeat 2s ease-in-out infinite';
-                        }, 600);
+                        if (icon) {
+                            icon.style.animation = 'heartBeat 0.6s ease-in-out';
+                            
+                            setTimeout(() => {
+                                icon.style.animation = 'heartBeat 2s ease-in-out infinite';
+                            }, 600);
+                        }
                     });
                 });
 
@@ -1198,41 +994,8 @@
                 });
 
                 console.log('🖼️ Image handling system initialized with error recovery');
-                console.log('💖 Beautiful favorite buttons ready!');
+                console.log('💖 Beautiful favorite buttons ready - CHỈ CÓ 2 NÚT!');
             });
-
-            // ===== UTILITY FUNCTIONS =====
-            function updateCartIcon() {
-                // Function to update cart icon in header (if exists)
-                // This will be called after successful add to cart
-                const cartBadge = document.getElementById('cartBadge');
-                if (cartBadge) {
-                    let currentCount = parseInt(cartBadge.textContent) || 0;
-                    cartBadge.textContent = currentCount + 1;
-                    
-                    // Add animation
-                    cartBadge.style.transform = 'scale(1.3)';
-                    setTimeout(() => {
-                        cartBadge.style.transform = 'scale(1)';
-                    }, 200);
-                } else {
-                    // Create badge if it doesn't exist
-                    const cartButton = document.getElementById('cartButton');
-                    if (cartButton) {
-                        const badge = document.createElement('span');
-                        badge.className = 'cart-badge';
-                        badge.id = 'cartBadge';
-                        badge.textContent = '1';
-                        cartButton.appendChild(badge);
-                    }
-                }
-            }
-
-            // ===== DEMO FUNCTION =====
-            function showUpdateMessage() {
-                alert('Hệ thống đang cập nhật sản phẩm. Hiện chưa có sản phẩm nào.');
-                return false;
-            }
         </script>
 
     </body>

@@ -12,6 +12,10 @@
         <servlet-name>FavoriteController</servlet-name>
         <servlet-class>controller.FavoriteController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ReviewController</servlet-name>
+        <servlet-class>controller.ReviewController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainController</servlet-name>
         <url-pattern>/MainController</url-pattern>
@@ -56,6 +60,10 @@
     <servlet-mapping>
         <servlet-name>FavoriteController</servlet-name>
         <url-pattern>/FavoriteController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReviewController</servlet-name>
+        <url-pattern>/ReviewController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

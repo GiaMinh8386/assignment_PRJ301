@@ -495,7 +495,6 @@
                                 Tổng cộng: <%= String.format("%,.0f", total) %>₫
                             </div>
                             <div class="cart-actions">
-                                <!-- ✅ FIXED: Corrected cart link URL -->
                                 <a href="CartController?action=view" class="cart-btn cart-btn-primary">
                                     <i class="fas fa-edit me-1"></i>Chỉnh sửa giỏ hàng
                                 </a>
@@ -529,7 +528,7 @@
                 </div>
             </div>
 
-            <!-- User Dropdown Menu -->
+            <!-- ✅ User Dropdown Menu - ĐÃ XÓA MỤC ĐÁNH GIÁ -->
             <div class="user-dropdown-menu" id="userDropdownMenu">
                 <div class="dropdown-header">
                     <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
@@ -554,10 +553,12 @@
                     }
                 %>
 
-                <!-- ✅ NEW – LỊCH SỬ ĐƠN HÀNG -->
+                <!-- ✅ Lịch sử đơn hàng -->
                 <a href="OrderController?action=viewOrders" class="dropdown-item">
                     <i class="fas fa-box me-2"></i>Lịch sử đơn hàng            
                 </a> 
+
+                <!-- ❌ ĐÃ XÓA: Mục đánh giá sản phẩm -->
 
                 <a href="changePassword.jsp" class="dropdown-item">
                     <i class="fas fa-key"></i>Thay đổi mật khẩu
