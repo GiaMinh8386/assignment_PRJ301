@@ -1,8 +1,12 @@
-<%@ page pageEncoding="UTF-8" %>
-<%@ page import="model.UserDTO" %>
-<%@ page import="utils.AuthUtils" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="model.CartItemDTO" %>
+<%-- 
+    Document   : header
+    Created on : Jul 5, 2025, 1:20:45 PM
+    Author     : PC
+--%>
+
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.*, model.UserDTO, model.CartItemDTO, utils.AuthUtils" %>
+
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -10,78 +14,92 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    body {
-        font-family: 'Segoe UI', sans-serif;
-    }
-
+    /* ===== NAVBAR STYLES ===== */
     .navbar {
-        background-color: #b02a20 !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        min-height: 70px;
+        background: linear-gradient(135deg, #b02a20 0%, #8b1e16 50%, #6d1610 100%);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-bottom: 3px solid #8b1e16;
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
     }
 
     .navbar-brand {
-        font-size: 30px;
-        font-weight: bold;
         color: white !important;
-        text-decoration: none;
-        flex-shrink: 0;
+        font-weight: 700;
+        font-size: 26px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
     }
 
     .navbar-brand:hover {
         color: #fff !important;
-        text-decoration: none;
+        transform: scale(1.05);
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
+    .navbar-brand i {
+        color: #ffd700;
+        margin-right: 10px;
+        animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* ===== SEARCH STYLES ===== */
     .search-container {
         flex: 1;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 0 20px;
+        max-width: 500px;
+        margin: 0 30px;
     }
 
-    .input-group {
-        border-radius: 25px;
-        overflow: hidden;
-        border: 2px solid #fff;
-        background-color: white;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        width: 100%;
-    }
-
-    .input-group .form-control {
-        border: none;
-        box-shadow: none;
-        font-size: 14px;
+    .form-control {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px 0 0 25px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
         padding: 12px 20px;
-        flex: 1;
-    }
-
-    .input-group .form-control:focus {
-        box-shadow: none;
-        outline: none;
-    }
-
-    .input-group .btn-search {
-        background-color: #b02a20;
-        color: white;
-        border: none;
-        padding: 0 25px;
+        font-size: 15px;
+        backdrop-filter: blur(10px);
         transition: all 0.3s ease;
-        flex-shrink: 0;
     }
 
-    .input-group .btn-search:hover {
-        background-color: #8b1e16;
+    .form-control:focus {
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.2);
         color: white;
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
     }
 
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-search {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-left: none;
+        border-radius: 0 25px 25px 0;
+        color: white;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-search:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* ===== USER SECTION STYLES ===== */
     .user-section {
         display: flex;
         align-items: center;
-        gap: 15px;
-        flex-shrink: 0;
-        min-width: 200px;
+        gap: 20px;
     }
 
     /* ===== FAVORITE BUTTON STYLES ===== */
@@ -93,17 +111,12 @@
         color: white;
         text-decoration: none;
         cursor: pointer;
-        padding: 10px 15px;
-        border-radius: 12px;
+        padding: 8px 15px;
+        border-radius: 8px;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
-        justify-content: center;
-        position: relative;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-        backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid transparent;
     }
 
     .favorite-link:hover {
@@ -170,15 +183,9 @@
     }
 
     @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.1);
-        }
-        100% {
-            transform: scale(1);
-        }
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
 
     .cart-dropdown-menu {
@@ -276,40 +283,28 @@
 
     .cart-actions {
         display: flex;
-        gap: 10px;
+        justify-content: center;
     }
 
     .cart-btn {
-        flex: 1;
-        padding: 8px 12px;
-        border-radius: 6px;
+        padding: 10px 20px;
+        border-radius: 8px;
         text-decoration: none;
         text-align: center;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 600;
         transition: all 0.3s ease;
-    }
-
-    .cart-btn-primary {
         background: #b02a20;
         color: white;
+        width: 100%;
     }
 
-    .cart-btn-primary:hover {
+    .cart-btn:hover {
         background: #8b1e16;
         color: white;
         text-decoration: none;
-    }
-
-    .cart-btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-
-    .cart-btn-secondary:hover {
-        background: #545b62;
-        color: white;
-        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(176, 42, 32, 0.3);
     }
 
     /* ===== USER DROPDOWN STYLES ===== */
@@ -501,11 +496,9 @@
                                 Tổng cộng: <%= String.format("%,.0f", total) %>₫
                             </div>
                             <div class="cart-actions">
-                                <a href="CartController?action=view" class="cart-btn cart-btn-primary">
-                                    <i class="fas fa-edit me-1"></i>Chỉnh sửa giỏ hàng
-                                </a>
-                                <a href="OrderController?action=checkout" class="cart-btn cart-btn-secondary">
-                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                <!-- ✅ CHỈ CÓ 1 NÚT: CHỈNH SỬA GIỎ HÀNG -->
+                                <a href="CartController?action=view" class="cart-btn">
+                                    <i class="fas fa-edit me-2"></i>Chỉnh sửa giỏ hàng
                                 </a>
                             </div>
                         </div>
@@ -523,7 +516,7 @@
                 </div>
             </div>
 
-            <!-- User dropdown -->
+            
             <div class="user-dropdown">
                 <div class="user-info" onclick="toggleUserDropdown()" id="userInfoClick">
                     <i class="fas fa-user-circle fa-2x me-2"></i>
@@ -532,44 +525,46 @@
                         <strong style="font-size: 16px;"><%= currentUser.getFullName() %></strong>
                     </div>
                 </div>
-            </div>
 
-            <!-- ✅ User Dropdown Menu - ĐÃ XÓA MỤC ĐÁNH GIÁ -->
-            <div class="user-dropdown-menu" id="userDropdownMenu">
-                <div class="dropdown-header">
-                    <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
-                </div>
+               
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-header">
+                        <i class="fas fa-user-circle me-2"></i><%= currentUser.getFullName() %>
+                    </div>
 
-                <%
-                    try {
-                        if (AuthUtils.isAdmin(request)) {
-                %>
-                <a href="ProductController?action=adminDashboard" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>Dashboard Admin
-                </a>
+                    <%
+                        try {
+                            if (AuthUtils.isAdmin(request)) {
+                    %>
+                    <!-- MERGED: Admin menu với cả Dashboard + Thêm sản phẩm -->
+                    <a href="ProductController?action=adminDashboard" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard Admin
+                    </a>
 
-                <div class="dropdown-divider"></div>
-                <%
+                    <a href="productForm.jsp" class="dropdown-item">
+                        <i class="fas fa-plus"></i>Thêm sản phẩm
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <%
+                            }
+                        } catch (Exception e) {
+                            // Handle exception silently
                         }
-                    } catch (Exception e) {
-                        // Handle exception silently
-                    }
-                %>
+                    %>
 
-                <!-- ✅ Lịch sử đơn hàng -->
-                <a href="OrderController?action=viewOrders" class="dropdown-item">
-                    <i class="fas fa-box me-2"></i>Lịch sử đơn hàng            
-                </a> 
+                    <!-- Lịch sử đơn hàng -->
+                    <a href="OrderController?action=viewOrders" class="dropdown-item">
+                        <i class="fas fa-box me-2"></i>Lịch sử đơn hàng            
+                    </a> 
 
-                <!-- ❌ ĐÃ XÓA: Mục đánh giá sản phẩm -->
-
-                <a href="changePassword.jsp" class="dropdown-item">
-                    <i class="fas fa-key"></i>Thay đổi mật khẩu
-                </a>
-                <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
-                    <i class="fas fa-sign-out-alt"></i>Đăng xuất
-                </a>
-                <div class="dropdown-divider"></div>
+                    <a href="changePassword.jsp" class="dropdown-item">
+                        <i class="fas fa-key"></i>Thay đổi mật khẩu
+                    </a>
+                    <a href="MainController?action=logout" class="dropdown-item logout-item" onclick="return confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i>Đăng xuất
+                    </a>
+                    <div class="dropdown-divider"></div>
+                </div>
             </div>
 
             <%
@@ -670,7 +665,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Header loaded with complete cart dropdown fix');
+        console.log('✅ Header loaded - Simple cart dropdown with edit button only');
 
         // Search form validation
         const searchForm = document.querySelector('form[role="search"]');
