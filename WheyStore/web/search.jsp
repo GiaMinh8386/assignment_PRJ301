@@ -10,7 +10,7 @@
     </head>
     <body>
         <div class="container mt-5">
-            <h3 class="mb-4">Kết quả tìm kiếm cho từ khóa: "<%= request.getAttribute("keyword") %>"</h3>
+            <h3 class="mb-4">Kết quả tìm kiếm cho từ khóa: "<%= request.getAttribute("searchKeyword") %>"</h3>
 
             <%
                 List<ProductDTO> list = (List<ProductDTO>) request.getAttribute("list");
@@ -24,8 +24,8 @@
                 <% for (ProductDTO product : list) { %>
                 <div class="col">
                     <div class="card h-100 shadow">
-                        <% if (product.getImage() != null && !product.getImage().isEmpty()) { %>
-                        <img src="<%= product.getImage() %>" class="card-img-top" alt="Image">
+                        <% if (product.getImageURL() != null && !product.getImageURL().isEmpty()) { %>
+                        <img src="<%= product.getImageURL() %>" class="card-img-top" alt="Image">
                         <% } else { %>
                         <img src="assets/img/no-image.png" class="card-img-top" alt="No Image">
                         <% } %>

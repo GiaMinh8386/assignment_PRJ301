@@ -1,21 +1,8 @@
 package controller;
 
-//import jakarta.servlet.*;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//import java.math.BigDecimal;
-//import java.util.*;
-//import model.CartItemDTO;
-//import model.OrderDAO;
-//import model.OrderDTO;
-//import model.OrderDetailDTO;
-//import model.UserDTO;
-//import utils.AuthUtils;
-
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,6 +12,19 @@ import model.OrderDTO;
 import model.OrderDetailDTO;
 import model.UserDTO;
 import utils.AuthUtils;
+
+//import javax.servlet.*;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.*;
+//import java.io.IOException;
+//import java.math.BigDecimal;
+//import java.util.*;
+//import model.CartItemDTO;
+//import model.OrderDAO;
+//import model.OrderDTO;
+//import model.OrderDetailDTO;
+//import model.UserDTO;
+//import utils.AuthUtils;
 @WebServlet(name = "OrderController", urlPatterns = {"/OrderController"})
 public class OrderController extends HttpServlet {
 
@@ -52,6 +52,9 @@ public class OrderController extends HttpServlet {
                     break;
                 case "updateOrderStatus":
                     url = handleUpdateOrderStatus(request, response);
+                    break;
+                case "viewAllOrders":
+                    url = handleViewAllOrders(request, response);
                     break;
                 default:
                     request.setAttribute("message", "Unknown action!");
@@ -93,6 +96,8 @@ public class OrderController extends HttpServlet {
             details.add(new OrderDetailDTO(
                     0, 0, // ID tự động
                     item.getProductID(),
+                    item.getProductName(),
+                    item.getImageURL(),
                     item.getQuantity(),
                     item.getUnitPrice()
             ));
@@ -125,7 +130,6 @@ public class OrderController extends HttpServlet {
  /*              2. VIEW ORDERS BY USER           */
  /* ============================================= */
     private String handleViewOrders(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             return "login.jsp";
@@ -137,7 +141,7 @@ public class OrderController extends HttpServlet {
         return "orderHistory.jsp";
     }
 
- /* ============================================= */
+    /* ============================================= */
  /*              3. VIEW ORDER DETAIL             */
  /* ============================================= */
     private String handleViewOrderDetail(HttpServletRequest request,
@@ -184,11 +188,24 @@ public class OrderController extends HttpServlet {
         boolean ok = orderDAO.updateStatus(orderID, newStatus);
 
         request.setAttribute("message",
-                ok ? "Update successful!" : "Update failed!");
+                ok ? "Cập nhật thành công!" : "Cập nhật thất bại!");
 
         List<OrderDTO> list = orderDAO.getAllOrders();
         request.setAttribute("orders", list);
         return "adminOrderList.jsp";
+    }
+
+    /* ============================================= */
+ /*              5. ADMIN VIEW ALL ORDERS         */
+ /* ============================================= */
+    private String handleViewAllOrders(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (!AuthUtils.isAdmin(request)) {
+            return "accessDenied.jsp";
+        }
+
+        List<OrderDTO> list = orderDAO.getAllOrders();
+        request.setAttribute("orders", list);
+        return "adminOrderList.jsp";  // Trang hiển thị danh sách đơn hàng
     }
 
     /* =========== STANDARD SERVLET METHODS ========= */
@@ -206,4 +223,5 @@ public class OrderController extends HttpServlet {
     public String getServletInfo() {
         return "Order processing servlet";
     }
+
 }

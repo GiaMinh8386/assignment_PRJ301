@@ -3,6 +3,11 @@
 <%@ page import="utils.AuthUtils" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="model.CartItemDTO" %>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
     body {
@@ -416,7 +421,8 @@
         <form class="search-container d-flex" role="search" action="MainController" method="get">
             <input type="hidden" name="action" value="searchProduct">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm..." name="keyword" />
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm..." 
+                       value="<%= request.getAttribute("searchKeyword") != null ? request.getAttribute("searchKeyword") : "" %>">
                 <button class="btn btn-search" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
@@ -542,9 +548,6 @@
                     <i class="fas fa-tachometer-alt"></i>Dashboard Admin
                 </a>
 
-                <a href="productForm.jsp" class="dropdown-item">
-                    <i class="fas fa-plus"></i>Thêm sản phẩm
-                </a>
                 <div class="dropdown-divider"></div>
                 <%
                         }

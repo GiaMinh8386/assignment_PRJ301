@@ -386,7 +386,7 @@
                     <!-- Product Image -->
                     <%
                         String contextPath = request.getContextPath();
-                        String imageName = product.getImage();
+                        String imageName = product.getImageURL();
                         String imagePath = null;
                         boolean hasValidImage = false;
                         

@@ -13,7 +13,7 @@ public class ProductDTO {
     private String description;      // Description
     private String brand;            // Brand
     private double price;            // Price
-    private String image;            // ImageURL
+    private String imageURL;            // ImageURL
     private int categoryId;          // CategoryID
     private boolean status;          // Status (hiện/ẩn)
 
@@ -22,13 +22,13 @@ public class ProductDTO {
     }
 
     // Full constructor
-    public ProductDTO(String id, String name, String description, String brand, double price, String image, int categoryId, boolean status) {
+    public ProductDTO(String id, String name, String description, String brand, double price, String imageURL, int categoryId, boolean status) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.price = price;
-        this.image = image;
+        this.imageURL = imageURL;
         this.categoryId = categoryId;
         this.status = status;
     }
@@ -74,12 +74,12 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageURL(String image) {
+        this.imageURL = image;
     }
 
     public int getCategoryId() {
@@ -109,7 +109,7 @@ public class ProductDTO {
                 + ", description=" + description
                 + ", brand=" + brand
                 + ", price=" + price
-                + ", image=" + image
+                + ", image=" + imageURL
                 + ", categoryId=" + categoryId
                 + ", status=" + status + '}';
     }

@@ -23,7 +23,7 @@ public class OrderDAO {
 
     private static final String GET_ORDER_DETAILS
             = "SELECT od.orderDetailID, od.orderID, od.productID, od.quantity, od.unitPrice, "
-            + "       p.productName "
+            + "p.productName, p.imageURL "
             + "FROM tblOrderDetails od "
             + "JOIN tblProducts p ON od.productID = p.productID "
             + "WHERE od.orderID = ?";
@@ -151,9 +151,12 @@ public class OrderDAO {
                             rs.getInt("orderDetailID"),
                             rs.getInt("orderID"),
                             rs.getString("productID"),
+                            rs.getString("productName"),
+                            rs.getString("imageURL"),
                             rs.getInt("quantity"),
                             rs.getBigDecimal("unitPrice")
                     );
+
                     // Bạn có thể set thêm productName vào DTO riêng nếu cần
                     list.add(detail);
                 }

@@ -330,7 +330,7 @@ public class ProductDAO {
             ps.setString(3, product.getDescription());
             ps.setString(4, product.getBrand());
             ps.setDouble(5, product.getPrice());
-            ps.setString(6, product.getImage());
+            ps.setString(6, product.getImageURL());
             ps.setInt(7, product.getCategoryId());
             ps.setBoolean(8, product.isStatus());
             
@@ -360,7 +360,7 @@ public class ProductDAO {
             ps.setString(2, product.getDescription());
             ps.setString(3, product.getBrand());
             ps.setDouble(4, product.getPrice());
-            ps.setString(5, product.getImage());
+            ps.setString(5, product.getImageURL());
             ps.setInt(6, product.getCategoryId());
             ps.setBoolean(7, product.isStatus());
             ps.setString(8, product.getId());

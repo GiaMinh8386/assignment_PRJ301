@@ -375,7 +375,7 @@
                         <tr>
                             <td>
                                 <%
-                                    String imagePath = product.getImage();
+                                    String imagePath = product.getImageURL();
                                     if (imagePath != null && !imagePath.trim().isEmpty()) {
                                         if (!imagePath.startsWith("http")) {
                                             imagePath = request.getContextPath() + "/assets/images/products/" + imagePath;

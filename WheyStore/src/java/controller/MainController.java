@@ -1,34 +1,34 @@
 package controller;
 
-//import java.io.IOException;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.sql.SQLException;
-//import model.FavoriteDAO;
-//import java.util.ArrayList;
-//import java.util.List;
-//import model.ProductDAO;
-//import model.ProductDTO;
-//import model.CategoryDAO;
-//import model.CategoryDTO;
-
 import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import model.FavoriteDAO;
+import java.util.ArrayList;
+import java.util.List;
 import model.ProductDAO;
 import model.ProductDTO;
 import model.CategoryDAO;
 import model.CategoryDTO;
+
+//import java.io.IOException;
+//import java.sql.SQLException;
+//import java.util.ArrayList;
+//import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import java.util.List;
+//import model.FavoriteDAO;
+//import model.ProductDAO;
+//import model.ProductDTO;
+//import model.CategoryDAO;
+//import model.CategoryDTO;
  
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {

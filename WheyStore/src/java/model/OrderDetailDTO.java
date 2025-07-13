@@ -7,20 +7,24 @@ public class OrderDetailDTO {
     private int orderDetailID;   // nếu muốn dùng sau
     private int orderID;
     private String productID;
+    private String productName;
+    private String imageURL;
     private int quantity;
     private BigDecimal unitPrice;
 
     public OrderDetailDTO() {
     }
 
-    public OrderDetailDTO(int orderDetailID, int orderID, String productID, int quantity, BigDecimal unitPrice) {
+    public OrderDetailDTO(int orderDetailID, int orderID, String productID, String productName, String imageURL, int quantity, BigDecimal unitPrice) {
         this.orderDetailID = orderDetailID;
         this.orderID = orderID;
         this.productID = productID;
+        this.productName = productName;
+        this.imageURL = imageURL;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
-
+    
     public int getOrderDetailID() {
         return orderDetailID;
     }
@@ -45,6 +49,22 @@ public class OrderDetailDTO {
         this.productID = productID;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -65,5 +85,5 @@ public class OrderDetailDTO {
     public String toString() {
         return "OrderDetailDTO{" + "orderDetailID=" + orderDetailID + ", orderID=" + orderID + ", productID=" + productID + ", quantity=" + quantity + ", unitPrice=" + unitPrice + '}';
     }
-    
+
 }

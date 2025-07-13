@@ -76,6 +76,7 @@ public class CartItemDAO {
                     list.add(new CartItemDTO(
                             rs.getString("productID"),
                             rs.getString("productName"),
+                            rs.getString("imageURL"),
                             rs.getBigDecimal("price"),
                             rs.getInt("quantity")));
                 }

@@ -642,7 +642,7 @@
                                     <!-- Enhanced image handling with better error management -->
                                     <%
                                         String contextPath = request.getContextPath();
-                                        String imageName = p.getImage();
+                                        String imageName = p.getImageURL();
                                         String imagePath = null;
                                         boolean hasValidImage = false;
                                         

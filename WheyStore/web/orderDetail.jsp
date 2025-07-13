@@ -20,11 +20,19 @@
         <div class="container my-5">
 
             <%
-                OrderDTO od = (OrderDTO) request.getAttribute("order");
-                List<OrderDetailDTO> items = (List<OrderDetailDTO>) request.getAttribute("orderDetails");
-            %>
+    OrderDTO od = (OrderDTO) request.getAttribute("order");
+    List<OrderDetailDTO> items = (List<OrderDetailDTO>) request.getAttribute("orderDetails");
 
-            <h3 class="mb-4">🧾 Đơn hàng #<%= od.getOrderID() %></h3>
+    if (od == null || items == null) {
+            %>
+            <div class="alert alert-danger my-5 container">
+                ❌ Không tìm thấy thông tin đơn hàng.
+                <a href="OrderController?action=viewOrders" class="btn btn-secondary mt-3">← Quay lại lịch sử</a>
+            </div>
+            <%
+                } else {
+            %>
+            <h3 class="mb-4 text-center">🧾 Đơn hàng #<%= od.getOrderID() %></h3>
 
             <ul class="list-group mb-4">
                 <li class="list-group-item">Ngày đặt: <strong><%= od.getOrderDate() %></strong></li>
@@ -32,11 +40,12 @@
                 <li class="list-group-item">Trạng thái: <span class="badge bg-info"><%= od.getStatus() %></span></li>
             </ul>
 
-            <table class="table table-bordered">
+            <table class="table table-bordered text-center align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
-                        <th>Mã SP</th>
+                        <th>Ảnh</th>
+                        <th>Tên Sản phẩm</th>
                         <th>Số lượng</th>
                         <th>Đơn giá</th>
                         <th>Tạm tính</th>
@@ -50,11 +59,13 @@
                     %>
                     <tr>
                         <td><%= idx %></td>
-                        <td><%= d.getProductID() %></td>
+                        <td>
+                            <img src="${pageContext.request.contextPath}/assets/images/products/<%= d.getImageURL() %>" alt="Ảnh" width="70" class="img-fluid"/>
+                        </td>
+                        <td><%= d.getProductName() %> (<%= d.getProductID() %>)</td>
                         <td><%= d.getQuantity() %></td>
                         <td><%= String.format("%,.0f", d.getUnitPrice()) %> ₫</td>
-                        <td><%= String.format("%,.0f", d.getUnitPrice().multiply(
-                        new java.math.BigDecimal(d.getQuantity()))) %> ₫</td>
+                        <td><%= String.format("%,.0f", d.getUnitPrice().multiply(new java.math.BigDecimal(d.getQuantity()))) %> ₫</td>
                     </tr>
                     <%
                         }
@@ -65,6 +76,9 @@
             <a href="OrderController?action=viewOrders" class="btn btn-secondary">
                 ← Quay lại lịch sử
             </a>
+            <%
+                }
+            %>
 
         </div>
 

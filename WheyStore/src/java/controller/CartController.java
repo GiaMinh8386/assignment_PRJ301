@@ -1,19 +1,19 @@
 package controller;
 
-//import jakarta.servlet.*;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//import java.util.*;
-//import model.*;
-
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import model.*;
 
+//import javax.servlet.*;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.*;
+//import java.io.IOException;
+//import java.util.*;
+//import model.*;
 @WebServlet(name = "CartController", urlPatterns = {"/CartController"})
 public class CartController extends HttpServlet {
 
@@ -41,7 +41,7 @@ public class CartController extends HttpServlet {
 
         try {
             System.out.println("DEBUG CartController - Action: " + action);
-            
+
             switch (action) {
                 case "add":
                     url = handleAdd(req, resp);
@@ -85,7 +85,9 @@ public class CartController extends HttpServlet {
             if (qtyRaw != null && !qtyRaw.trim().isEmpty()) {
                 qty = Integer.parseInt(qtyRaw);
             }
-            if (qty < 1) qty = 1;
+            if (qty < 1) {
+                qty = 1;
+            }
         } catch (NumberFormatException e) {
             qty = 1;
         }
@@ -109,7 +111,13 @@ public class CartController extends HttpServlet {
 
         CartItemDTO item = cart.get(pid);
         if (item == null) {
-            item = new CartItemDTO(pid, product.getName(), product.getPriceBigDec(), qty);
+            item = new CartItemDTO(
+                    pid,
+                    product.getName(),
+                    product.getImageURL(), // ✅ imageURL là String
+                    product.getPriceBigDec(), // ✅ BigDecimal
+                    qty // ✅ int
+            );
         } else {
             item.setQuantity(item.getQuantity() + qty);
         }
@@ -227,7 +235,7 @@ public class CartController extends HttpServlet {
 
         int totalItems = 0;
         java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
-        
+
         for (CartItemDTO item : cart.values()) {
             totalItems += item.getQuantity();
             totalAmount = totalAmount.add(item.getLineTotal());
@@ -236,7 +244,7 @@ public class CartController extends HttpServlet {
         req.setAttribute("cartItems", cart);
         req.setAttribute("totalItems", totalItems);
         req.setAttribute("totalAmount", totalAmount);
-        
+
         System.out.println("DEBUG handleView - Cart summary: " + totalItems + " items, total: " + totalAmount);
 
         return "cart.jsp";

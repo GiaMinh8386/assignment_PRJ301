@@ -469,7 +469,7 @@
                         <div class="product-image-section">
                             <%
                                 String contextPath = request.getContextPath();
-                                String imageName = product.getImage();
+                                String imageName = product.getImageURL();
                                 String imagePath = null;
                                 boolean hasImage = false;
                             

@@ -297,7 +297,7 @@
                     <div class="mb-3">
                         <label for="image" class="form-label">Link ảnh</label>
                         <input type="text" class="form-control" id="image" name="image"
-                               value="<%= product != null && product.getImage() != null ? product.getImage() : "" %>"/>
+                               value="<%= product != null && product.getImageURL() != null ? product.getImageURL() : "" %>"/>
                         <small class="text-white-50">Để trống nếu không có hình ảnh</small>
                     </div>
 
