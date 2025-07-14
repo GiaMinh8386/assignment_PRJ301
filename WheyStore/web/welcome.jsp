@@ -212,9 +212,7 @@
                 <i class="fas fa-home me-2"></i>Về trang chủ
             </a>
             
-            <a href="MainController?action=viewProfile" class="btn btn-custom btn-outline-custom">
-                <i class="fas fa-user-edit me-2"></i>Chỉnh sửa thông tin
-            </a>
+           
             
             <%
                 try {

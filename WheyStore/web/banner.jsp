@@ -1,7 +1,7 @@
 
-<!-- BANNER V?I ?NH C” S?N + BUTTONS -->
+<!-- BANNER V?I ?NH C√ì S?N + BUTTONS -->
 <!-- Thay th? banner c? trong index.jsp -->
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
     <!-- Indicators -->
     <div class="carousel-indicators">
@@ -15,14 +15,14 @@
         <!-- Slide 1: Whey Isolate -->
         <div class="carousel-item active">
             <div class="banner-container">
-                <img src="assets/images/banner1.jpg" class="d-block w-100 banner-img" alt="Gi?m gi· l?n Whey Isolate">
+                <img src="assets/images/banner1.jpg" class="d-block w-100 banner-img" alt="Gi?m gi√° l?n Whey Isolate">
                 <!-- Overlay buttons -->
                 <div class="banner-overlay">
                     <div class="banner-buttons">
                         <a href="MainController?action=searchProduct&category=1" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-tags me-2"></i>Nh?n ?u ?„i Ngay
+                            <i class="fas fa-tags me-2"></i>Nh·∫≠n ∆∞u ƒë√£i Ngay
                         </a>
-                        <a href="MainController?action=listProducts" class="btn btn-outline-light btn-lg">
+                        <a href="login.jsp" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-shopping-cart me-2"></i>Mua Ngay
                         </a>
                     </div>
@@ -38,10 +38,10 @@
                 <div class="banner-overlay">
                     <div class="banner-buttons">
                         <a href="MainController?action=searchProduct&category=2" class="btn btn-warning btn-lg me-3">
-                            <i class="fas fa-bolt me-2"></i>T?ng S?c M?nh
+                            <i class="fas fa-bolt me-2"></i>TƒÉng S·ª©c M·∫°nh
                         </a>
                         <a href="register.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>??ng K˝ Ngay
+                            <i class="fas fa-user-plus me-2"></i>ƒêƒÉng K√Ω Ngay
                         </a>
                     </div>
                 </div>
@@ -56,10 +56,10 @@
                 <div class="banner-overlay">
                     <div class="banner-buttons">
                         <a href="MainController?action=searchProduct&keyword=creatine" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-fire me-2"></i>Kh·m Ph· Ngay
+                            <i class="fas fa-fire me-2"></i>Kh√°m Ph√° Ngay
                         </a>
                         <a href="login.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>??ng Nh?p
+                            <i class="fas fa-sign-in-alt me-2"></i>ƒêƒÉng Nh·∫≠p
                         </a>
                     </div>
                 </div>
@@ -92,13 +92,13 @@
     width: 100%;
     transition: transform 0.3s ease;
     
-    /* ===== TH M C¡C D“NG N¿Y ===== */
-    object-position: center top;    /* ? ?u tiÍn ph?n trÍn c?a ?nh (cÛ ch?) */
-    filter: contrast(1.1) brightness(1.05); /* ? T?ng ?? s?c nÈt */
-    image-rendering: crisp-edges;   /* ? Render ?nh s?c nÈt h?n */
+    /* ===== TH√äM C√ÅC D√íNG N√ÄY ===== */
+    object-position: center top;    /* ? ?u ti√™n ph?n tr√™n c?a ?nh (c√≥ ch?) */
+    filter: contrast(1.1) brightness(1.05); /* ? T?ng ?? s?c n√©t */
+    image-rendering: crisp-edges;   /* ? Render ?nh s?c n√©t h?n */
 }
 
-/* ===== OVERLAY V¿ BUTTONS ===== */
+/* ===== OVERLAY V√Ä BUTTONS ===== */
 .banner-overlay {
     position: absolute;
     top: 0;
@@ -214,12 +214,12 @@
     transition: transform 0.6s ease-in-out;
 }
 
-/* ===== AUTO-SHOW BUTTONS (T˘y ch?n) ===== */
+/* ===== AUTO-SHOW BUTTONS (T√πy ch?n) ===== */
 .banner-overlay.always-show {
     opacity: 1 !important;
 }
 
-/* N?u mu?n buttons luÙn hi?n, thÍm class 'always-show' v‡o .banner-overlay */
+/* N?u mu?n buttons lu√¥n hi?n, th√™m class 'always-show' v√†o .banner-overlay */
 </style>
 
 <script>
@@ -244,11 +244,11 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             // Add loading state
             const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>?ang x? l˝...';
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>ƒêang x·ª≠ l√Ω...';
             
             // Restore after 2 seconds if still on page
             setTimeout(() => {
-                if (this.innerHTML.includes('?ang x? l˝')) {
+                if (this.innerHTML.includes('ƒêang x·ª≠ l√Ω')) {
                     this.innerHTML = originalText;
                 }
             }, 2000);
@@ -264,31 +264,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
 });
 </script>
-
-<!-- 
-===========================================
-H??NG D?N S? D?NG:
-===========================================
-
-1. THAY TH? BANNER C?:
-   - XÛa to‡n b? banner c? trong index.jsp
-   - Copy code n‡y v‡o ch? banner c?
-
-2. CH?NH CHI?U CAO BANNER:
-   - Desktop: .banner-img { height: 400px; }
-   - Mobile: .banner-img { height: 250px; }
-
-3. CH?NH BUTTONS:
-   - Thay ??i text v‡ link trong th? <a>
-   - Thay ??i m‡u b?ng class: btn-primary, btn-warning, btn-success
-   - Thay ??i icon b?ng class fas fa-*
-
-4. CH?NH HI?U UNG:
-   - B? hover effect: xÛa .banner-container:hover
-   - LuÙn hi?n buttons: thÍm class 'always-show' v‡o .banner-overlay
-   - T?t auto-zoom: xÛa transform: scale(1.05)
-
-5. CH?NH TIMING:
-   - Carousel speed: data-bs-interval="4000" (4 gi‚y)
-   - Animation delay: setTimeout(..., 3000) (3 gi‚y)
 

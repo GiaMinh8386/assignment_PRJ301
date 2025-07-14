@@ -369,31 +369,39 @@
 
             /* ===== LOGIN NOTIFICATION MODAL ===== */
             .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 9998;
-                display: none;
-            }
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px);
+    z-index: 99999 !important;
+    display: none;
+}
 
-            .login-modal {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                z-index: 9999;
-                max-width: 400px;
-                width: 90%;
-                text-align: center;
-                display: none;
-            }
+.login-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    z-index: 999999 !important;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    display: none;
+}
+
+/* Prevent body scroll when modal open */
+body.modal-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+}
 
             .modal-icon {
                 font-size: 3rem;
@@ -852,16 +860,16 @@
 
             // ===== LOGIN NOTIFICATION FUNCTIONS =====
             function showLoginNotification() {
-                document.getElementById('modalOverlay').style.display = 'block';
-                document.getElementById('loginModal').style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            }
+    document.getElementById('modalOverlay').style.display = 'block';
+    document.getElementById('loginModal').style.display = 'block';
+    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
+}
 
-            function hideLoginNotification() {
-                document.getElementById('modalOverlay').style.display = 'none';
-                document.getElementById('loginModal').style.display = 'none';
-                document.body.style.overflow = 'auto'; // Restore scrolling
-            }
+function hideLoginNotification() {
+    document.getElementById('modalOverlay').style.display = 'none';
+    document.getElementById('loginModal').style.display = 'none';
+    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
+}
 
             // ===== PAGE INITIALIZATION =====
             document.addEventListener('DOMContentLoaded', function () {
