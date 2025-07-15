@@ -1,11 +1,12 @@
 package controller;
 
+
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.ReviewDAO;
 import model.ReviewDTO;
@@ -14,21 +15,6 @@ import model.CategoryDAO;
 import model.CategoryDTO;
 import utils.AuthUtils;
 import java.util.ArrayList;
-
-//import java.io.IOException;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.util.List;
-//import model.ReviewDAO;
-//import model.ReviewDTO;
-//import model.UserDTO;
-//import model.CategoryDAO;
-//import model.CategoryDTO;
-//import utils.AuthUtils;
-//import java.util.ArrayList;
 
 @WebServlet(name = "ReviewController", urlPatterns = {"/ReviewController"})
 public class ReviewController extends HttpServlet {
