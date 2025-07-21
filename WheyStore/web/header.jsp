@@ -672,9 +672,9 @@
         if (searchForm) {
             searchForm.addEventListener('submit', function (e) {
                 const keyword = this.querySelector('input[name="keyword"]');
-                if (keyword && keyword.value.trim().length < 2) {
+                if (keyword && keyword.value.trim().length < 1) {
                     e.preventDefault();
-                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                    alert('Vui lòng nhập ít nhất 1 ký tự để tìm kiếm');
                     keyword.focus();
                     return false;
                 }
