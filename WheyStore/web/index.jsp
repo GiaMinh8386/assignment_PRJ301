@@ -413,6 +413,13 @@
                 width: 100%;
             }
 
+            /* Prevent body scroll when modal open */
+            body.modal-open {
+                overflow: hidden !important;
+                position: fixed;
+                width: 100%;
+            }
+
             .modal-icon {
                 font-size: 3rem;
                 color: #b02a20;
@@ -866,145 +873,241 @@
         <script>
                     // Enhanced image error handling
                     function handleImageError(img, productName, productBrand) {
-                        console.log('🖼️ Image failed to load for product:', productName);
-
-                        // Create placeholder content
-                        const placeholder = document.createElement('div');
-                        placeholder.className = 'product-image-placeholder';
-                        placeholder.innerHTML = `
+                    console.log('🖼️ Image failed to load for product:', productName);
+                    // Create placeholder content
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'product-image-placeholder';
+                    placeholder.innerHTML = `
                     <i class="fas fa-image"></i>
                     <div>${productBrand || 'Product'}</div>
                     <small>Hình ảnh không có sẵn</small>
                 `;
+                    << << << < HEAD
+            // Replace image with placeholder
+        img.parentNode.replaceChild(placeholder, img);
+        =======
+        // ===== LOGIN NOTIFICATION FUNCTIONS =====
+        function showLoginNotification() {
+                            document.getElementById('modalOverlay').style.display = 'block';
+                    document.getElementById('loginModal').style.display = 'block';
+                    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
+                }
+                
+                function hideLoginNotification() {
+                            document.getElementById('modalOverlay').style.display = 'none';
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
+                }
+            
+            // ===== PAGE INITIALIZATION =====
+                document.addEventListener('DOMContentLoaded', function () {
+                            console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
+                    // Price filter form submission
+                    const priceFilterForm = document.getElementById('priceFilterForm');
+                    const priceFilterBtn = document.getElementById('priceFilterBtn');
+                    if (priceFilterForm && priceFilterBtn) {
+                    priceFilterForm.addEventListener('submit', function (e) {
+                    // Show loading state
+                    const originalText = priceFilterBtn.innerHTML;
+                    priceFilterBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang lọc...';
+                    priceFilterBtn.disabled = true;
+                    // Check if any price range is selected
+                    const selectedPrice = priceFilterForm.querySelector('input[name="priceRange"]:checked');
+                    if (!selectedPrice) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn một khoảng giá để lọc!');
+                    priceFilterBtn.innerHTML = originalText;
+                    priceFilterBtn.disabled = false;
+                    return false;
+                    }
 
-                        // Replace image with placeholder
-                        img.parentNode.replaceChild(placeholder, img);
+                    console.log('✅ Price filter submitted with range:', selectedPrice.value);
+                    });
+                    // Auto-submit when radio button changes
+                    const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
+                    priceInputs.forEach(input => {
+                    input.addEventListener('change', function () {
+                    console.log('🔄 Price range changed to:', this.value);
+                    // Auto-submit after short delay
+                    setTimeout(() => {
+                    priceFilterForm.submit();
+                    }, 300);
+                    });
+                    });
+                    }
+
+                    // ===== FAVORITE BUTTON HANDLING =====
+                    const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
+                    favoriteButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                    // Add heart animation
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                    icon.style.animation = 'heartBeat 0.6s ease-in-out';
+                    setTimeout(() => {
+                    icon.style.animation = 'heartBeat 2s ease-in-out infinite';
+                    }, 600);
+                    }
+                    });
+                    });
+                    // Smooth hover effects for product cards
+                    const cards = document.querySelectorAll('.product-card');
+                    cards.forEach(card => {
+                    card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px)';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                    });
+                    });
+                    // Auto-scroll to products when filters are applied
+                    if (window.location.search.includes('action=filter') ||
+                            window.location.search.includes('categoryId') ||
+                            window.location.search.includes('priceRange') ||
+                            window.location.search.includes('brand')) {
+                    setTimeout(() => {
+                    const mainContent = document.querySelector('.col-9');
+                    if (mainContent) {
+                    mainContent.scrollIntoView({
+                    behavior: 'smooth',
+                            block: 'start'
+                    });
+                    }
+                    }, 100);
+                    }
+
+                    // Search form validation (for header search)
+                    const searchForms = document.querySelectorAll('form[role="search"]');
+                    searchForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                    const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
+                    if (keyword && keyword.value.trim().length < 2) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                    keyword.focus();
+                    return false;
+                    }
+                    });
+                    });
+                    // Close modal when pressing Escape
+                    document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                    hideLoginNotification();
+                    >>> >>> > 6eea58586f1a51b858cef9c730eba82665c85328
                     }
 
                     // ===== LOGIN NOTIFICATION FUNCTIONS =====
                     function showLoginNotification() {
-                        document.getElementById('modalOverlay').style.display = 'block';
-                        document.getElementById('loginModal').style.display = 'block';
-                        document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
+                    document.getElementById('modalOverlay').style.display = 'block';
+                    document.getElementById('loginModal').style.display = 'block';
+                    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
                     }
 
                     function hideLoginNotification() {
-                        document.getElementById('modalOverlay').style.display = 'none';
-                        document.getElementById('loginModal').style.display = 'none';
-                        document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
+                    document.getElementById('modalOverlay').style.display = 'none';
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
                     }
 
                     // ===== PAGE INITIALIZATION =====
                     document.addEventListener('DOMContentLoaded', function () {
-                        console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
+                    console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
+                    // Price filter form submission
+                    const priceFilterForm = document.getElementById('priceFilterForm');
+                    const priceFilterBtn = document.getElementById('priceFilterBtn');
+                    if (priceFilterForm) {
+                    const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
+                    priceInputs.forEach(input => {
+                    input.addEventListener('change', function () {
+                    console.log('🔄 Price range changed to:', this.value);
+                    setTimeout(() => {
+                    priceFilterForm.submit();
+                    }, 300);
+                    });
+                    });
+                    }
 
-                        // Price filter form submission
-                        const priceFilterForm = document.getElementById('priceFilterForm');
-                        const priceFilterBtn = document.getElementById('priceFilterBtn');
+                    // ===== FAVORITE BUTTON HANDLING =====
+                    const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
+                    favoriteButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                    // Add heart animation
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                    icon.style.animation = 'heartBeat 0.6s ease-in-out';
+                    setTimeout(() => {
+                    icon.style.animation = 'heartBeat 2s ease-in-out infinite';
+                    }, 600);
+                    }
+                    });
+                    });
+                    // Smooth hover effects for product cards
+                    const cards = document.querySelectorAll('.product-card');
+                    cards.forEach(card => {
+                    card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px)';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                    });
+                    });
+                    // Auto-scroll to products when filters are applied
+                    if (window.location.search.includes('action=filter') ||
+                            window.location.search.includes('categoryId') ||
+                            window.location.search.includes('priceRange') ||
+                            window.location.search.includes('brand')) {
+                    setTimeout(() => {
+                    const mainContent = document.querySelector('.col-9');
+                    if (mainContent) {
+                    mainContent.scrollIntoView({
+                    behavior: 'smooth',
+                            block: 'start'
+                    });
+                    }
+                    }, 100);
+                    }
 
-                        if (priceFilterForm) {
-                            const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
-                            priceInputs.forEach(input => {
-                                input.addEventListener('change', function () {
-                                    console.log('🔄 Price range changed to:', this.value);
-                                    setTimeout(() => {
-                                        priceFilterForm.submit();
-                                    }, 300);
-                                });
-                            });
-                        }
-
-                        // ===== FAVORITE BUTTON HANDLING =====
-                        const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
-                        favoriteButtons.forEach(button => {
-                            button.addEventListener('click', function (e) {
-                                // Add heart animation
-                                const icon = this.querySelector('i');
-                                if (icon) {
-                                    icon.style.animation = 'heartBeat 0.6s ease-in-out';
-
-                                    setTimeout(() => {
-                                        icon.style.animation = 'heartBeat 2s ease-in-out infinite';
-                                    }, 600);
-                                }
-                            });
-                        });
-
-                        // Smooth hover effects for product cards
-                        const cards = document.querySelectorAll('.product-card');
-                        cards.forEach(card => {
-                            card.addEventListener('mouseenter', function () {
-                                this.style.transform = 'translateY(-5px)';
-                            });
-
-                            card.addEventListener('mouseleave', function () {
-                                this.style.transform = 'translateY(0)';
-                            });
-                        });
-
-                        // Auto-scroll to products when filters are applied
-                        if (window.location.search.includes('action=filter') ||
-                                window.location.search.includes('categoryId') ||
-                                window.location.search.includes('priceRange') ||
-                                window.location.search.includes('brand')) {
-                            setTimeout(() => {
-                                const mainContent = document.querySelector('.col-9');
-                                if (mainContent) {
-                                    mainContent.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'start'
-                                    });
-                                }
-                            }, 100);
-                        }
-
-                        // Search form validation (for header search)
-                        const searchForms = document.querySelectorAll('form[role="search"]');
-                        searchForms.forEach(form => {
-                            form.addEventListener('submit', function (e) {
-                                const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
-                                if (keyword && keyword.value.trim().length < 2) {
-                                    e.preventDefault();
-                                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
-                                    keyword.focus();
-                                    return false;
-                                }
-                            });
-                        });
-
-                        // Close modal when pressing Escape
-                        document.addEventListener('keydown', function (e) {
-                            if (e.key === 'Escape') {
-                                hideLoginNotification();
-                            }
-                        });
-
-                        // Enhanced image lazy loading with error handling
-                        const images = document.querySelectorAll('.product-image');
-                        const imageObserver = new IntersectionObserver((entries, observer) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    const img = entry.target;
-                                    img.classList.add('loaded');
-
-                                    // Add error handling for lazy loaded images
-                                    img.addEventListener('error', function () {
-                                        const productName = this.alt || 'Unknown Product';
-                                        const productBrand = this.closest('.product-card')?.querySelector('.product-brand')?.textContent || '';
-                                                handleImageError(this, productName, productBrand);
-                                    });
-
-                                    observer.unobserve(img);
-                                }
-                            });
-                        });
-
-                        images.forEach(img => {
-                            imageObserver.observe(img);
-                        });
-
-                        console.log('🖼️ Image handling system initialized with error recovery');
-                        console.log('💖 Beautiful favorite buttons ready - CHỈ CÓ 2 NÚT!');
+                    // Search form validation (for header search)
+                    const searchForms = document.querySelectorAll('form[role="search"]');
+                    searchForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                    const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
+                    if (keyword && keyword.value.trim().length < 2) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                    keyword.focus();
+                    return false;
+                    }
+                    });
+                    });
+                    // Close modal when pressing Escape
+                    document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                    hideLoginNotification();
+                    }
+                    });
+                    // Enhanced image lazy loading with error handling
+                    const images = document.querySelectorAll('.product-image');
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.classList.add('loaded');
+                    // Add error handling for lazy loaded images
+                    img.addEventListener('error', function () {
+                    const productName = this.alt || 'Unknown Product';
+                    const productBrand = this.closest('.product-card')?.querySelector('.product-brand')?.textContent || '';
+                    handleImageError(this, productName, productBrand);
+                    });
+                    observer.unobserve(img);
+                    }
+                    });
+                    });
+                    images.forEach(img => {
+                    imageObserver.observe(img);
+                    });
+                    console.log('🖼️ Image handling system initialized with error recovery');
+                    console.log('💖 Beautiful favorite buttons ready - CHỈ CÓ 2 NÚT!');
                     });
         </script>
 

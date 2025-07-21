@@ -1,8 +1,12 @@
 
 <!-- BANNER V?I ?NH CÓ S?N + BUTTONS -->
 <!-- Thay th? banner c? trong index.jsp -->
+<<<<<<< HEAD
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
+=======
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+>>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
 <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
     <!-- Indicators -->
     <div class="carousel-indicators">
@@ -21,9 +25,13 @@
                 <div class="banner-overlay">
                     <div class="banner-buttons">
                         <a href="MainController?action=searchProduct&category=1" class="btn btn-primary btn-lg me-3">
+<<<<<<< HEAD
                             <i class="fas fa-tags me-2"></i>Nhận Ưu Đãi Ngay
+=======
+                            <i class="fas fa-tags me-2"></i>Nhận ưu đãi Ngay
+>>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
                         </a>
-                        <a href="MainController?action=listProducts" class="btn btn-outline-light btn-lg">
+                        <a href="login.jsp" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-shopping-cart me-2"></i>Mua Ngay
                         </a>
                     </div>
@@ -42,7 +50,7 @@
                             <i class="fas fa-bolt me-2"></i>Tăng Sức Mạnh
                         </a>
                         <a href="register.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Ðăng Ký Ngay
+                            <i class="fas fa-user-plus me-2"></i>Đăng Ký Ngay
                         </a>
                     </div>
                 </div>
@@ -245,11 +253,19 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             // Add loading state
             const originalText = this.innerHTML;
+<<<<<<< HEAD
             this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>?ang x? lý...';
             
             // Restore after 2 seconds if still on page
             setTimeout(() => {
                 if (this.innerHTML.includes('?ang x? lý')) {
+=======
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            
+            // Restore after 2 seconds if still on page
+            setTimeout(() => {
+                if (this.innerHTML.includes('Đang xử lý')) {
+>>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
                     this.innerHTML = originalText;
                 }
             }, 2000);
@@ -266,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<<<<<<< HEAD
 <!-- 
 ===========================================
 H??NG D?N S? D?NG:
@@ -293,3 +310,5 @@ H??NG D?N S? D?NG:
    - Carousel speed: data-bs-interval="4000" (4 giây)
    - Animation delay: setTimeout(..., 3000) (3 giây)
 
+=======
+>>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
