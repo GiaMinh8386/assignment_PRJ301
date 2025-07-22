@@ -24,261 +24,278 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        
-        .reviews-header {
-            background: linear-gradient(135deg, #b02a20 0%, #8b1e16 100%);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .reviews-header h1 {
-            margin: 0;
-            font-weight: 700;
-            font-size: 2.5rem;
-        }
-        
-        .reviews-header p {
-            margin: 10px 0 0 0;
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-        
-        .reviews-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .review-card {
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .review-card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .product-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .product-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: #f8f9fa;
-        }
-        
-        .product-details h6 {
-            margin: 0;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .product-details small {
-            color: #666;
-        }
-        
-        .review-rating {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .rating-stars {
-            color: #ffc107;
-            font-size: 1.2rem;
-        }
-        
-        .rating-number {
-            background: #b02a20;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .review-date {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .review-comment {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .review-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        
-        .btn-review-action {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .btn-view-product {
-            background: #17a2b8;
-            color: white;
-        }
-        
-        .btn-view-product:hover {
-            background: #138496;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .btn-edit-review {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-edit-review:hover {
-            background: #218838;
-            color: white;
-        }
-        
-        .btn-delete-review {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-delete-review:hover {
-            background: #c82333;
-            color: white;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-        
-        .empty-state i {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            color: #dee2e6;
-        }
-        
-        .empty-state h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #495057;
-        }
-        
-        .empty-state p {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .empty-state .btn {
-            background-color: #b02a20;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-        
-        .empty-state .btn:hover {
-            background-color: #8b1e16;
-            transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #b02a20;
-            margin-bottom: 5px;
-        }
-        
-        .stats-label {
-            color: #666;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .breadcrumb-section {
-            background: #fff;
-            padding: 15px 0;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .breadcrumb {
-            background: none;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .breadcrumb-item a {
-            color: #6c757d;
-            text-decoration: none;
-        }
-        
-        .breadcrumb-item a:hover {
-            color: #b02a20;
-        }
-        
-        .breadcrumb-item.active {
-            color: #333;
-        }
-    </style>
+       body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.reviews-header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+.reviews-header p {
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.reviews-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.review-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.review-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.review-comment {
+    color: #212529;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f8f9fa;
+}
+
+.product-details h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.product-details small {
+    color: #666;
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 5px;
+    font-size: 1.5rem;
+    color: #ffc107;
+    cursor: pointer;
+}
+
+.rating-number {
+    background: #b02a20;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.review-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-review-action {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-view-product {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-view-product:hover {
+    background: #138496;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-edit-review {
+    background: #28a745;
+    color: white;
+}
+
+.btn-edit-review:hover {
+    background: #218838;
+    color: white;
+}
+
+.btn-delete-review {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete-review:hover {
+    background: #c82333;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    color: #dee2e6;
+}
+
+.empty-state h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #495057;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.empty-state .btn {
+    background-color: #b02a20;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.empty-state .btn:hover {
+    background-color: #8b1e16;
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #b02a20;
+    margin-bottom: 5px;
+}
+
+.stats-label {
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.breadcrumb-section {
+    background: #fff;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb {
+    background: none;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #b02a20;
+}
+
+.breadcrumb-item.active {
+    color: #333;
+}
+
+textarea,
+textarea.form-control {
+    background-color: #ffffff !important;
+    color: #212529 !important;  /* chữ đen dễ nhìn */
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 150px;
+}
+
+/* Fix màu placeholder khi chưa gõ */
+textarea::placeholder,
+textarea.form-control::placeholder {
+    color: #6c757d !important; /* placeholder xám đậm */
+    opacity: 1 !important;     /* hiển thị rõ ràng */
+}
+</style>
 </head>
 <body>
 
@@ -343,7 +360,8 @@
             <div class="review-card">
                 <div class="review-header">
                     <div class="product-info">
-                        <div class="product-image-placeholder" style="width: 60px; height: 60px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <div class="product-image-placeholder" style="width: 60px; height: 60px; background: #000000
+; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-box text-muted"></i>
                         </div>
                 
@@ -533,20 +551,62 @@
             });
         });
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const stars = document.querySelectorAll('#rating-stars i');
+    let selected = 0;
 
+    function highlight(index) {
+        stars.forEach((star, i) => {
+            star.classList.remove('fas', 'far', 'text-warning');
+            if (i <= index) {
+                star.classList.add('fas', 'text-warning');
+            } else {
+                star.classList.add('far');
+            }
+        });
+    }
+
+    stars.forEach((star, index) => {
+        star.addEventListener('mouseenter', () => highlight(index));
+        star.addEventListener('mouseleave', () => highlight(selected - 1));
+        star.addEventListener('click', () => {
+            selected = index + 1;
+            document.getElementById('rating-value').value = selected; // gán vào hidden input nếu có
+            highlight(index);
+        });
+    });
+
+    highlight(selected - 1);
+});
+</script>
 </body>
-</html>        <div class="product-details">
-                            <h6><%= review.getProductName() %></h6>
-                            <small>Mã sản phẩm: <%= review.getProductID() %></small>
-                        </div>
-                    </div>
-                    
-                    <div class="review-rating">
-                        <div class="rating-stars">
-                            <%= review.getStarDisplay() %>
-                        </div>
-                        <div class="rating-number">
-                            <%= review.getRating() %>/5
-                        </div>
-                    </div>
+</html>        <% 
+    List<ReviewDTO> reviewList = (List<ReviewDTO>) request.getAttribute("reviewList"); 
+%>
+
+<% if (reviewList != null && !reviewList.isEmpty()) { %>
+    <% for (ReviewDTO review : reviewList) { 
+           int rating = review.getRating();
+    %>
+        <div class="product-details">
+            <h6><%= review.getProductName() %></h6>
+            <small>Mã sản phẩm: <%= review.getProductID() %></small>
+        </div>
+
+        <div class="review-rating">
+            <div class="rating-stars" id="rating-stars">
+                <% for (int i = 1; i <= 5; i++) { %>
+                    <i class="fa-star <%= i <= rating ? "fas text-warning" : "far" %>" data-value="<%= i %>"></i>
+                <% } %>
+            </div>
+            <div class="rating-number">
+                <%= review.getRating() %>/5
+            </div>
+        </div>
+        <hr>
+    <% } %>
+<% } else { %>
+    <p>Bạn chưa viết đánh giá nào.</p>
+<% } %>
                 </div>

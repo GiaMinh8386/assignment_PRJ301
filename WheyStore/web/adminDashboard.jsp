@@ -260,35 +260,7 @@
                 </div>
             </div>
             
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-info mx-auto">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <div class="stats-number">126</div>
-                    <div class="stats-label">Bán chạy</div>
-                </div>
-            </div>
-            
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-danger mx-auto">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="stats-number">12</div>
-                    <div class="stats-label">Hết hàng</div>
-                </div>
-            </div>
-            
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-primary mx-auto">
-                        <i class="fas fa-warehouse"></i>
-                    </div>
-                    <div class="stats-number">1,234</div>
-                    <div class="stats-label">Tồn kho</div>
-                </div>
-            </div>
+           
         </div>
 
         <div class="row">
@@ -309,9 +281,7 @@
                         <i class="fas fa-shopping-cart me-2"></i>Quản lý đơn hàng
                     </a>
                     
-                    <a href="#" class="action-btn btn-reports">
-                        <i class="fas fa-chart-bar me-2"></i>Báo cáo doanh thu
-                    </a>
+                    
                 </div>
             </div>
 

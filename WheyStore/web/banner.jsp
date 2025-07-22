@@ -1,12 +1,7 @@
 
 <!-- BANNER V?I ?NH CÓ S?N + BUTTONS -->
 <!-- Thay th? banner c? trong index.jsp -->
-<<<<<<< HEAD
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
-=======
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
->>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
 <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
     <!-- Indicators -->
     <div class="carousel-indicators">
@@ -24,16 +19,8 @@
                 <!-- Overlay buttons -->
                 <div class="banner-overlay">
                     <div class="banner-buttons">
-                        <a href="MainController?action=searchProduct&category=1" class="btn btn-primary btn-lg me-3">
-<<<<<<< HEAD
-                            <i class="fas fa-tags me-2"></i>Nhận Ưu Đãi Ngay
-=======
-                            <i class="fas fa-tags me-2"></i>Nhận ưu đãi Ngay
->>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
-                        </a>
-                        <a href="login.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-shopping-cart me-2"></i>Mua Ngay
-                        </a>
+                        
+                    
                     </div>
                 </div>
             </div>
@@ -46,12 +33,7 @@
                 <!-- Overlay buttons -->
                 <div class="banner-overlay">
                     <div class="banner-buttons">
-                        <a href="MainController?action=searchProduct&category=2" class="btn btn-warning btn-lg me-3">
-                            <i class="fas fa-bolt me-2"></i>Tăng Sức Mạnh
-                        </a>
-                        <a href="register.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Đăng Ký Ngay
-                        </a>
+                       
                     </div>
                 </div>
             </div>
@@ -64,12 +46,7 @@
                 <!-- Overlay buttons -->
                 <div class="banner-overlay">
                     <div class="banner-buttons">
-                        <a href="MainController?action=searchProduct&keyword=creatine" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-fire me-2"></i>Khám Phá Ngay
-                        </a>
-                        <a href="login.jsp" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập
-                        </a>
+                        
                     </div>
                 </div>
             </div>
@@ -253,19 +230,11 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             // Add loading state
             const originalText = this.innerHTML;
-<<<<<<< HEAD
-            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>?ang x? lý...';
-            
-            // Restore after 2 seconds if still on page
-            setTimeout(() => {
-                if (this.innerHTML.includes('?ang x? lý')) {
-=======
             this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
             
             // Restore after 2 seconds if still on page
             setTimeout(() => {
                 if (this.innerHTML.includes('Đang xử lý')) {
->>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328
                     this.innerHTML = originalText;
                 }
             }, 2000);
@@ -282,33 +251,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<<<<<<< HEAD
-<!-- 
-===========================================
-H??NG D?N S? D?NG:
-===========================================
-
-1. THAY TH? BANNER C?:
-   - Xóa toàn b? banner c? trong index.jsp
-   - Copy code này vào ch? banner c?
-
-2. CH?NH CHI?U CAO BANNER:
-   - Desktop: .banner-img { height: 400px; }
-   - Mobile: .banner-img { height: 250px; }
-
-3. CH?NH BUTTONS:
-   - Thay ??i text và link trong th? <a>
-   - Thay ??i màu b?ng class: btn-primary, btn-warning, btn-success
-   - Thay ??i icon b?ng class fas fa-*
-
-4. CH?NH HI?U UNG:
-   - B? hover effect: xóa .banner-container:hover
-   - Luôn hi?n buttons: thêm class 'always-show' vào .banner-overlay
-   - T?t auto-zoom: xóa transform: scale(1.05)
-
-5. CH?NH TIMING:
-   - Carousel speed: data-bs-interval="4000" (4 giây)
-   - Animation delay: setTimeout(..., 3000) (3 giây)
-
-=======
->>>>>>> 6eea58586f1a51b858cef9c730eba82665c85328

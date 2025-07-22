@@ -344,15 +344,15 @@
                                     if (checkoutUser != null) {
                                 %>
                                 <button type="button" class="btn btn-success w-100 mt-3" onclick="proceedCheckout()">
-                                    <i class="fas fa-credit-card me-2"></i>Tiến hành thanh toán
+                                    <i class="fas fa-credit-card me-2"></i>Xác nhận đơn hàng
                                 </button>
                                 <%
                                     } else {
                                 %>
                                 <div class="text-center mt-3">
-                                    <p class="text-muted small">Vui lòng đăng nhập để thanh toán</p>
+                                    <p class="text-muted small">Vui lòng đăng nhập để đặt</p>
                                     <a href="login.jsp" class="btn btn-primary w-100">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để thanh toán
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để đặt
                                     </a>
                                 </div>
                                 <%

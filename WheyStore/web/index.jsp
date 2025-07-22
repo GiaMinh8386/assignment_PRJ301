@@ -319,21 +319,11 @@
             }
 
             @keyframes heartBeat {
-                0% {
-                    transform: scale(1);
-                }
-                14% {
-                    transform: scale(1.1);
-                }
-                28% {
-                    transform: scale(1);
-                }
-                42% {
-                    transform: scale(1.1);
-                }
-                70% {
-                    transform: scale(1);
-                }
+                0% { transform: scale(1); }
+                14% { transform: scale(1.1); }
+                28% { transform: scale(1); }
+                42% { transform: scale(1.1); }
+                70% { transform: scale(1); }
             }
 
             /* ===== EMPTY STATE STYLES ===== */
@@ -379,46 +369,39 @@
 
             /* ===== LOGIN NOTIFICATION MODAL ===== */
             .modal-overlay {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                background-color: rgba(0, 0, 0, 0.6) !important;
-                backdrop-filter: blur(8px);
-                z-index: 99999 !important;
-                display: none;
-            }
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px);
+    z-index: 99999 !important;
+    display: none;
+}
 
-            .login-modal {
-                position: fixed !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                background: white;
-                border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-                z-index: 999999 !important;
-                max-width: 400px;
-                width: 90%;
-                text-align: center;
-                display: none;
-            }
+.login-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    z-index: 999999 !important;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    display: none;
+}
 
-            /* Prevent body scroll when modal open */
-            body.modal-open {
-                overflow: hidden !important;
-                position: fixed;
-                width: 100%;
-            }
-
-            /* Prevent body scroll when modal open */
-            body.modal-open {
-                overflow: hidden !important;
-                position: fixed;
-                width: 100%;
-            }
+/* Prevent body scroll when modal open */
+body.modal-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+}
 
             .modal-icon {
                 font-size: 3rem;
@@ -587,19 +570,17 @@
                                             1.000.000₫ - 1.500.000₫
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="priceRange" value="1500000-2000000" id="price4" <%= "1500000-2000000".equals(currentPriceRange) ? "checked" : "" %>>
-                                        <label class="form-check-label" for="price4">
-                                            1.500.000₫ - 2.000.000₫
-                                        </label>
-                                    </div>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" name="priceRange" value="2000000-99999999" id="price5" <%= "2000000-99999999".equals(currentPriceRange) ? "checked" : "" %>>
-                                        <label class="form-check-label" for="price5">
-                                            Trên 2.000.000₫
+                                        <input class="form-check-input" type="radio" name="priceRange" value="1500000-99999999" id="price4" <%= "1500000-99999999".equals(currentPriceRange) ? "checked" : "" %>>
+                                        <label class="form-check-label" for="price4">
+                                            Trên 1.500.000₫
                                         </label>
                                     </div>
-
+                                    <!--                                    
+                                    <button type="submit" class="btn filter-btn w-100" id="priceFilterBtn">
+                                        <i class="fas fa-search me-2"></i>Áp dụng bộ lọc
+                                    </button>
+                                    -->
                                 </form>
                             </div>
 
@@ -618,17 +599,8 @@
                                 <a href="MainController?action=filterByBrand&brand=Rule One" class="category-link <%= "Rule One".equals(currentBrand) ? "active" : "" %>">
                                     <i class="fas fa-star"></i>Rule One Protein
                                 </a>
-                                <a href="MainController?action=filterByBrand&brand=Nutricost" class="category-link <%= "Nutricost".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>Nutricost
-                                </a>
                                 <a href="MainController?action=filterByBrand&brand=Nutrabolics" class="category-link <%= "Nutrabolics".equals(currentBrand) ? "active" : "" %>">
                                     <i class="fas fa-star"></i>Nutrabolics
-                                </a>
-                                <a href="MainController?action=filterByBrand&brand=Now" class="category-link <%= "Now".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>Now
-                                </a>
-                                <a href="MainController?action=filterByBrand&brand=Hammer Nutrition" class="category-link <%= "Hammer Nutrition".equals(currentBrand) ? "active" : "" %>">
-                                    <i class="fas fa-star"></i>Hammer Nutrition
                                 </a>
                             </div>
                         </div>
@@ -701,20 +673,20 @@
                                             }
                                         }
                                     %>
-
+                                    
                                     <div class="product-image-container">
                                         <% if (hasValidImage) { %>
-                                        <img src="<%= imagePath %>"
-                                             class="product-image"
-                                             alt="<%= p.getName() %>"
-                                             loading="lazy"
-                                             onerror="handleImageError(this, '<%= p.getName() %>', '<%= p.getBrand() != null ? p.getBrand() : "" %>')">
+                                            <img src="<%= imagePath %>"
+                                                 class="product-image"
+                                                 alt="<%= p.getName() %>"
+                                                 loading="lazy"
+                                                 onerror="handleImageError(this, '<%= p.getName() %>', '<%= p.getBrand() != null ? p.getBrand() : "" %>')">
                                         <% } else { %>
-                                        <div class="product-image-placeholder">
-                                            <i class="fas fa-image"></i>
-                                            <div><%= p.getBrand() != null ? p.getBrand() : "Product" %></div>
-                                            <small><%= p.getFormattedPrice() %></small>
-                                        </div>
+                                            <div class="product-image-placeholder">
+                                                <i class="fas fa-image"></i>
+                                                <div><%= p.getBrand() != null ? p.getBrand() : "Product" %></div>
+                                                <small><%= p.getFormattedPrice() %></small>
+                                            </div>
                                         <% } %>
                                     </div>
 
@@ -736,7 +708,7 @@
                                                 }
                                             %>
                                         </div>
-
+                                        
                                         <!-- ✅ CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH -->
                                         <div class="product-actions">
                                             <!-- 1️⃣ NÚT XEM CHI TIẾT - full width -->
@@ -744,7 +716,7 @@
                                                class="product-btn-detail">
                                                 <i class="fas fa-eye me-2"></i>Xem chi tiết
                                             </a>
-
+                                            
                                             <!-- 2️⃣ FAVORITE ACTIONS - canh giữa với style cũ -->
                                             <div class="favorite-actions">
                                                 <%
@@ -871,244 +843,147 @@
 
         <!-- Custom JavaScript -->
         <script>
-                    // Enhanced image error handling
-                    function handleImageError(img, productName, productBrand) {
-                    console.log('🖼️ Image failed to load for product:', productName);
-                    // Create placeholder content
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'product-image-placeholder';
-                    placeholder.innerHTML = `
+            // Enhanced image error handling
+            function handleImageError(img, productName, productBrand) {
+                console.log('🖼️ Image failed to load for product:', productName);
+                
+                // Create placeholder content
+                const placeholder = document.createElement('div');
+                placeholder.className = 'product-image-placeholder';
+                placeholder.innerHTML = `
                     <i class="fas fa-image"></i>
                     <div>${productBrand || 'Product'}</div>
                     <small>Hình ảnh không có sẵn</small>
                 `;
-                    << << << < HEAD
-            // Replace image with placeholder
-        img.parentNode.replaceChild(placeholder, img);
-        =======
-        // ===== LOGIN NOTIFICATION FUNCTIONS =====
-        function showLoginNotification() {
-                            document.getElementById('modalOverlay').style.display = 'block';
-                    document.getElementById('loginModal').style.display = 'block';
-                    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
-                }
                 
-                function hideLoginNotification() {
-                            document.getElementById('modalOverlay').style.display = 'none';
-                    document.getElementById('loginModal').style.display = 'none';
-                    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
-                }
-            
+                // Replace image with placeholder
+                img.parentNode.replaceChild(placeholder, img);
+            }
+
+            // ===== LOGIN NOTIFICATION FUNCTIONS =====
+            function showLoginNotification() {
+    document.getElementById('modalOverlay').style.display = 'block';
+    document.getElementById('loginModal').style.display = 'block';
+    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
+}
+
+function hideLoginNotification() {
+    document.getElementById('modalOverlay').style.display = 'none';
+    document.getElementById('loginModal').style.display = 'none';
+    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
+}
+
             // ===== PAGE INITIALIZATION =====
-                document.addEventListener('DOMContentLoaded', function () {
-                            console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
-                    // Price filter form submission
-                    const priceFilterForm = document.getElementById('priceFilterForm');
-                    const priceFilterBtn = document.getElementById('priceFilterBtn');
-                    if (priceFilterForm && priceFilterBtn) {
-                    priceFilterForm.addEventListener('submit', function (e) {
-                    // Show loading state
-                    const originalText = priceFilterBtn.innerHTML;
-                    priceFilterBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang lọc...';
-                    priceFilterBtn.disabled = true;
-                    // Check if any price range is selected
-                    const selectedPrice = priceFilterForm.querySelector('input[name="priceRange"]:checked');
-                    if (!selectedPrice) {
-                    e.preventDefault();
-                    alert('Vui lòng chọn một khoảng giá để lọc!');
-                    priceFilterBtn.innerHTML = originalText;
-                    priceFilterBtn.disabled = false;
-                    return false;
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
 
-                    console.log('✅ Price filter submitted with range:', selectedPrice.value);
-                    });
-                    // Auto-submit when radio button changes
+                // Price filter form submission
+                const priceFilterForm = document.getElementById('priceFilterForm');
+
+                if (priceFilterForm) {
                     const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
                     priceInputs.forEach(input => {
-                    input.addEventListener('change', function () {
-                    console.log('🔄 Price range changed to:', this.value);
-                    // Auto-submit after short delay
-                    setTimeout(() => {
-                    priceFilterForm.submit();
-                    }, 300);
+                        input.addEventListener('change', function () {
+                            console.log('🔄 Price range changed to:', this.value);
+                            setTimeout(() => {
+                                priceFilterForm.submit();
+                            }, 300);
+                        });
                     });
-                    });
-                    }
+                }
 
-                    // ===== FAVORITE BUTTON HANDLING =====
-                    const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
-                    favoriteButtons.forEach(button => {
+                // ===== FAVORITE BUTTON HANDLING =====
+                const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
+                favoriteButtons.forEach(button => {
                     button.addEventListener('click', function(e) {
-                    // Add heart animation
-                    const icon = this.querySelector('i');
-                    if (icon) {
-                    icon.style.animation = 'heartBeat 0.6s ease-in-out';
-                    setTimeout(() => {
-                    icon.style.animation = 'heartBeat 2s ease-in-out infinite';
-                    }, 600);
-                    }
+                        // Add heart animation
+                        const icon = this.querySelector('i');
+                        if (icon) {
+                            icon.style.animation = 'heartBeat 0.6s ease-in-out';
+                            
+                            setTimeout(() => {
+                                icon.style.animation = 'heartBeat 2s ease-in-out infinite';
+                            }, 600);
+                        }
                     });
-                    });
-                    // Smooth hover effects for product cards
-                    const cards = document.querySelectorAll('.product-card');
-                    cards.forEach(card => {
+                });
+
+                // Smooth hover effects for product cards
+                const cards = document.querySelectorAll('.product-card');
+                cards.forEach(card => {
                     card.addEventListener('mouseenter', function () {
-                    this.style.transform = 'translateY(-5px)';
+                        this.style.transform = 'translateY(-5px)';
                     });
+
                     card.addEventListener('mouseleave', function () {
-                    this.style.transform = 'translateY(0)';
+                        this.style.transform = 'translateY(0)';
                     });
-                    });
-                    // Auto-scroll to products when filters are applied
-                    if (window.location.search.includes('action=filter') ||
-                            window.location.search.includes('categoryId') ||
-                            window.location.search.includes('priceRange') ||
-                            window.location.search.includes('brand')) {
+                });
+
+                // Auto-scroll to products when filters are applied
+                if (window.location.search.includes('action=filter') ||
+                        window.location.search.includes('categoryId') ||
+                        window.location.search.includes('priceRange') ||
+                        window.location.search.includes('brand')) {
                     setTimeout(() => {
-                    const mainContent = document.querySelector('.col-9');
-                    if (mainContent) {
-                    mainContent.scrollIntoView({
-                    behavior: 'smooth',
-                            block: 'start'
-                    });
-                    }
+                        const mainContent = document.querySelector('.col-9');
+                        if (mainContent) {
+                            mainContent.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
                     }, 100);
-                    }
+                }
 
-                    // Search form validation (for header search)
-                    const searchForms = document.querySelectorAll('form[role="search"]');
-                    searchForms.forEach(form => {
+                // Search form validation (for header search)
+                const searchForms = document.querySelectorAll('form[role="search"]');
+                searchForms.forEach(form => {
                     form.addEventListener('submit', function (e) {
-                    const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
-                    if (keyword && keyword.value.trim().length < 2) {
-                    e.preventDefault();
-                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
-                    keyword.focus();
-                    return false;
-                    }
+                        const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
+                        if (keyword && keyword.value.trim().length < 2) {
+                            e.preventDefault();
+                            alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
+                            keyword.focus();
+                            return false;
+                        }
                     });
-                    });
-                    // Close modal when pressing Escape
-                    document.addEventListener('keydown', function(e) {
+                });
+
+                // Close modal when pressing Escape
+                document.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape') {
-                    hideLoginNotification();
-                    >>> >>> > 6eea58586f1a51b858cef9c730eba82665c85328
+                        hideLoginNotification();
                     }
+                });
 
-                    // ===== LOGIN NOTIFICATION FUNCTIONS =====
-                    function showLoginNotification() {
-                    document.getElementById('modalOverlay').style.display = 'block';
-                    document.getElementById('loginModal').style.display = 'block';
-                    document.body.classList.add('modal-open'); // 🔧 THÊM DÒNG NÀY
-                    }
-
-                    function hideLoginNotification() {
-                    document.getElementById('modalOverlay').style.display = 'none';
-                    document.getElementById('loginModal').style.display = 'none';
-                    document.body.classList.remove('modal-open'); // 🔧 THÊM DÒNG NÀY
-                    }
-
-                    // ===== PAGE INITIALIZATION =====
-                    document.addEventListener('DOMContentLoaded', function () {
-                    console.log('✅ Index page loaded successfully - CHỈ CÓ 2 NÚT: XEM CHI TIẾT + YÊU THÍCH!');
-                    // Price filter form submission
-                    const priceFilterForm = document.getElementById('priceFilterForm');
-                    const priceFilterBtn = document.getElementById('priceFilterBtn');
-                    if (priceFilterForm) {
-                    const priceInputs = priceFilterForm.querySelectorAll('input[name="priceRange"]');
-                    priceInputs.forEach(input => {
-                    input.addEventListener('change', function () {
-                    console.log('🔄 Price range changed to:', this.value);
-                    setTimeout(() => {
-                    priceFilterForm.submit();
-                    }, 300);
-                    });
-                    });
-                    }
-
-                    // ===== FAVORITE BUTTON HANDLING =====
-                    const favoriteButtons = document.querySelectorAll('.btn-favorite-home');
-                    favoriteButtons.forEach(button => {
-                    button.addEventListener('click', function (e) {
-                    // Add heart animation
-                    const icon = this.querySelector('i');
-                    if (icon) {
-                    icon.style.animation = 'heartBeat 0.6s ease-in-out';
-                    setTimeout(() => {
-                    icon.style.animation = 'heartBeat 2s ease-in-out infinite';
-                    }, 600);
-                    }
-                    });
-                    });
-                    // Smooth hover effects for product cards
-                    const cards = document.querySelectorAll('.product-card');
-                    cards.forEach(card => {
-                    card.addEventListener('mouseenter', function () {
-                    this.style.transform = 'translateY(-5px)';
-                    });
-                    card.addEventListener('mouseleave', function () {
-                    this.style.transform = 'translateY(0)';
-                    });
-                    });
-                    // Auto-scroll to products when filters are applied
-                    if (window.location.search.includes('action=filter') ||
-                            window.location.search.includes('categoryId') ||
-                            window.location.search.includes('priceRange') ||
-                            window.location.search.includes('brand')) {
-                    setTimeout(() => {
-                    const mainContent = document.querySelector('.col-9');
-                    if (mainContent) {
-                    mainContent.scrollIntoView({
-                    behavior: 'smooth',
-                            block: 'start'
-                    });
-                    }
-                    }, 100);
-                    }
-
-                    // Search form validation (for header search)
-                    const searchForms = document.querySelectorAll('form[role="search"]');
-                    searchForms.forEach(form => {
-                    form.addEventListener('submit', function (e) {
-                    const keyword = this.querySelector('input[name="q"]') || this.querySelector('input[name="keyword"]');
-                    if (keyword && keyword.value.trim().length < 2) {
-                    e.preventDefault();
-                    alert('Vui lòng nhập ít nhất 2 ký tự để tìm kiếm');
-                    keyword.focus();
-                    return false;
-                    }
-                    });
-                    });
-                    // Close modal when pressing Escape
-                    document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') {
-                    hideLoginNotification();
-                    }
-                    });
-                    // Enhanced image lazy loading with error handling
-                    const images = document.querySelectorAll('.product-image');
-                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                // Enhanced image lazy loading with error handling
+                const images = document.querySelectorAll('.product-image');
+                const imageObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.classList.add('loaded');
-                    // Add error handling for lazy loaded images
-                    img.addEventListener('error', function () {
-                    const productName = this.alt || 'Unknown Product';
-                    const productBrand = this.closest('.product-card')?.querySelector('.product-brand')?.textContent || '';
-                    handleImageError(this, productName, productBrand);
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            
+                            // Add error handling for lazy loaded images
+                            img.addEventListener('error', function() {
+                                const productName = this.alt || 'Unknown Product';
+                                const productBrand = this.closest('.product-card')?.querySelector('.product-brand')?.textContent || '';
+                                handleImageError(this, productName, productBrand);
+                            });
+                            
+                            observer.unobserve(img);
+                        }
                     });
-                    observer.unobserve(img);
-                    }
-                    });
-                    });
-                    images.forEach(img => {
+                });
+
+                images.forEach(img => {
                     imageObserver.observe(img);
-                    });
-                    console.log('🖼️ Image handling system initialized with error recovery');
-                    console.log('💖 Beautiful favorite buttons ready - CHỈ CÓ 2 NÚT!');
-                    });
+                });
+
+                console.log('🖼️ Image handling system initialized with error recovery');
+                console.log('💖 Beautiful favorite buttons ready - CHỈ CÓ 2 NÚT!');
+            });
         </script>
 
     </body>

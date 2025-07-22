@@ -432,6 +432,87 @@
                 border-radius: 10px;
                 margin-bottom: 20px;
             }
+            
+            textarea.form-control,
+            textarea#comment {
+                background-color: #ffffff !important;    /* nền trắng */
+                color: #000000 !important;               /* chữ đen rõ ràng */
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 10px;
+                min-height: 150px;
+                font-size: 15px;
+            }
+
+            /* Màu placeholder */
+            textarea::placeholder,
+            textarea.form-control::placeholder {
+            color: #6c757d !important;               /* placeholder xám đậm */
+            opacity: 1 !important;
+            }
+            
+            .star-rating {
+                display: flex;
+                flex-direction: row; /* trái -> phải */
+                gap: 5px;
+            }
+
+            .star-rating input[type="radio"] {
+                display: none;
+            }
+
+            .star-rating label {
+                font-size: 24px;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107; /* khi hover */
+            }
+
+            .star-rating input[type="radio"]:checked ~ label {
+                color: #ddd;
+            }
+
+            .star-rating input[type="radio"]:checked + label,
+            .star-rating input[type="radio"]:checked + label ~ label {
+                color: #ffc107; /* khi chọn */
+            }
+            
+            .star-rating {
+                direction: rtl; /* quan trọng để đảo ngược thứ tự hiển thị */
+                unicode-bidi: bidi-override;
+                display: inline-flex;
+            }
+
+            .star-rating input[type="radio"] {
+                display: none;
+            }   
+
+            .star-rating label {
+                font-size: 2rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107; /* vàng khi hover */
+            }
+
+            .star-rating input[type="radio"]:checked ~ label {
+                color: #ddd; /* reset màu nếu chọn lại sao thấp hơn */
+            }
+
+            .star-rating input[type="radio"]:checked + label,
+            .star-rating input[type="radio"]:checked + label ~ label {
+                color: #ffc107; /* sao đã chọn */
+            }
+
         </style>
     </head>
     <body>
