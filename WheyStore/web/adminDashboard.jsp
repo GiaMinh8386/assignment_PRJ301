@@ -92,7 +92,7 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+margin-bottom: 30px;
         }
         
         .products-table {
@@ -202,7 +202,7 @@
                     <p class="mb-0">Tổng quan và quản lý sản phẩm của cửa hàng</p>
                 </div>
                 <div class="col-4 text-end">
-                    <div class="text-white-50">
+<div class="text-white-50">
                         <i class="fas fa-calendar me-2"></i>
                         <span id="currentDate"></span>
                     </div>
@@ -212,53 +212,47 @@
     </div>
 
     <div class="container">
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-primary mx-auto">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="stats-number" id="totalProducts">
-                        <%
-                            List<ProductDTO> allProducts = (List<ProductDTO>) request.getAttribute("allProducts");
-                            int totalProducts = allProducts != null ? allProducts.size() : 0;
-                            out.print(totalProducts);
-                        %>
-                    </div>
-                    <div class="stats-label">Tổng sản phẩm</div>
+    <!-- Statistics Cards -->
+    <div class="row mb-4 justify-content-center"> <!-- thêm lớp này -->
+        <div class="col-2 mb-3">
+            <div class="stats-card text-center">
+                <div class="stats-icon icon-primary mx-auto">
+                    <i class="fas fa-box"></i>
                 </div>
+                <div class="stats-number" id="totalProducts">
+                    <%
+                        List<ProductDTO> allProducts = (List<ProductDTO>) request.getAttribute("allProducts");
+                        int totalProducts = allProducts != null ? allProducts.size() : 0;
+                        out.print(totalProducts);
+                    %>
+                </div>
+                <div class="stats-label">Tổng sản phẩm</div>
             </div>
-            
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-success mx-auto">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stats-number" id="activeProducts">
-                        <%
-                            int activeProducts = 0;
-                            if (allProducts != null) {
-                                for (ProductDTO p : allProducts) {
-                                    if (p.isStatus()) activeProducts++;
-                                }
+        </div>
+
+        <div class="col-2 mb-3">
+            <div class="stats-card text-center">
+                <div class="stats-icon icon-success mx-auto">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stats-number" id="activeProducts">
+                    <%
+                        int activeProducts = 0;
+                        if (allProducts != null) {
+                            for (ProductDTO p : allProducts) {
+                                if (p.isStatus()) activeProducts++;
                             }
-                            out.print(activeProducts);
-                        %>
-                    </div>
-                    <div class="stats-label">Đang bán</div>
+                        }
+                        out.print(activeProducts);
+                    %>
                 </div>
+                <div class="stats-label">Đang bán</div>
             </div>
-            
-            <div class="col-2 mb-3">
-                <div class="stats-card text-center">
-                    <div class="stats-icon icon-warning mx-auto">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stats-number">85</div>
-                    <div class="stats-label">Đánh giá cao</div>
-                </div>
-            </div>
+        </div>
+    </div>
+</div>
+
+         
             
            
         </div>
@@ -287,7 +281,7 @@
 
             <!-- Charts Section -->
             <div class="col-9 mb-4">
-                <div class="chart-container">
+<div class="chart-container">
                     <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>Thống kê bán hàng</h5>
                     <div class="row">
                         <div class="col-6 mb-3">
@@ -347,7 +341,7 @@
                                 <%
                                     String imagePath = product.getImageURL();
                                     if (imagePath != null && !imagePath.trim().isEmpty()) {
-                                        if (!imagePath.startsWith("http")) {
+if (!imagePath.startsWith("http")) {
                                             imagePath = request.getContextPath() + "/assets/images/products/" + imagePath;
                                         }
                                 %>
@@ -391,7 +385,7 @@
                                 <a href="ProductController?action=deleteProduct&id=<%= product.getId() %>" 
                                    class="btn btn-outline-danger btn-action" title="Xóa"
                                    onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
-                                    <i class="fas fa-trash"></i>
+<i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
@@ -455,7 +449,7 @@
             // Display current date
             const currentDate = new Date().toLocaleDateString('vi-VN', {
                 weekday: 'long',
-                year: 'numeric',
+year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
@@ -534,7 +528,7 @@
         function refreshData() {
             const btn = event.target.closest('button');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang tải...';
+btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang tải...';
             btn.disabled = true;
             
             // Simulate refresh
